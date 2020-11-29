@@ -1,0 +1,109 @@
+import React from 'react'
+import { css } from 'styled-components'
+import { InlineWysiwyg } from 'react-tinacms-editor'
+import Markdown from '../components/Markdown'
+
+const InlineMarkdownField = ({
+  name,
+  content,
+}: {
+  name: string,
+  content: string,
+}) => {
+  return (
+    <div css={css`
+      color: #33342E;
+
+      .sunrisemvmtsb-markdown-editor h1 {
+        font-family: 'Source Sans Pro';
+        font-size: 40px;
+        font-weight: 900;
+        line-height: 50px;
+        margin: 0;
+        text-transform: uppercase;
+        padding-top: 16px;
+      }
+
+      .sunrisemvmtsb-markdown-editor h2 {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: bold;
+        font-size: 30px;
+        line-height: 1.25;
+        padding-top: 16px;
+        margin: 0;
+      }
+
+      .sunrisemvmtsb-markdown-editor h3,
+      .sunrisemvmtsb-markdown-editor h4,
+      .sunrisemvmtsb-markdown-editor h5,
+      .sunrisemvmtsb-markdown-editor h6 {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 1.25;
+        margin: 0;
+        padding-top: 12px;
+      }
+
+      .sunrisemvmtsb-markdown-editor p {
+        font-family: 'Source Serif Pro';
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 1.4;
+        margin: 0;
+        padding-top: 12px;
+      }
+
+      .sunrisemvmtsb-markdown-editor ul {
+        margin: 0;
+        padding-top: 12px;
+      }
+
+      .sunrisemvmtsb-markdown-editor li {
+        padding: 4px 0;
+      }
+      .sunrisemvmtsb-markdown-editor li:first-child,
+      .sunrisemvmtsb-markdown-editor li:last-child {
+        padding: 0
+      }
+
+      .sunrisemvmtsb-markdown-editor li ul {
+        padding-top: 0;
+      }
+
+      .sunrisemvmtsb-markdown-editor h1:first-child,
+      .sunrisemvmtsb-markdown-editor h2:first-child,
+      .sunrisemvmtsb-markdown-editor h3:first-child,
+      .sunrisemvmtsb-markdown-editor h4:first-child,
+      .sunrisemvmtsb-markdown-editor h5:first-child,
+      .sunrisemvmtsb-markdown-editor h6:first-child,
+      .sunrisemvmtsb-markdown-editor p:first-child {
+        padding-top: 0;
+      }
+    `}>
+      <InlineWysiwyg
+        className="sunrisemvmtsb-markdown-editor"
+        name={name}
+        format="markdown"
+        focusRing={{ borderRadius: 0 }}>
+        {!content &&
+          <div css={css`
+            font-family: 'Source Serif Pro';
+            font-size: 18px;
+            font-style: italic;
+            line-height: 1.4;
+            color: rgba(0,0,0,0.48);
+            padding: 8px 0;
+          `}>
+            Write something here.
+          </div>
+        }
+        <Markdown>{content}</Markdown>
+      </InlineWysiwyg>
+    </div>
+  )
+}
+
+export default InlineMarkdownField
