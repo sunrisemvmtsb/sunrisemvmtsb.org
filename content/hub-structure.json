@@ -1,3 +1,8 @@
 {
-  "blocks": []
+  "blocks": [
+    {
+      "_template": "OneColumnText",
+      "content": "# Building Our Power Through Your Participation\n\nSunrise Santa Barbara has a distributed leadership model that relies on the participation of our members (whether you can give 5 mins a week or 40 hours) to succeed. When everybody actively plugs in, sets realistic expectations (both for themselves and their teams), and contributes how they can, our movement thrives! We are able to grow our numbers, our power and influence, sustain our community, and pass policies and elect leaders who stand up for climate justice and the health and wellbeing of all people."
+    }
+  ]
 }
