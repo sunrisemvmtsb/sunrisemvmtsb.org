@@ -1,7 +1,7 @@
 import path from 'path'
 import React from 'react'
 import App, { AppProps } from 'next/app'
-import { TinaProvider, TinaCMS, useCMS } from 'tinacms'
+import { TinaProvider, ModalProvider, TinaCMS, useCMS } from 'tinacms'
 import { GithubClient, TinacmsGithubProvider } from 'react-tinacms-github'
 import { NextGithubMediaStore } from 'next-tinacms-github'
 import { GitClient, GitMediaStore } from '@tinacms/git-client'
@@ -74,13 +74,15 @@ export default class Application extends App {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <TinaProvider cms={this.cms}>
-        <TinacmsGithubProvider onLogin={onLogin} onLogout={onLogout} error={pageProps.error}>
-          <GlobalStyle />
-          <EditLink />
-          <Component {...pageProps} />
-        </TinacmsGithubProvider>
-      </TinaProvider>
+      <ModalProvider>
+        <TinaProvider cms={this.cms}>
+          <TinacmsGithubProvider onLogin={onLogin} onLogout={onLogout} error={pageProps.error}>
+            <GlobalStyle />
+            <EditLink />
+            <Component {...pageProps} />
+          </TinacmsGithubProvider>
+        </TinaProvider>
+      </ModalProvider>
     )
   }
 }
