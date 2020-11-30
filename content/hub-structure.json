@@ -1,3 +1,23 @@
 {
-  "blocks": []
+  "blocks": [
+    {
+      "_template": "TeamExplorer",
+      "teams": [
+        {
+          "name": "Administrative Coordinators",
+          "leads": [],
+          "description": "",
+          "color": "#FFDE16",
+          "_template": "Team"
+        },
+        {
+          "name": "Actions",
+          "leads": [],
+          "description": "",
+          "color": "#FF2F2F",
+          "_template": "Team"
+        }
+      ]
+    }
+  ]
 }
