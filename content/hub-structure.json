@@ -48,7 +48,7 @@
         {
           "name": "Actions",
           "leads": [],
-          "description": "",
+          "description": "Hello world",
           "color": "#FF2F2F",
           "_template": "Team"
         }
