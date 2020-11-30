@@ -6,6 +6,10 @@ import { useForm, ModalProvider } from 'tinacms'
 import Markdown from '../components/Markdown'
 import Typography from '../components/Typography'
 import Color from 'color'
+import { GetStaticProps } from 'next'
+import { useGithubJsonForm, useGithubToolbarPlugins } from 'react-tinacms-github'
+import { getGithubPreviewProps, parseJson, GithubFile } from 'next-tinacms-github'
+
 
 const Hero = () => {
   return (
@@ -382,17 +386,15 @@ type HubStructureData = {
   blocks: Array<HubStructureBlock>
 }
 
-const HubStructure = () => {
-  const [data, form] = useForm<HubStructureData>({
-    initialValues: {
-      blocks: []
-    },
-    id: 'hub-structure',
+const HubStructure = ({
+  file
+}: {
+  file: GithubFile<HubStructureData>
+}) => {
+  const [data, form] = useGithubJsonForm(file, {
     label: 'Hub Structure',
-    onSubmit: () => {
-
-    }
   })
+  useGithubToolbarPlugins()
 
   return (
     <>
@@ -426,3 +428,28 @@ const HubStructure = () => {
 }
 
 export default HubStructure
+export const getStaticProps: GetStaticProps = async ({
+ preview,
+ previewData,
+}) => {
+  if (preview) {
+    return getGithubPreviewProps({
+      ...previewData,
+      fileRelativePath: 'content/hub-structure.json',
+      parse: parseJson,
+    })
+  }
+
+ return {
+   props: {
+     sourceProvider: null,
+     error: null,
+     preview: false,
+     file: {
+       fileRelativePath: 'content/hub-structure.json',
+       data: (await import('../../content/hub-structure.json')).default,
+     },
+   },
+ }
+}
+  
