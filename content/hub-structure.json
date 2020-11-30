@@ -46,12 +46,6 @@
       "_template": "TeamExplorer",
       "teams": [
         {
-          "name": "Administrative Coordinators",
-          "leads": [],
-          "color": "#FFDE16",
-          "_template": "Team"
-        },
-        {
           "name": "Actions",
           "leads": [],
           "description": "",
