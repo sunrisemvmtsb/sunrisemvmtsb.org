@@ -46,6 +46,22 @@
       "_template": "TeamExplorer",
       "teams": [
         {
+          "_template": "Team",
+          "name": "Administrative Coordinators",
+          "leads": [
+            {
+              "image": "/images/placeholder.svg",
+              "name": "Mikala Butson"
+            },
+            {
+              "image": "/images/placeholder.svg",
+              "name": "Chris Kracha"
+            }
+          ],
+          "description": "The hub has 1-3 administrative coordinators, which oversee the technical operations of the hub. They are responsible for:\n\n* Scheduling weekly core meetings and reserving meeting spaces\n* Routine maintenance of the website, ensuring it has up-to-date information\n* Ensuring Sunrise SB is in good standing with OSL office\n* Matching Team Leads with each other for weekly check-ins\n* Planning weekly or biweekly bonding opportunities for members\n* Scheduling quarterly leadership development session for core team, in collaboration with training team.\n  * Includes organizing 1 annual leadership retreat to set year-long strategy and develop team connections\n  * So, 4 sessions total\n\nIf 3 coordinators, one coordinator should be the **Justice, Equity & Anti-Oppression Lead**. In the beginning, one person should volunteer to be the **Sunrise National Delegate**. Once the hub grows, this position will rotate quarterly between core members.\n\n**Expected time commitment: 5-10 hours**",
+          "color": "#FFDE16"
+        },
+        {
           "name": "Actions",
           "leads": [],
           "description": "Hello world",
