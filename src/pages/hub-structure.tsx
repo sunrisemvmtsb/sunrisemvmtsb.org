@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from 'styled-components'
 import { BlocksControls, InlineBlock, InlineBlocks, InlineForm, InlineGroup, InlineText, AddBlockMenu } from 'react-tinacms-inline'
 import InlineMarkdownField from '../components/InlineMarkdownField'
-import { useForm, ModalProvider } from 'tinacms'
+import { useForm, ModalProvider, usePlugin } from 'tinacms'
 import Markdown from '../components/Markdown'
 import Typography from '../components/Typography'
 import Color from 'color'
@@ -394,7 +394,7 @@ const HubStructure = ({
   const [data, form] = useGithubJsonForm(file, {
     label: 'Hub Structure',
   })
-  useGithubToolbarPlugins()
+  usePlugin(form)
 
   return (
     <>
@@ -433,6 +433,7 @@ export const getStaticProps: GetStaticProps = async ({
  previewData,
 }) => {
   if (preview) {
+    console.log(previewData)
     return getGithubPreviewProps({
       ...previewData,
       fileRelativePath: 'content/hub-structure.json',

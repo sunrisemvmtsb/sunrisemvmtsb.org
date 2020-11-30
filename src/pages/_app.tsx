@@ -55,8 +55,8 @@ export default class Application extends App {
       proxy: '/api/proxy-github',
       authCallbackRoute: '/api/create-github-access-token',
       clientId: process.env.GITHUB_CLIENT_ID,
-      baseRepoFullName: process.env.GITHUB_REPO,
-      baseBranch: process.env.GITHUB_BASE_BRANCH,
+      baseRepoFullName: process.env.REPO_FULL_NAME,
+      baseBranch: process.env.BASE_BRANCH,
     })
     this.cms = new TinaCMS({
       enabled: !!props.pageProps.preview,
