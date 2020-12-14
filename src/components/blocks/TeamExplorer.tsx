@@ -76,6 +76,7 @@ const TeamEntryTemplate = ({
             display: flex;
             flex-direction: column;
             align-items: center;
+            cursor: pointer;
           `}
           onClick={() => setSelected?.(index)}>
           <div css={css`

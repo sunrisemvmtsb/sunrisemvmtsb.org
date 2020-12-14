@@ -7,6 +7,8 @@ import { NextGithubMediaStore } from 'next-tinacms-github'
 import { GitClient, GitMediaStore } from '@tinacms/git-client'
 import NextGitMediaStore from '../infrastructure/NextGitMediaStore'
 import { createGlobalStyle, css } from 'styled-components'
+import Header from '../components/molecules/Header'
+import Footer from '../components/molecules/Footer'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -19,6 +21,12 @@ const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #33342E;
+    background-color: #000;
+  }
+  :root {
+    --sunrise-yellow: #ffde16;
+    --sunrise-tan: #F7F5E8;
+    --sunrise-magenta: #8F0D56;
   }
   a {
     color: inherit;
@@ -78,8 +86,13 @@ export default class Application extends App {
         <TinaProvider cms={this.cms}>
           <TinacmsGithubProvider onLogin={onLogin} onLogout={onLogout} error={pageProps.error}>
             <GlobalStyle />
-            <EditLink />
-            <Component {...pageProps} />
+            <div css={css`
+              background-color: #fffffb;
+            `}>
+              <Header />
+              <Component {...pageProps} />
+              <Footer />
+            </div>
           </TinacmsGithubProvider>
         </TinaProvider>
       </ModalProvider>
@@ -96,6 +109,7 @@ const EditLink = () => {
         position: absolute;
         bottom: 0;
         right: 0;
+        z-index: 99999;
       `}
       onClick={cms.toggle}>
       {cms.enabled ? 'Exit Edit Mode' : 'Edit This Site'}

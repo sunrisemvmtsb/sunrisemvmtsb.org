@@ -56,6 +56,7 @@ const HomeHero = ({
           position: relative;
           z-index: 1;
           pointer-events: ${cms.enabled ? 'none' : 'all'};
+          padding-right: 464px;
         `}>
           <h1 css={css`
             font-size: 104px;

@@ -49,10 +49,13 @@ const Typography = ({
 }>) => {
   return (
     <span css={css`
-      font-family: ${Variant.family(variant)};
-      font-weight: ${Variant.weight(variant)};
-      font-size: ${Variant.size(variant)}px;
-      text-transform: ${Variant.transform(variant)};
+      &, textarea {
+        font-family: ${Variant.family(variant)};
+        font-weight: ${Variant.weight(variant)};
+        font-size: ${Variant.size(variant)}px;
+        text-transform: ${Variant.transform(variant)};
+        color: inherit;
+      }
     `}>
       {children}
     </span>

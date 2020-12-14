@@ -2,7 +2,6 @@ import BaseDocument, { Html, Head, Main, NextScript, DocumentContext } from 'nex
 import { createGlobalStyle, ServerStyleSheet } from 'styled-components'
 
 
-
 export default class Document extends BaseDocument {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet()
