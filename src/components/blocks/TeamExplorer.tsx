@@ -4,6 +4,8 @@ import { BlocksControls, InlineBlocks, InlineText, InlineGroup } from 'react-tin
 import InlineMarkdownField from '../InlineMarkdownField'
 import Typography from '../Typography'
 import Color from 'color'
+import { useRouter } from 'next/router'
+import { containeranalysis } from 'googleapis/build/src/apis/containeranalysis'
 
 type TeamLead = {
   name: string,
@@ -61,13 +63,16 @@ const TeamEntryTemplate = ({
     data.leads :
     [{ name: 'No lead yet', image: '/images/placeholder.svg' }]
 
+  const router = useRouter()
+  const team = router.query.team
+  const [didScroll, setDidScroll] = React.useState(false)
+
   return (
-    <div
-      css={css`
-        padding: ${selected === index ? 12 : 16}px;
-        border: ${selected === index ? `2px solid ${data.color}` : '0'};
-        background-color: ${selected === index ? Color(data.color).fade(0.75).string() : 'none'};
-      `}>
+    <div css={css`
+      padding: ${selected === index ? 12 : 16}px;
+      border: ${selected === index ? `2px solid ${data.color}` : '0'};
+      background-color: ${selected === index ? Color(data.color).fade(0.75).string() : 'none'};
+    `}>
       <BlocksControls
         focusRing={{ borderRadius: 0 }}
         index={index}>
@@ -145,14 +150,36 @@ export const Component = ({
   index: number,
   data: Data,
 }) => {
+  
   const [selected, setSelected] = React.useState(0)
   const current = data.teams[selected]
 
+  const router = useRouter()
+  const team = router.query.team
+  const [didScroll, setDidScroll] = React.useState(false)
+
+  React.useEffect(() => {
+    if (!team) return
+    const index = data
+      .teams
+      .findIndex(({ name }) => {
+        return name.toLowerCase().replace(' ', '-') === team
+      })
+    if (index === -1) return
+    setSelected(index)
+  }, [team])
+
   return (
-    <div css={css`
-      padding-top: 48px;
-      &:first-child { padding-top: 0; }
-    `}>
+    <div
+      ref={(div) => {
+        if (!div || !team || didScroll) return
+        div.scrollIntoView()
+        setDidScroll(true)
+      }}
+      css={css`
+        padding-top: 48px;
+        &:first-child { padding-top: 0; }
+      `}>
       <BlocksControls
         index={index}
         focusRing={{ borderRadius: 0, offset: { x: 0, y: 16 } }}>

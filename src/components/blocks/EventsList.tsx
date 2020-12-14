@@ -3,6 +3,7 @@ import { css } from 'styled-components'
 import { BlocksControls, InlineText, InlineTextarea, InlineImage } from 'react-tinacms-inline'
 import Typography from '../Typography'
 import { CalendarEvent } from '../../infrastructure/GoogleCalendar'
+import Icon from '../atoms/Icon'
 
 export type Data = {
   
@@ -82,6 +83,10 @@ const parseEvent = (input: CalendarEvent): HubEvent => {
   }
 }
 
+const teamUrl = (input: Team): string => {
+  return `/hub-structure?team=${input.toLowerCase()}`
+}
+
 export const Component = ({
   index,
   events,
@@ -150,6 +155,38 @@ export const Component = ({
               `}>
                 {event.title}
               </h3>
+              {event.team &&
+                <a
+                  href={teamUrl(event.team)}
+                  css={css`
+                    display: flex;
+                    padding-top: 16px;
+                    font-family: Source Sans Pro;
+                    font-size: 12px;
+                    line-height: 15px;
+                    text-decoration: underline;
+                    color: var(--sunrise-magenta);
+                    align-items: center;
+                  `}>
+                  <Icon
+                    icon="Info"
+                    css={css`
+                      width: 16px;
+                      height: 16px;
+                      display: block;
+                      margin-right: 4px;
+                      fill: currentColor;
+                    `} />
+                  <span
+                    css={css`
+                      font-size: 12px;
+                      display: block;
+                      margin-top: -3px;
+                    `}>
+                    Learn more about the {event.team} Team
+                  </span>
+                </a>
+              }
               <div css={css`
                 font-family: Source Sans Pro;
                 font-weight: 700;
@@ -159,18 +196,6 @@ export const Component = ({
               `}>
                 {event.start}
               </div>
-              {event.team &&
-                <div css={css`
-                  padding-top: ${event.start ? 8 : 16}px;
-                  font-family: Source Sans Pro;
-                  font-size: 12px;
-                  line-height: 15px;
-                  text-decoration-line: underline;
-                  color: var(--sunrise-magenta);
-                `}>
-                  Learn more about the {event.team} Team
-                </div>
-              }
             </li>
           ))}
         </ul>

@@ -2,6 +2,7 @@ import React from 'react'
 import { css } from 'styled-components'
 import Typography from '../Typography'
 import { BlocksControls } from 'react-tinacms-inline'
+import SocialFeed, { SocialPost } from '../molecules/SocialFeed'
 
 
 export type Data = {}
@@ -14,8 +15,10 @@ export const template = {
 
 export const Component = ({
   index,
-}, {
+  posts = [],
+}: {
   index: number,
+  posts?: Array<SocialPost>,
 }) => {
   return (
     <BlocksControls
@@ -24,10 +27,12 @@ export const Component = ({
       <section css={css`
         padding: 120px;
         background-color: #fffffb;
+        position: relative;
       `}>
         <div css={css`
           max-width: 1200px;
           margin: 0 auto;
+          position: relative;
         `}>
           <div css={css`
             padding-bottom: 48px;
@@ -65,90 +70,9 @@ export const Component = ({
             <div css={css`
               padding-left: 16px;
               border-left: 1px solid var(--sunrise-magenta);
+              position: relative;
             `}>
-              <div css={css`
-                padding-bottom: 16px;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                display: grid;
-                grid-template-columns: 48px 1fr;
-                grid-auto-flow: column;
-                grid-column-gap: 16px;
-              `}>
-                <div css={css`
-                  background-color: var(--sunrise-yellow);
-                  width: 48px;
-                  height: 48px;
-                  padding: 6px;
-                `}>
-                  <img
-                    src="/images/logo.svg"
-                    css={css`
-                      width: 36px;
-                      height: 36px;
-                    `} />
-                </div>
-                <div>
-                  <p css={css`
-                    font-family: Source Sans Pro;
-                    font-weight: 700;
-                    font-size: 18px;
-                    line-height: 1;
-                    margin: 0;
-                    color: #000;
-                    padding-bottom: 8px;
-                  `}>
-                    Sunrise Santa Barbara
-                  </p>
-                  <div>
-                    <a
-                      css={css`
-                        font-family: Source Sans Pro;
-                        font-weight: 700;
-                        font-size: 12px;
-                        line-height: 12px;
-                        color: #FFF;
-                        text-transform: uppercase;
-                        display: inline-flex;
-                        padding: 4px;
-                        background: #1B95E0;
-                        align-items: center;
-                        margin-right: 8px;
-                      `}>
-                      <img
-                        src="/images/twitter.svg"
-                        css={css`
-                          width: 12px;
-                          height: 12px;
-                          margin-right: 4px;
-                        `} />
-                      Follow
-                    </a>
-                    <a
-                      css={css`
-                        font-family: Source Sans Pro;
-                        font-weight: 700;
-                        font-size: 12px;
-                        line-height: 12px;
-                        color: #FFF;
-                        text-transform: uppercase;
-                        display: inline-flex;
-                        padding: 4px;
-                        background: linear-gradient(51.55deg, #FEDA77 9.78%, #F58529 23.88%, #DD2A7B 39.79%, #8134AF 62.56%, #515BD4 88.78%);
-                        align-items: center;
-                        margin-right: 8px;
-                      `}>
-                      <img
-                        src="/images/instagram.svg"
-                        css={css`
-                          width: 12px;
-                          height: 12px;
-                          margin-right: 4px;
-                        `} />
-                      Follow
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <SocialFeed posts={posts} />
             </div>
           </div>
         </div>

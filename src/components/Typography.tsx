@@ -5,6 +5,8 @@ export type Variant =
   | 'SectionTitle'
   | 'ContentTitle'
   | 'Body'
+  | 'Caption'
+
 
 const Variant = {
   family: (variant: Variant) => {
@@ -12,6 +14,7 @@ const Variant = {
       case 'SectionTitle': return 'Source Sans Pro'
       case 'ContentTitle': return 'Source Sans Pro'
       case 'Body': return 'Source Serif Pro'
+      case 'Caption': return 'Source Serif Pro'
       default: return 'Source Serif Pro'
     }
   },
@@ -20,6 +23,7 @@ const Variant = {
       case 'SectionTitle': return 40
       case 'ContentTitle': return 30
       case 'Body': return 18
+      case 'Caption': return 14
       default: return 18
     }
   },
@@ -28,6 +32,7 @@ const Variant = {
       case 'SectionTitle': return 900
       case 'ContentTitle': return 700
       case 'Body': return 400
+      case 'Caption': return 400
       default: return 400
     }
   },
@@ -36,6 +41,7 @@ const Variant = {
       case 'SectionTitle': return 'uppercase'
       case 'ContentTitle': return 'none'
       case 'Body': return 'none'
+      case 'Caption': return 'none'
       default: return 'none'
     }
   }
@@ -48,7 +54,7 @@ const Typography = ({
   variant: Variant,
 }>) => {
   return (
-    <span css={css`
+    <div css={css`
       &, textarea {
         font-family: ${Variant.family(variant)};
         font-weight: ${Variant.weight(variant)};
@@ -58,7 +64,7 @@ const Typography = ({
       }
     `}>
       {children}
-    </span>
+    </div>
   )
 }
 

@@ -24,8 +24,38 @@ const formatDate = (input: Date) => {
   ].join('')
 }
 
+
+const FIVE_MINUTES = 1000 * 60 * 5
+
 export default class GoogleCalendar {
-  async events(): Promise<Array<CalendarEvent>> {
+  private static _instance: GoogleCalendar | null = null
+  static get instance() {
+    if (!this._instance) this._instance = new GoogleCalendar()
+    return this._instance
+  }
+
+  private _lastFetched: number
+  private _cache: Array<CalendarEvent>
+
+  constructor() {
+    this._lastFetched = 0
+    this._cache = []
+  }
+
+  async load(): Promise<Array<CalendarEvent>> {
+    const now = Date.now()
+    if (now - this._lastFetched > FIVE_MINUTES) {
+      try {
+        const data = await this._fetch()
+        this._lastFetched = now
+        this._cache = data
+      } catch { }
+    }
+
+    return this._cache
+  }
+
+  private async _fetch(): Promise<Array<CalendarEvent>> {
     const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent('sunrisemvmtsb@gmail.com')}/events`)
     url.searchParams.append('orderBy', 'startTime')
     url.searchParams.append('singleEvents', 'true')

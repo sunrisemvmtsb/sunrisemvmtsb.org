@@ -12,6 +12,8 @@ import * as CallToAction from '../components/blocks/CallToAction'
 import * as EventsList from '../components/blocks/EventsList'
 import * as NewsHeadlines from '../components/blocks/NewsHeadlines'
 import GoogleCalendar, { CalendarEvent } from '../infrastructure/GoogleCalendar'
+import Instagram, { InstagramPost } from '../infrastructure/Instagram'
+import { SocialPost } from '../components/molecules/SocialFeed'
 
 type HeroData = {
   background: InlineAdjustableImageData
@@ -30,9 +32,11 @@ type HomeData = {
 const Home = ({
   file,
   events,
+  posts,
 }: {
   file: GithubFile<HomeData>,
   events: Array<CalendarEvent>,
+  posts: Array<SocialPost>,
 }) => {
   const [data, form] = useGithubJsonForm(file, {
     label: 'Home Page'
@@ -51,7 +55,7 @@ const Home = ({
       <InlineBlocks
         name="blocks"
         blocks={{ CallToAction, EventsList, NewsHeadlines }}
-        itemProps={{ events }} />
+        itemProps={{ events, posts }} />
     </InlineForm>
   )
 }
@@ -62,8 +66,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   preview,
   previewData,
 }) => {
-  const calendar = new GoogleCalendar()
-  const events = await calendar.events()
+  const events = await GoogleCalendar.instance.load()
+  const instagram = await Instagram.instance.load()
+  const posts = instagram.map((p) => ({ type: 'Instagram', ...p }))
 
   const github = preview ?
     (await getGithubPreviewProps({
@@ -81,6 +86,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     }
 
   return {
-    props: { events, ...github }
+    props: { posts, events, ...github }
   }
 }
