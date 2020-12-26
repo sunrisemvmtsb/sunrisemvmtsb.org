@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 module.exports = {
   env: {
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,

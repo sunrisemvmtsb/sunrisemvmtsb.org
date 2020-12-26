@@ -1,10 +1,37 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { useCMS } from 'tinacms'
 import ButtonLink from '../atoms/ButtonLink'
+import { signIn, signOut, useSession, getSession } from 'next-auth/client'
+import { useCMS } from 'tinacms'
 
 const Footer = () => {
   const cms = useCMS()
+  const [ session, loading ] = useSession()
+
+  React.useEffect(() => {
+    if (loading) return
+    if (session && !sessionStorage.getItem('preview')) {
+      fetch('/api/preview')
+        .then((response) => {
+          if (response.status !== 200) throw Error('failed')
+          sessionStorage.setItem('preview', 'active')
+          window.location.href = window.location.pathname
+        })
+    } else if (!session && sessionStorage.getItem('preview')) {
+      fetch('/api/reset-preview')
+        .then((response) => {
+          if (response.status !== 200) throw Error('failed')
+          sessionStorage.removeItem('preview')
+          window.location.reload()
+        })
+    }
+  }, [session, loading])
+
+  React.useEffect(() => {
+    return cms.events.subscribe('cms:disable', () => {
+      signOut()
+    })
+  }, [])
 
   return (
     <footer css={css`
@@ -25,7 +52,19 @@ const Footer = () => {
           </ButtonLink>
         </div>
         <button
-          onClick={() => cms.toggle()}
+          onClick={async () => {
+            if (loading) return
+
+            if (session) {
+              cms.disable()
+              await signOut()
+              await fetch(`/api/reset-preview`)
+              window.location.reload()            
+              return
+            }
+
+            signIn('google')
+          }}
           css={css`
             font-family: Source Sans Pro;
             font-size: 18px;
@@ -43,7 +82,7 @@ const Footer = () => {
               text-decoration: underline;
             }
           `}>
-          {cms.enabled ? 'Exit Admin' : 'Admin'}
+          {session ? 'Exit Admin' : 'Admin'}
         </button>
       </div>
     </footer>
