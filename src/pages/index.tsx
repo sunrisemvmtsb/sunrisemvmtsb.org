@@ -4,27 +4,22 @@ import { css } from 'styled-components'
 import { GetServerSideProps } from 'next'
 import { useCMS, usePlugin } from 'tinacms'
 import { InlineForm, InlineBlocks } from 'react-tinacms-inline'
-import { useJsonForm, JsonFile } from 'next-tinacms-json'
-import { Data as InlineAdjustableImageData } from '../components/fields/InlineAdjustableImage'
-import HomeHero from '../components/heros/HomeHero'
 import * as CallToAction from '../components/blocks/CallToAction'
 import * as EventsList from '../components/blocks/EventsList'
 import * as NewsHeadlines from '../components/blocks/NewsHeadlines'
+import * as PrimaryHero from '../components/blocks/PrimaryHero'
 import GoogleCalendar, { CalendarEvent } from '../infrastructure/GoogleCalendar'
-import Instagram, { InstagramPost } from '../infrastructure/Instagram'
+import Instagram from '../infrastructure/Instagram'
 import { SocialPost } from '../components/molecules/SocialFeed'
-
-type HeroData = {
-  background: InlineAdjustableImageData
-}
+import { useJsonForm, JsonFile } from '../infrastructure/CustomGitClient'
 
 type BlocksData =
+  | { _template: 'PrimaryHero' } & PrimaryHero.Data
   | { _template: 'CallToAction' } & CallToAction.Data
   | { _template: 'EventsList' } & EventsList.Data
   | { _template: 'NewsHeadlines' } & NewsHeadlines.Data
 
 type HomeData = {
-  hero: HeroData,
   blocks: Array<BlocksData>
 }
 
@@ -37,8 +32,6 @@ const Home = ({
   events: Array<CalendarEvent>,
   posts: Array<SocialPost>,
 }) => {
-  const cms = useCMS()
-  console.log(cms.disabled)
   const [data, form] = useJsonForm(file, {
     label: 'Home Page'
   }) as [HomeData, any]
@@ -46,16 +39,9 @@ const Home = ({
 
   return (
     <InlineForm form={form}>
-      <HomeHero
-        data={{
-          background: {
-            data: data.hero.background,
-            name: 'hero.background',
-          }
-        }} />
       <InlineBlocks
         name="blocks"
-        blocks={{ CallToAction, EventsList, NewsHeadlines }}
+        blocks={{ PrimaryHero, CallToAction, EventsList, NewsHeadlines }}
         itemProps={{ events, posts }} />
     </InlineForm>
   )

@@ -1,9 +1,10 @@
 import path from 'path'
-import { GitMediaStore } from '@tinacms/git-client'
+import CustomGitMediaStore from './CustomGitMediaStore'
 import { Media, MediaListOptions, MediaUploadOptions } from '@tinacms/core'
 
-export default class NextGithubMediaStore extends GitMediaStore {
-  previewSrc(fieldValue: string) {
+export default class NextGitMediaStore extends CustomGitMediaStore {
+  async previewSrc(fieldValue: string) {
+    if (fieldValue === '/images/placeholder.svg') return fieldValue
     return super.previewSrc(path.join('media', fieldValue))
   }
 

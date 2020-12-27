@@ -2,11 +2,11 @@ import path from 'path'
 import React from 'react'
 import { AppProps } from 'next/app'
 import { TinaProvider, ModalProvider, TinaCMS, useCMS } from 'tinacms'
-import { GitClient, GitMediaStore } from '@tinacms/git-client'
 import { createGlobalStyle, css } from 'styled-components'
 import Header from '../components/molecules/Header'
 import Footer from '../components/molecules/Footer'
-import { useSession } from 'next-auth/client'
+import CustomGitClient from '../infrastructure/CustomGitClient'
+import NextGitMediaStore from '../infrastructure/NextGitMediaStore'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -39,10 +39,10 @@ path.resolve('./content/')
 
 const Application = ({ Component, pageProps }: AppProps) => {
   const cms = React.useMemo(() => {
-    const git = new GitClient('/api/tina')
+    const git = new CustomGitClient('/api/tina')
     const cms = new TinaCMS({
       enabled: !!pageProps.preview,
-      media: new GitMediaStore(git),
+      media: new NextGitMediaStore(git),
       toolbar: true,
     })
     cms.registerApi('git', git)

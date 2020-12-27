@@ -5,7 +5,6 @@ import InlineMarkdownField from '../InlineMarkdownField'
 import Typography from '../Typography'
 import Color from 'color'
 import { useRouter } from 'next/router'
-import { containeranalysis } from 'googleapis/build/src/apis/containeranalysis'
 
 type TeamLead = {
   name: string,

@@ -1,13 +1,4 @@
 {
-  "hero": {
-    "background": {
-      "path": "/media/county_admin_protest.jpg",
-      "x": "center",
-      "y": "center",
-      "fit": "cover",
-      "alt": "Protest at SB County administration building"
-    }
-  },
   "blocks": [
     {
       "_template": "PrimaryHero",
