@@ -10,11 +10,21 @@
   },
   "blocks": [
     {
+      "_template": "PrimaryHero",
+      "background": {
+        "path": "/images/placeholder.svg",
+        "alt": "",
+        "x": "center",
+        "y": "center",
+        "fit": "cover"
+      }
+    },
+    {
       "_template": "CallToAction",
       "callout": "Take Action Today",
-      "title": "Sign our Petition for a Climate Cabinet",
+      "title": "Sign our Petition for a Climate Cabinet?",
       "url": "",
-      "description": "Biden & Harris promised to “Build Back Better”, but to do that they’ll need a team who represents the ambition of their vision. We gave them a mandate on climate and we’ll be here to make sure they fulfill it",
+      "description": "Biden & Harris promised to “Build Back Better”, but to do that they’ll need a team who represents the ambition of their vision. We gave them a mandate on climate and we’ll be here to make sure they fulfill it.",
       "image": "/images/placeholder.svg"
     },
     {
