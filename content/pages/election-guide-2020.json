@@ -6,14 +6,6 @@
       "_template": "HeadlineHero",
       "title": "Election Guide",
       "lead": "November 2020"
-    },
-    {
-      "_template": "CallToAction",
-      "callout": "",
-      "title": "",
-      "url": "",
-      "description": "",
-      "image": "/images/placeholder.svg"
     }
   ],
   "lead": "November 2020"
