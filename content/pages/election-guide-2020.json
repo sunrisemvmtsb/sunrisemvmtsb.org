@@ -1,1 +1,11 @@
-{"title":"Election Guide 2020","description":"Lol","blocks":[]}
+{
+  "title": "Election Guide 2020",
+  "description": "Lol",
+  "blocks": [
+    {
+      "_template": "HeadlineHero",
+      "title": "Election Guide",
+      "lead": "November 2020"
+    }
+  ]
+}
