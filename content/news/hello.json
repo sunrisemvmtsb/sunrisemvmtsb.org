@@ -2,6 +2,13 @@
   "content": "lmaooooo.",
   "title": "Lmao This is the Title",
   "subtitle": "LMao this is the Subtitle",
+  "image": {
+    "alt": "Image",
+    "fit": "cover",
+    "path": "/images/placeholder.svg",
+    "x": "center",
+    "y": "center"
+  },
   "tags": [
     "Featured",
     "Movement Updates"
