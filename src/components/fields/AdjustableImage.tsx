@@ -2,6 +2,7 @@ import React from 'react'
 import { css } from 'styled-components'
 import { Field } from 'tinacms'
 import { InlineGroup, InlineImage } from 'react-tinacms-inline'
+import Preview from '../../contexts/Preview'
 
 export type Data = {
   path: string,
@@ -11,15 +12,17 @@ export type Data = {
   fit: 'contain' | 'cover' | 'fill'
 }
 
-const InlineAdjustableImage = ({
-  data,
-  name,
-  className,
-}: {
+export type Props = {
   data: Data,
   name: string,
   className?: string,
-}) => {
+}
+
+const Editor = ({
+  data,
+  name,
+  className,
+}: Props) => {
   return (
     <div
       className={className}
@@ -80,4 +83,30 @@ const InlineAdjustableImage = ({
   )
 }
 
-export default InlineAdjustableImage
+const Static = ({
+  data,
+  name,
+  className,
+}: Props) => {
+  return (
+    <div
+      className={className}
+      css={css`
+        position: relative;
+      `}>
+      <img
+        alt={data.alt}
+        src={data.path}
+        css={css`
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: ${data.fit};
+          object-position: ${data.x} ${data.y};
+        `} />
+    </div>
+  )
+}
+
+const AdjustableImage = Preview.component(Editor, Static)
+export default AdjustableImage

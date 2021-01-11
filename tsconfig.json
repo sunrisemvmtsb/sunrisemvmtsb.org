@@ -19,12 +19,13 @@
     "jsx": "preserve",
     "downlevelIteration": true,
     "experimentalDecorators": true,
+    "baseUrl": "./"
   },
   "include": [
     "next-env.d.ts",
     "custom.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
   ],
   "exclude": [
     "node_modules"

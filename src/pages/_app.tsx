@@ -1,12 +1,17 @@
+import type {} from 'styled-components/cssprop'
 import path from 'path'
 import React from 'react'
-import { AppProps } from 'next/app'
+import { AppContext, AppProps } from 'next/app'
 import { TinaProvider, ModalProvider, TinaCMS, useCMS } from 'tinacms'
 import { createGlobalStyle, css } from 'styled-components'
 import Header from '../components/molecules/Header'
 import Footer from '../components/molecules/Footer'
 import CustomGitClient from '../infrastructure/CustomGitClient'
 import NextGitMediaStore from '../infrastructure/NextGitMediaStore'
+import Preview from '../contexts/Preview'
+import PageCreatorPlugin from '../plugins/PageCreatorPlugin'
+import NewsCreatorPlugin from '../plugins/NewsCreatorPlugin'
+import { useConfigScreenPlugin } from '../plugins/Config'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -37,33 +42,70 @@ const GlobalStyle = createGlobalStyle`
 
 path.resolve('./content/')
 
-const Application = ({ Component, pageProps }: AppProps) => {
+const Contents = ({ Component, pageProps }: AppProps) => {
+  const config = useConfigScreenPlugin(pageProps.config)
+
+  return (
+    <>
+      <GlobalStyle />
+      <div css={css`
+        background-color: #fffffb;
+      `}>
+        <Header config={config} />
+        <main css={css`
+          padding-bottom: 120px;
+        `}>
+          <Component {...pageProps} />
+        </main>
+        <Footer />
+      </div>
+    </>
+  )
+}
+
+const Application = (props: AppProps) => {
   const cms = React.useMemo(() => {
     const git = new CustomGitClient('/api/tina')
     const cms = new TinaCMS({
-      enabled: !!pageProps.preview,
+      enabled: !!props.pageProps.preview,
       media: new NextGitMediaStore(git),
       toolbar: true,
+      sidebar: true,
+      plugins: [
+        PageCreatorPlugin,
+        NewsCreatorPlugin,
+      ]
     })
     cms.registerApi('git', git)
     return cms
   }, [])
 
+  React.useEffect(() => {
+    props.pageProps.preview ?
+      sessionStorage.setItem('preview', 'active') :
+      sessionStorage.removeItem('preview')
+  }, [props.pageProps.preview])
 
   return (
-    <ModalProvider>
-      <TinaProvider cms={cms}>
-        <GlobalStyle />
-        <div css={css`
-          background-color: #fffffb;
-        `}>
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
-        </div>
-      </TinaProvider>
-    </ModalProvider>
+    <ErrorBoundary>
+      <Preview.Provider preview={!!props.pageProps.preview}>
+        <ModalProvider>
+          <TinaProvider cms={cms}>
+            <Contents {...props} />
+          </TinaProvider>
+        </ModalProvider>
+      </Preview.Provider>
+    </ErrorBoundary>
   )
+}
+
+class ErrorBoundary extends React.Component {
+  componentDidCatch(error, errorInfo) {
+
+  }
+  render() {
+    return this.props.children
+  }
 }
 
 export default Application

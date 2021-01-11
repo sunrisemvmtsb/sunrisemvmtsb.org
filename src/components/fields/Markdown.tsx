@@ -1,9 +1,9 @@
 import React from 'react'
 import { css } from 'styled-components'
 import { InlineWysiwyg } from 'react-tinacms-editor'
-import Markdown from '../components/Markdown'
+import Markdown from '../atoms/Markdown'
 
-const InlineMarkdownField = ({
+const MarkdownField = ({
   name,
   content,
 }: {
@@ -56,6 +56,20 @@ const InlineMarkdownField = ({
         padding-top: 12px;
       }
 
+      .sunrisemvmtsb-markdown-editor .tinacms-image-wrapper {
+        margin: 0;
+        padding-top: 12px;
+      }
+
+      .sunrisemvmtsb-markdown-editor img {
+        display: block;
+        width: 100%;
+      }
+
+      .sunrisemvmtsb-markdown-editor a {
+        color: var(--sunrise-magenta);
+      }
+
       .sunrisemvmtsb-markdown-editor ul {
         margin: 0;
         padding-top: 12px;
@@ -79,7 +93,8 @@ const InlineMarkdownField = ({
       .sunrisemvmtsb-markdown-editor h4:first-child,
       .sunrisemvmtsb-markdown-editor h5:first-child,
       .sunrisemvmtsb-markdown-editor h6:first-child,
-      .sunrisemvmtsb-markdown-editor p:first-child {
+      .sunrisemvmtsb-markdown-editor p:first-child,
+      .sunrisemvmtsb-markdown-editor .tinacms-image-wrapper:first-child {
         padding-top: 0;
       }
     `}>
@@ -87,7 +102,10 @@ const InlineMarkdownField = ({
         className="sunrisemvmtsb-markdown-editor"
         name={name}
         format="markdown"
-        focusRing={{ borderRadius: 0 }}>
+        focusRing={{ borderRadius: 0 }}
+        imageProps={{
+          parse: (media) => media.id
+        }}>
         {!content &&
           <div css={css`
             font-family: 'Source Serif Pro';
@@ -106,4 +124,4 @@ const InlineMarkdownField = ({
   )
 }
 
-export default InlineMarkdownField
+export default MarkdownField

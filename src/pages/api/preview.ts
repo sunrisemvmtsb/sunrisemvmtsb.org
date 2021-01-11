@@ -3,6 +3,5 @@ import Auth from '../../infrastructure/Auth'
 
 export default Auth.protect((req: NextApiRequest, res: NextApiResponse) => {
   res.setPreviewData({})
-  console.log('preview data set')
   res.status(200).end()
 })

@@ -1,10 +1,13 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { BlocksControls, InlineBlocks, InlineText, InlineGroup } from 'react-tinacms-inline'
-import InlineMarkdownField from '../InlineMarkdownField'
+import Markdown from '../fields/Markdown'
 import Typography from '../Typography'
 import Color from 'color'
 import { useRouter } from 'next/router'
+import BlockItem from '../fields/BlockItem'
+import Blocks from '../fields/Blocks'
+import Text from '../fields/Text'
+import Group from '../fields/Group'
 
 type TeamLead = {
   name: string,
@@ -67,14 +70,12 @@ const TeamEntryTemplate = ({
   const [didScroll, setDidScroll] = React.useState(false)
 
   return (
-    <div css={css`
-      padding: ${selected === index ? 12 : 16}px;
-      border: ${selected === index ? `2px solid ${data.color}` : '0'};
-      background-color: ${selected === index ? Color(data.color).fade(0.75).string() : 'none'};
-    `}>
-      <BlocksControls
-        focusRing={{ borderRadius: 0 }}
-        index={index}>
+    <BlockItem index={index}>
+      <div css={css`
+        padding: ${selected === index ? 12 : 16}px;
+        border: ${selected === index ? `2px solid ${data.color}` : '0'};
+        background-color: ${selected === index ? Color(data.color).fade(0.75).string() : 'none'};
+      `}>
         <div
           css={css`
             display: flex;
@@ -137,8 +138,8 @@ const TeamEntryTemplate = ({
             {data.name}
           </p>
         </div>
-      </BlocksControls>
-    </div>
+      </div>
+    </BlockItem>
   )
 }
 
@@ -179,9 +180,7 @@ export const Component = ({
         padding-top: 48px;
         &:first-child { padding-top: 0; }
       `}>
-      <BlocksControls
-        index={index}
-        focusRing={{ borderRadius: 0, offset: { x: 0, y: 16 } }}>
+      <BlockItem index={index}>
         <div css={css`
           position: relative;
           height: 70vh;
@@ -189,7 +188,7 @@ export const Component = ({
           <div css={css`
             width: 80%;
           `}>
-            <InlineBlocks
+            <Blocks
               name="teams"
               direction="horizontal"
               itemProps={{
@@ -203,6 +202,7 @@ export const Component = ({
                 grid-auto-flow: column dense;
                 justify-items: center;
               `}
+              data={data.teams}
               blocks={{
                 Team: {
                   Component: TeamEntryTemplate,
@@ -258,27 +258,23 @@ export const Component = ({
             box-shadow: -8px 0px 6px -5px rgba(0, 0, 0, 0.25);
             padding: 32px;
           `}>
-            <InlineGroup
-              name={`teams[${selected}]`}
-              focusRing={{ borderRadius: 0, offset: { x: 32, y: 32 } }}>
+            <Group name={`teams[${selected}]`}>
               <div css={css`
                 padding-bottom: 24px;
               `}>
                 <Typography variant="ContentTitle">
-                  <InlineText
-                    name="name"
-                    focusRing={{ borderRadius: 0 }}>
+                  <Text name="name">
                     {current.name}
-                  </InlineText>
+                  </Text>
                 </Typography>
               </div>
-              <InlineMarkdownField
+              <Markdown
                 name="description"
                 content={current.description} />
-            </InlineGroup>
+            </Group>
           </div>
         </div>
-      </BlocksControls>
+      </BlockItem>
     </div>
   )
 }

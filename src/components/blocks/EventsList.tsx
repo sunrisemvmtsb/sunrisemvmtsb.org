@@ -1,9 +1,9 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { BlocksControls, InlineText, InlineTextarea, InlineImage } from 'react-tinacms-inline'
 import Typography from '../Typography'
 import { CalendarEvent } from '../../infrastructure/GoogleCalendar'
 import Icon from '../atoms/Icon'
+import BlockItem from '../fields/BlockItem'
 
 export type Data = {
   
@@ -95,9 +95,7 @@ export const Component = ({
   events?: Array<CalendarEvent>,
 }) => {
   return (
-    <BlocksControls
-      index={index}
-      focusRing={{ offset: { x: 0, y: 0 }, borderRadius: 0 }}>
+    <BlockItem index={index}>
       <div css={css`
         padding: 120px;
         background-color: var(--sunrise-yellow);
@@ -200,6 +198,6 @@ export const Component = ({
           ))}
         </ul>
       </div>
-    </BlocksControls>
+    </BlockItem>
   )
 }

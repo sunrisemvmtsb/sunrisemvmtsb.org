@@ -3,33 +3,40 @@ import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
 import { signIn, signOut, useSession, getSession } from 'next-auth/client'
 import { useCMS } from 'tinacms'
+import Preview from '../../contexts/Preview'
 
 const Footer = () => {
   const cms = useCMS()
   const [ session, loading ] = useSession()
+  const preview = Preview.use()
+
+  const doSignOut = React.useCallback(() => {
+    fetch('/api/reset-preview')
+      .then((response) => {
+        if (response.status !== 200) throw Error('failed')
+        sessionStorage.removeItem('preview')
+        window.dispatchEvent(new Event('storage'))
+        signOut()
+      })
+  }, [cms])
 
   React.useEffect(() => {
     if (loading) return
-    if (session && !sessionStorage.getItem('preview')) {
+    if (session && !preview) {
       fetch('/api/preview')
         .then((response) => {
           if (response.status !== 200) throw Error('failed')
           sessionStorage.setItem('preview', 'active')
-          window.location.href = window.location.pathname
-        })
-    } else if (!session && sessionStorage.getItem('preview')) {
-      fetch('/api/reset-preview')
-        .then((response) => {
-          if (response.status !== 200) throw Error('failed')
-          sessionStorage.removeItem('preview')
-          window.location.reload()
+          window.dispatchEvent(new Event('storage'))
+          cms.enable()
+          history.replaceState("", document.title, window.location.pathname + window.location.search)
         })
     }
   }, [session, loading])
 
   React.useEffect(() => {
     return cms.events.subscribe('cms:disable', () => {
-      signOut()
+      doSignOut()
     })
   }, [])
 
@@ -57,9 +64,6 @@ const Footer = () => {
 
             if (session) {
               cms.disable()
-              await signOut()
-              await fetch(`/api/reset-preview`)
-              window.location.reload()            
               return
             }
 

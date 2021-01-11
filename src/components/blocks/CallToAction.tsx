@@ -1,6 +1,8 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { BlocksControls, InlineText, InlineTextarea, InlineImage } from 'react-tinacms-inline'
+import BlockItem from '../fields/BlockItem'
+import Textarea from '../fields/Textarea'
+import Image from '../fields/Image'
 import Typography from '../Typography'
 
 export type Data = {
@@ -31,9 +33,7 @@ export const Component = ({
   data: Data,
 }) => {
   return (
-    <BlocksControls
-      index={index}
-      focusRing={{ offset: { x: 0, y: 0 }, borderRadius: 0 }}>
+    <BlockItem index={index}>
       <div css={css`
         padding: 120px;
         padding-top: 60px;
@@ -59,9 +59,9 @@ export const Component = ({
               grid-column: 1 / span 2;
             `}>
               <Typography variant="SectionTitle">
-                <InlineTextarea
+                <Textarea
                   name="callout"
-                  focusRing={{ borderRadius: 0 }} />
+                  children={data.callout} />
               </Typography>
             </div>
             <div css={css`
@@ -72,9 +72,9 @@ export const Component = ({
                 height: 120px;
               }
             `}>
-              <InlineImage
+              <Image
                 name="image"
-                parse={(media) => media.id} />
+                src={data.image} />
             </div>
             <div css={css`
               grid-row: 2 / span 1;
@@ -90,14 +90,14 @@ export const Component = ({
                 text-decoration: underline;
                 padding-bottom: 16px;
               `}>
-                <InlineTextarea
+                <Textarea
                   name="title"
-                  focusRing={{ borderRadius: 0 }} />
+                  children={data.title} />
               </div>
               <Typography variant="Body">
-                <InlineTextarea
+                <Textarea
                   name="description"
-                  focusRing={{ borderRadius: 0 }} />
+                  children={data.description} />
               </Typography>
             </div>
           </div>
@@ -128,6 +128,6 @@ export const Component = ({
           </div>
         </div>
       </div>
-    </BlocksControls>
+    </BlockItem>
   )
 }

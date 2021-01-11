@@ -1,0 +1,26 @@
+{
+  "header": {
+    "links": [
+      {
+        "title": "Home",
+        "url": "/",
+        "type": "Plain"
+      },
+      {
+        "title": "Hub Structure",
+        "url": "/hub-structure",
+        "type": "Plain"
+      },
+      {
+        "title": "Take Action",
+        "url": "/",
+        "type": "WhiteButton"
+      },
+      {
+        "title": "Donate",
+        "url": "/",
+        "type": "YellowButton"
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { BlocksControls } from 'react-tinacms-inline'
-import InlineMarkdownField from '../InlineMarkdownField'
+import Markdown from '../fields/Markdown'
+import BlockItem from '../fields/BlockItem'
 
 export type Data = {
   leftContent: string,
@@ -31,9 +31,7 @@ export const Component = ({
         padding-top: 32px;
       }
     `}>
-      <BlocksControls
-        index={index}
-        focusRing={{ offset: { x: 0, y: 16 }, borderRadius: 0 }}>
+      <BlockItem index={index}>
         <div css={css`
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -43,14 +41,14 @@ export const Component = ({
           max-width: 920px;
           margin: 0 auto;
         `}>
-          <InlineMarkdownField
+          <Markdown
             name="leftContent"
             content={data.leftContent} />
-          <InlineMarkdownField
+          <Markdown
             name="rightContent"
             content={data.rightContent} />
         </div>
-      </BlocksControls>
+      </BlockItem>
     </div>
   )
 }

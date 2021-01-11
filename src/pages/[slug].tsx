@@ -1,88 +1,110 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { InlineBlocks, InlineForm } from 'react-tinacms-inline'
+import { InlineForm } from 'react-tinacms-inline'
 import { usePlugin } from 'tinacms'
-import { GetStaticPaths, GetStaticProps } from 'next'
-import { useGithubJsonForm, useGithubToolbarPlugins } from 'react-tinacms-github'
-import { getGithubPreviewProps, parseJson, GithubFile } from 'next-tinacms-github'
+import { GetServerSideProps } from 'next'
+import { useJsonForm, JsonFile } from '../infrastructure/CustomGitClient'
 import * as OneColumnText from '../components/blocks/OneColumnText'
 import * as TwoColumnText from '../components/blocks/TwoColumnText'
 import * as TeamExplorer from '../components/blocks/TeamExplorer'
-import HeadlineHero from '../components/heros/HeadlineHero'
-import glob from 'glob'
+import * as CallToAction from '../components/blocks/CallToAction'
+import * as HeadlineHero from '../components/blocks/HeadlineHero'
+import Blocks from '../components/fields/Blocks'
 import path from 'path'
+import fs from 'fs'
 
-type PageBlock =
+type BlocksData =
+  | { _template: 'HeadlineHero' } & HeadlineHero.Data
+  | { _template: 'CallToAction' } & CallToAction.Data
   | { _template: 'OneColumnText' } & OneColumnText.Data
   | { _template: 'TwoColumnText' } & TwoColumnText.Data
   | { _template: 'TeamExplorer' } & TeamExplorer.Data
 
-type PageData = {
-  blocks: Array<PageBlock>
+const blocks = {
+  HeadlineHero, CallToAction, OneColumnText, TwoColumnText, TeamExplorer
 }
 
-const HubStructure = ({
-  file
+type PageData = {
+  title: string,
+  description: string,
+  blocks: Array<BlocksData>
+}
+
+const Page = ({
+  file,
 }: {
-  file: GithubFile<PageData>
+  file: JsonFile<PageData>,
 }) => {
-  const [data, form] = useGithubJsonForm(file, {
-    label: 'Hub Structure',
+  const [data, form] = useJsonForm(file, {
+    label: file.data.title,
   })
   usePlugin(form)
 
   return (
-    <>
-      <HeadlineHero
-        lead="Sunrise Santa Barbara’s"
-        title="Hub Structure & Teams" />
-      <div css={css`
-        padding: 120px 0;
-      `}>
-        <InlineForm form={form}>
-          <InlineBlocks
-            name="blocks"
-            blocks={{ OneColumnText, TwoColumnText, TeamExplorer }} />
-        </InlineForm>
-      </div>
-    </>
+    <InlineForm form={form}>
+      <Blocks
+        name="blocks"
+        blocks={{ HeadlineHero, CallToAction, OneColumnText, TwoColumnText, TeamExplorer }}
+        data={file.data.blocks} />
+    </InlineForm>
   )
 }
 
-export default HubStructure
+export default Page
 
-export const getStaticProps: GetStaticProps = async ({
- preview,
- previewData,
- params
+export const getServerSideProps: GetServerSideProps<{ file: JsonFile<PageData>, preview: boolean }, { slug: string }> = async ({
+  preview,
+  previewData,
+  params,
 }) => {
-  if (preview) {
-    return getGithubPreviewProps({
-      ...previewData,
-      fileRelativePath: `content/pages/${params.slug}.json`,
-      parse: parseJson,
-    })
+  const file = {
+    fileRelativePath: `content/pages/${params.slug}.json`,
+    data: JSON.parse(fs.readFileSync(path.resolve(process.cwd(), `./content/pages/${params.slug}.json`), 'utf-8')),
+  }
+
+  const config = {
+    fileRelativePath: `content/config.json`,
+    data: JSON.parse(fs.readFileSync(path.resolve(process.cwd(), `./content/pages/${params.slug}.json`), 'utf-8')),
   }
 
   return {
-    props: {
-      sourceProvider: null,
-      error: null,
-      preview: false,
-      file: {
-        fileRelativePath: `content/pages/${params.slug}.json`,
-        data: (await import(`../../content/pages/${params.slug}.json`)).default,
-      },
-    },
+    props: { file, config, preview: !!preview }
   }
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = glob.sync('content/pages/*.json')
-  return {
-    paths: paths.map((p) => ({
-      params: { slug: path.basename(p, '.json') },
-    })),
-    fallback: false,
-  }
-}
+
+// export const getStaticProps: GetStaticProps = async ({
+//  preview,
+//  previewData,
+//  params
+// }) => {
+//   if (preview) {
+//     return getGithubPreviewProps({
+//       ...previewData,
+//       fileRelativePath: `content/pages/${params.slug}.json`,
+//       parse: parseJson,
+//     })
+//   }
+
+//   return {
+//     props: {
+//       sourceProvider: null,
+//       error: null,
+//       preview: false,
+//       file: {
+//         fileRelativePath: `content/pages/${params.slug}.json`,
+//         data: (await import(`../../content/pages/${params.slug}.json`)).default,
+//       },
+//     },
+//   }
+// }
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const paths = glob.sync('content/pages/*.json')
+//   return {
+//     paths: paths.map((p) => ({
+//       params: { slug: path.basename(p, '.json') },
+//     })),
+//     fallback: false,
+//   }
+// }

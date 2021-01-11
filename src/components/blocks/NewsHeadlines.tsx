@@ -1,8 +1,8 @@
 import React from 'react'
 import { css } from 'styled-components'
 import Typography from '../Typography'
-import { BlocksControls } from 'react-tinacms-inline'
 import SocialFeed, { SocialPost } from '../molecules/SocialFeed'
+import BlockItem from '../fields/BlockItem'
 
 
 export type Data = {}
@@ -21,9 +21,7 @@ export const Component = ({
   posts?: Array<SocialPost>,
 }) => {
   return (
-    <BlocksControls
-      index={index}
-      focusRing={{ offset: 0, borderRadius: 0 }}>
+    <BlockItem index={index}>
       <section css={css`
         padding: 120px;
         background-color: #fffffb;
@@ -77,7 +75,7 @@ export const Component = ({
           </div>
         </div>
       </section>
-    </BlocksControls>
+    </BlockItem>
   )
 }
 

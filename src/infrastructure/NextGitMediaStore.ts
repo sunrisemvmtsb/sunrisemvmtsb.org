@@ -5,7 +5,7 @@ import { Media, MediaListOptions, MediaUploadOptions } from '@tinacms/core'
 export default class NextGitMediaStore extends CustomGitMediaStore {
   async previewSrc(fieldValue: string) {
     if (fieldValue === '/images/placeholder.svg') return fieldValue
-    return super.previewSrc(path.join('media', fieldValue))
+    return super.previewSrc(path.join('/media', fieldValue))
   }
 
   list(options: MediaListOptions) {
@@ -15,9 +15,10 @@ export default class NextGitMediaStore extends CustomGitMediaStore {
         directory: path.join('public/media', options.directory || ''),
       })
       .then(list => {
+        const items = normalizeMediaItems(list.items)
         return {
           ...list,
-          items: normalizeMediaItems(list.items),
+          items: items,
         }
       })
   }
@@ -48,6 +49,7 @@ function normalizeMediaItems(items: Media[]) {
     return {
       ...item,
       directory: item.directory.replace('public/media', ''),
+      previewSrc: item.previewSrc?.replace('public/media/', ''),
       id: item.id.replace('public/media', ''),
     }
   })

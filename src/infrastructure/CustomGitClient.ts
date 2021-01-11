@@ -47,12 +47,12 @@ export const useJsonForm = <T>(jsonFile: JsonFile<T>, options: {
       async onSubmit() {
         const persist = await api.persistCachedChanges({ files: [jsonFile.fileRelativePath] })
         if (persist.status === 'error') return persist
-        if (process.env.NODE_ENV !== 'production') return
         const commit = await api.commit({
           files: [jsonFile.fileRelativePath],
           message: `Commit from Tina: Update ${jsonFile.fileRelativePath}`,
         })
         if (commit.status === 'error') return commit
+        if (process.env.NODE_ENV !== 'production') return
         const push = await api.push()
         if (push.status === 'error') return push
       },
@@ -66,7 +66,7 @@ export const useJsonForm = <T>(jsonFile: JsonFile<T>, options: {
         })
       },
     },
-    { values: jsonFile.data, label }
+    { label }
   )
 
   return [values || jsonFile.data, form]
@@ -255,6 +255,8 @@ export default class CustomGitClient {
 
     const storage = await this._getStorage()
     await Promise.all(data.files.map((file) => storage.removeItem(file)))
+
+    if (process.env.NODE_ENV !== 'production') return { status: 'success' }
     return this._resetOnServer(data)
   }
 

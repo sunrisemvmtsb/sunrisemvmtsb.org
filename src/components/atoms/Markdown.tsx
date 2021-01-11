@@ -2,6 +2,7 @@ import React from 'react'
 import { css } from 'styled-components'
 import ReactMarkdown from 'react-markdown'
 import Gfm from 'remark-gfm'
+import ImageFixer from '../../infrastructure/RemarkImageFixer'
 
 const Markdown = ({
   children,
@@ -87,9 +88,14 @@ const Markdown = ({
         text-decoration: underline;
       }
 
+      img {
+        display: block;
+        width: 100%;
+      }
+
       color: #33342E;
     `}>
-      <ReactMarkdown plugins={[Gfm]}>
+      <ReactMarkdown plugins={[Gfm, ImageFixer]}>
         {children}
       </ReactMarkdown>
     </div>

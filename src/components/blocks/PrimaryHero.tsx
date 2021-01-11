@@ -1,11 +1,11 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { BlocksControls, InlineBlocks } from 'react-tinacms-inline'
-import InlineAdjustableImage, { Data as InlineAdjustableImageData } from '../fields/InlineAdjustableImage'
+import AdjustableImage, { Data as AdjustableImageData } from '../fields/AdjustableImage'
 import { useCMS } from 'tinacms'
+import BlockItem from '../fields/BlockItem'
 
 export type Data = {
-  background: InlineAdjustableImageData,
+  background: AdjustableImageData,
 }
 
 export const template = {
@@ -32,9 +32,7 @@ export const Component = ({
   const cms = useCMS()
 
   return (
-    <BlocksControls
-      focusRing={{ borderRadius: 0, offset: 0 }}
-      index={index}>
+    <BlockItem index={index}>
       <header css={css`
         position: relative;
         padding: 120px;
@@ -47,7 +45,7 @@ export const Component = ({
           bottom: 0;
           z-index: 0;
         `}>
-          <InlineAdjustableImage
+          <AdjustableImage
             name="background"
             data={data.background}
             css={css`
@@ -93,6 +91,6 @@ export const Component = ({
           </h1>
         </div>
       </header>
-    </BlocksControls>
+    </BlockItem>
   )
 }

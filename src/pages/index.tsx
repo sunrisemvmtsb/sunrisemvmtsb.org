@@ -8,13 +8,19 @@ import * as CallToAction from '../components/blocks/CallToAction'
 import * as EventsList from '../components/blocks/EventsList'
 import * as NewsHeadlines from '../components/blocks/NewsHeadlines'
 import * as PrimaryHero from '../components/blocks/PrimaryHero'
+import * as HeadlineHero from '../components/blocks/HeadlineHero'
 import GoogleCalendar, { CalendarEvent } from '../infrastructure/GoogleCalendar'
 import Instagram from '../infrastructure/Instagram'
 import { SocialPost } from '../components/molecules/SocialFeed'
 import { useJsonForm, JsonFile } from '../infrastructure/CustomGitClient'
+import Blocks from '../components/fields/Blocks'
+import fs from 'fs'
+import path from 'path'
+import GitHub from '../infrastructure/GitHub'
 
 type BlocksData =
   | { _template: 'PrimaryHero' } & PrimaryHero.Data
+  | { _template: 'HeadlineHero' } & HeadlineHero.Data
   | { _template: 'CallToAction' } & CallToAction.Data
   | { _template: 'EventsList' } & EventsList.Data
   | { _template: 'NewsHeadlines' } & NewsHeadlines.Data
@@ -39,10 +45,11 @@ const Home = ({
 
   return (
     <InlineForm form={form}>
-      <InlineBlocks
+      <Blocks
         name="blocks"
-        blocks={{ PrimaryHero, CallToAction, EventsList, NewsHeadlines }}
-        itemProps={{ events, posts }} />
+        blocks={{ PrimaryHero, HeadlineHero, CallToAction, EventsList, NewsHeadlines }}
+        itemProps={{ events, posts }}
+        data={file.data.blocks} />
     </InlineForm>
   )
 }
@@ -62,7 +69,16 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: (await import('../../content/index.json')).default,
   }
 
+  const config = {
+    fileRelativePath: `content/config.json`,
+    data: JSON.parse(fs.readFileSync(path.resolve(process.cwd(), `./content/config.json`), 'utf-8')),
+  }
+
+  const pages = await GitHub.instance.listContentDirectory('pages')
+
+  console.log(pages)
+
   return {
-    props: { posts, events, file, preview: !!preview }
+    props: { posts, events, file, config, pages, preview: !!preview }
   }
 }
