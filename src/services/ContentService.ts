@@ -174,7 +174,7 @@ class GitHubContentService extends ContentService {
       // are adding a new file. GitHub API v3 serves a JSON response for 404 here so we can just decode
       // and attempt to read `sha` rather than checking the status code.
       sha: currentData.sha,
-      content,
+      content: base64.encode(content),
       message: commit,
       branch: 'main',
       committer: {
