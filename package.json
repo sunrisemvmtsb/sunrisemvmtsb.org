@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev --port 1337",
     "build": "next build",
-    "start": "next start",
-    "export": "next export"
+    "start": "next start"
   },
   "dependencies": {
     "@octokit/rest": "18.0.12",
