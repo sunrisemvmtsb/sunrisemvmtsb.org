@@ -1,9 +1,34 @@
 import React from 'react'
 import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
-import { signIn, signOut, useSession, getSession } from 'next-auth/client'
+import { signIn, signOut, getSession, Session } from 'next-auth/client'
 import { useCMS } from 'tinacms'
 import Preview from '../../contexts/Preview'
+
+const useSession = () => {
+  const mounted = React.useRef(true)
+  React.useLayoutEffect(() => {
+    return () => { mounted.current = false }
+  })
+  const [ loading, setLoading ] = React.useState(true)
+  const [ session, setSession ] = React.useState<Session | null | undefined>(undefined)
+
+  React.useEffect(() => {
+    getSession()
+      .then((result) => {
+        if (!mounted.current) return
+        setSession(result)
+        setLoading(false)
+      })
+      .catch(() => {
+        if (!mounted.current) return
+        setSession(null)
+        setLoading(false)
+      })
+  })
+
+  return [ session, loading ]
+}
 
 const Footer = () => {
   const cms = useCMS()
