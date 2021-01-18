@@ -188,7 +188,7 @@ class GitHubContentService extends ContentService {
       body: JSON.stringify(body),
       headers: {
         'Accept': 'application/vnd.github.v3+json',
-        'Authorization': `Basic `
+        'Authorization': `token ${process.env.GITHUB_ACCESS_TOKEN}`,
       },
 
     })
