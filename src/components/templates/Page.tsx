@@ -89,6 +89,6 @@ export const getStaticProps: GetStaticProps = async ({
 
   return {
     props: { slug, posts, events, page, news, preview: !!preview },
-    revalidate: 30,
+    revalidate: 2,
   }
 }

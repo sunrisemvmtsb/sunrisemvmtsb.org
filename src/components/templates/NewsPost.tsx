@@ -168,6 +168,6 @@ export const getStaticProps: GetStaticProps = async ({
   const post = await ContentService.instance.getNewsPost(slug)
   return {
     props: { slug, post, preview: !!preview },
-    revalidate: 30,
+    revalidate: 2,
   }
 }

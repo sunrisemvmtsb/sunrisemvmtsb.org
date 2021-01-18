@@ -7,6 +7,15 @@ import SiteConfig from '../domain/SiteConfig'
 import NewsSummary from '../domain/NewsSummary'
 import NewsPost from '../domain/NewsPost'
 
+const b64EncodeUnicode = (str: string) => {
+  return base64.encode(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_match, p1) => {
+      return String.fromCharCode(parseInt(p1, 16))
+    })
+  )
+}
+
+
 export default abstract class ContentService {
   private static _instance: ContentService | null = null
   static get instance(): ContentService {
@@ -174,7 +183,7 @@ class GitHubContentService extends ContentService {
       // are adding a new file. GitHub API v3 serves a JSON response for 404 here so we can just decode
       // and attempt to read `sha` rather than checking the status code.
       sha: currentData.sha,
-      content: base64.encode(content),
+      content: b64EncodeUnicode(content),
       message: commit,
       branch: 'main',
       committer: {
