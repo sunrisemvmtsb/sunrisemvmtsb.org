@@ -62,7 +62,6 @@ export default class PageEditorPlugin {
         return initial
       },
       async onSubmit(values) {
-        console.log(values)
         try {
           await PageEditorPlugin.instance.save(values)
         } catch (e) {

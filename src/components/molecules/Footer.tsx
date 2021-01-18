@@ -1,67 +1,48 @@
 import React from 'react'
 import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
-import { signIn, signOut, getSession, Session } from 'next-auth/client'
 import { useCMS } from 'tinacms'
 import Preview from '../../contexts/Preview'
+import base64 from 'base-64'
 
-const useSession = () => {
-  const mounted = React.useRef(true)
-  React.useLayoutEffect(() => {
-    return () => { mounted.current = false }
+const signin = async () => {
+  const validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const array = new Uint8Array(40)
+  crypto.getRandomValues(array)
+  const chars = array.map((x) => validChars.charCodeAt(x % validChars.length))
+  const csrf = String.fromCharCode(...chars)
+
+  const state = base64.encode(JSON.stringify({ csrf, redirect: window.location.href }))
+
+  const url = '/api/auth/signin'
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ state }),
   })
-  const [ loading, setLoading ] = React.useState(true)
-  const [ session, setSession ] = React.useState<Session | null | undefined>(undefined)
+  const data = await response.json()
+  window.location.assign(data.url)
+}
 
-  React.useEffect(() => {
-    getSession()
-      .then((result) => {
-        if (!mounted.current) return
-        setSession(result)
-        setLoading(false)
-      })
-      .catch(() => {
-        if (!mounted.current) return
-        setSession(null)
-        setLoading(false)
-      })
+const signout = async () => {
+  const url = '/api/auth/signout'
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'same-origin',
   })
-
-  return [ session, loading ]
+  if (!response.ok) throw Error('failed to sign out')
+  sessionStorage.removeItem('preview')
+  window.dispatchEvent(new Event('storage'))
 }
 
 const Footer = () => {
   const cms = useCMS()
-  const [ session, loading ] = useSession()
   const preview = Preview.use()
-
-  const doSignOut = React.useCallback(() => {
-    fetch('/api/reset-preview')
-      .then((response) => {
-        if (response.status !== 200) throw Error('failed')
-        sessionStorage.removeItem('preview')
-        window.dispatchEvent(new Event('storage'))
-        signOut()
-      })
-  }, [cms])
-
-  React.useEffect(() => {
-    if (loading) return
-    if (session && !preview) {
-      fetch('/api/preview')
-        .then((response) => {
-          if (response.status !== 200) throw Error('failed')
-          sessionStorage.setItem('preview', 'active')
-          window.dispatchEvent(new Event('storage'))
-          cms.enable()
-          history.replaceState("", document.title, window.location.pathname + window.location.search)
-        })
-    }
-  }, [session, loading])
 
   React.useEffect(() => {
     return cms.events.subscribe('cms:disable', () => {
-      doSignOut()
+      signout()
     })
   }, [])
 
@@ -84,15 +65,8 @@ const Footer = () => {
           </ButtonLink>
         </div>
         <button
-          onClick={async () => {
-            if (loading) return
-
-            if (session) {
-              cms.disable()
-              return
-            }
-
-            signIn('google')
+          onClick={() => {
+            preview ? cms.disable() : signin()
           }}
           css={css`
             font-family: Source Sans Pro;
@@ -111,7 +85,7 @@ const Footer = () => {
               text-decoration: underline;
             }
           `}>
-          {session ? 'Exit Admin' : 'Admin'}
+          {preview ? 'Exit Admin' : 'Admin'}
         </button>
       </div>
     </footer>

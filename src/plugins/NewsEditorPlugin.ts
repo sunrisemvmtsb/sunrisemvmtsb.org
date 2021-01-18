@@ -62,7 +62,6 @@ export default class NewsEditorPlugin {
         return initial
       },
       async onSubmit(values) {
-        console.log(values)
         try {
           await NewsEditorPlugin.instance.save(values)
         } catch (e) {

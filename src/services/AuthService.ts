@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next/types'
-import { getSession } from 'next-auth/client'
+import GoogleAuth from '../infrastructure/GoogleAuth'
+import Crypto from '../infrastructure/Crypto'
 
 export default abstract class AuthService {
   private static _instance: AuthService | null = null
@@ -28,14 +29,21 @@ class ClientAuthService extends AuthService {
 class ServerAuthService extends AuthService {
   protect(handler: NextApiHandler): NextApiHandler {
     return async (req: NextApiRequest, res: NextApiResponse) => {
-      const session = await getSession({ req })
-      if (!session) return res.status(401).end()
-      return handler(req, res)
+      const data = req.previewData
+      if (!data) return res.status(401).end()
+
+      try {
+        const authToken = Crypto.decrypt(data.authToken)
+        const valid = await GoogleAuth.instance.verifyAccessToken('http://localhost:1337', authToken)
+        if (valid) return handler(req, res)
+        else return res.status(401).end()
+      } catch {
+        return res.status(401).end()
+      }
     }
   }
 
-  async isLoggedIn() {
-    const session = await getSession()
-    return !!session
+  async isLoggedIn(): Promise<boolean> {
+    throw Error('This method doesnt work on the server')
   }
 }

@@ -24,7 +24,6 @@ type Page = {
 
 const Page = {
   path: (page: Page): string => {
-    console.log(page)
     if (page.slug === '') return 'content/index.json'
     return `content/pages/${page.slug}.json`
   }
