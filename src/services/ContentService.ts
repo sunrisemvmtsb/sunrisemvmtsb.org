@@ -162,7 +162,10 @@ class GitHubContentService extends ContentService {
   ) {
     const url = `https://api.github.com/repos/sunrisemvmtsb/sunrisemvmtsb.org/contents/${path}`
     const currentResponse = await fetch(url + '?ref=main', {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `token ${process.env.GITHUB_ACCESS_TOKEN}`,
+      }
     })
     const currentData = await currentResponse.json()
 
