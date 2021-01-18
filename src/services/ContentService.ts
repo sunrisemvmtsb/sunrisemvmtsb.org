@@ -1,6 +1,7 @@
 import fs from 'fs'
 import glob from 'glob'
 import path from 'path'
+import base64 from 'base-64'
 import Page from '../domain/Page'
 import SiteConfig from '../domain/SiteConfig'
 import NewsSummary from '../domain/NewsSummary'
@@ -182,7 +183,11 @@ class GitHubContentService extends ContentService {
     const response = await fetch(url, {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: { 'Accept': 'application/vnd.github.v3+json' },
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `Basic `
+      },
+
     })
 
     if (!response.ok) throw Error(`Could not update ${path}`)
