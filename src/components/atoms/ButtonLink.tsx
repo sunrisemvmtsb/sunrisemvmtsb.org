@@ -4,12 +4,14 @@ import { css } from 'styled-components'
 type Color =
   | 'Yellow'
   | 'White'
+  | 'Magenta'
 
 const Color = {
   backgroundColor: (color: Color) => {
     switch (color) {
       case 'Yellow': return 'var(--sunrise-yellow)'
       case 'White': return '#fff'
+      case 'Magenta': return 'var(--sunrise-magenta)'
       default: return '#fff'
     }
   },
@@ -17,6 +19,7 @@ const Color = {
     switch (color) {
       case 'Yellow': return '#000'
       case 'White': return '#000'
+      case 'Magenta': return '#FFF'
       default: return '#000'
     }
   }

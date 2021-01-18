@@ -61,10 +61,10 @@ export default class GoogleCalendar {
     url.searchParams.append('singleEvents', 'true')
     url.searchParams.append('timeMin', formatDate(new Date()))
     url.searchParams.append('maxResults', '4')
-    url.searchParams.append('key', process.env.GOOGLE_CALENDAR_API_KEY)
+    url.searchParams.append('key', process.env.GOOGLE_CALENDAR_API_KEY!)
     const response = await fetch(url.href)
     const data = await response.json()
-    return data.items.map((event) => ({
+    return data.items.map((event: any) => ({
       id: event.id,
       summary: event.summary,
       description: event.description ?? '',

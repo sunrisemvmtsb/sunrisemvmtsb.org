@@ -4,23 +4,34 @@
       {
         "title": "Home",
         "url": "/",
-        "type": "Plain"
+        "type": "Plain",
+        "id": "1"
+      },
+      {
+        "title": "Test Page",
+        "url": "/",
+        "type": "Plain",
+        "id": "be8ef61d-ec79-4bd5-83ad-f12541ef49e4"
       },
       {
         "title": "Hub Structure",
         "url": "/hub-structure",
-        "type": "Plain"
+        "type": "Plain",
+        "id": "2"
       },
       {
         "title": "Take Action",
         "url": "/",
-        "type": "WhiteButton"
+        "type": "WhiteButton",
+        "id": "3"
       },
       {
         "title": "Donate",
         "url": "/",
-        "type": "YellowButton"
+        "type": "YellowButton",
+        "id": "4"
       }
     ]
-  }
+  },
+  "calendar": "https://calendar.google.com/calendar/u/0/embed?src=sunrisemvmtsb@gmail.com"
 }

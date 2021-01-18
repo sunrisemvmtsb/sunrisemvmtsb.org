@@ -4,6 +4,9 @@ import Typography from '../Typography'
 import { CalendarEvent } from '../../infrastructure/GoogleCalendar'
 import Icon from '../atoms/Icon'
 import BlockItem from '../fields/BlockItem'
+import { Temporal } from 'proposal-temporal'
+import ButtonLink from '../atoms/ButtonLink'
+import SiteConfig from '../../domain/SiteConfig'
 
 export type Data = {
   
@@ -13,16 +16,6 @@ export const template = {
   label: 'Events List',
   defaultItem: {},
   fields: []
-}
-
-const formatDate = (input: string) => {
-  const date = new Date(input)
-  return `${date.getMonth() + 1}/${date.getDate()}`
-}
-
-const formatDateTime = (input: string) => {
-  const date = new Date(input)
-  return `${date.getMonth()}/${date.getDate()} ${(date.getHours() + 13) % 12}:${date.getHours().toString().padStart(2, '0')} PST`
 }
 
 type Team =
@@ -76,8 +69,16 @@ const parseEvent = (input: CalendarEvent): HubEvent => {
     id: input.id,
     title: input.summary,
     start: 'date' in input.start ?
-      formatDate(input.start.date) :
-      formatDateTime(input.start.dateTime),
+      Temporal.PlainDate.from(input.start.date).toLocaleString('default', {
+        day: '2-digit',
+        month: 'numeric',
+      }) :
+      Temporal.PlainDateTime.from(input.start.dateTime).toLocaleString('default', {
+        day: '2-digit',
+        month: 'numeric', 
+        hour: 'numeric',
+        minute: '2-digit',
+      }),
     type: parseEventType(input),
     team: parseTeam(input),
   }
@@ -89,10 +90,12 @@ const teamUrl = (input: Team): string => {
 
 export const Component = ({
   index,
-  events,
+  events = [],
+  siteConfig = SiteConfig.default,  
 }: {
   index: number,
   events?: Array<CalendarEvent>,
+  siteConfig?: SiteConfig
 }) => {
   return (
     <BlockItem index={index}>
@@ -105,10 +108,18 @@ export const Component = ({
           max-width: 1200px;
           position: relative;
           padding-bottom: 48px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         `}>
           <Typography variant="SectionTitle">
             Our upcoming events
           </Typography>
+          <ButtonLink
+            color="Magenta"
+            href={siteConfig.calendar}>
+            See all
+          </ButtonLink>
         </div>
         <ul css={css`
           display: grid;

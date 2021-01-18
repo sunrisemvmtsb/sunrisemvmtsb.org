@@ -1,0 +1,12 @@
+{
+  "slug": "test-page",
+  "title": "Test Page",
+  "description": "Test page lol",
+  "blocks": [
+    {
+      "_template": "HeadlineHero",
+      "lead": "Hello",
+      "title": "World"
+    }
+  ]
+}

@@ -33,7 +33,7 @@ export default class Instagram {
     if (now - this._lastFetched > FIVE_MINUTES) {
       try {
         console.info('Reloading Instagram feed')
-        const data = process.env.NODE_ENV === 'development' ? this._fake() : await this._fetch()
+        const data = process.env.NODE_ENV === 'development' ? [] : await this._fetch()
         this._lastFetched = now
         this._cache = data
       } catch (error) {
@@ -44,59 +44,6 @@ export default class Instagram {
     return this._cache
   }
 
-
-  private _fake(): Array<InstagramPost> {
-    return [
-      {
-        id: '1',
-        url: 'https://sunrisemvmtsb.org',
-        image: '/images/placeholder.svg',
-        caption: '@sunrisemvmt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. #GreenNewDeal',
-        profile: 'sunrisemvmtsb',
-        avatar: '/images/placeholder.svg',
-        timestamp: 0,
-        video: true,
-        comments: 5,
-        interactions: 200,
-      },
-      {
-        id: '2',
-        url: 'https://sunrisemvmtsb.org',
-        image: '/images/placeholder.svg',
-        caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-        profile: 'sunrisemvmtsb',
-        avatar: '/images/placeholder.svg',
-        timestamp: 1,
-        video: false,
-        comments: 5,
-        interactions: 200,
-      },
-      {
-        id: '3',
-        url: 'https://sunrisemvmtsb.org',
-        image: '/images/placeholder.svg',
-        caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-        profile: 'sunrisemvmtsb',
-        avatar: '/images/placeholder.svg',
-        timestamp: 2,
-        video: false,
-        comments: 5,
-        interactions: 200,
-      },
-      {
-        id: '4',
-        url: 'https://sunrisemvmtsb.org',
-        image: '/images/placeholder.svg',
-        caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-        profile: 'sunrisemvmtsb',
-        avatar: '/images/placeholder.svg',
-        timestamp: 3,
-        video: false,
-        comments: 5,
-        interactions: 200,
-      }
-    ]
-  }
 
   private async _fetch(): Promise<Array<InstagramPost>> {
     const response = await fetch('https://www.instagram.com/sunrisemvmtsb/')
@@ -110,7 +57,7 @@ export default class Instagram {
       }
       return []
     }
-    return rawData.entry_data.ProfilePage[0].graphql.user.edge_owner_to_timeline_media.edges.map((edge) => {
+    return rawData.entry_data.ProfilePage[0].graphql.user.edge_owner_to_timeline_media.edges.map((edge: any) => {
       return {
         id: edge.node.id,
         url: `https://instagram.com/p/${edge.node.shortcode}`,

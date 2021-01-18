@@ -1,10 +1,12 @@
 module.exports = {
-  env: {
-    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
-    REPO_FULL_NAME: process.env.REPO_FULL_NAME,
-    BASE_BRANCH: process.env.BASE_BRANCH,
-  },
-  webpack: (config) => {
+  env: {},
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.node = {
+        fs: 'empty'
+      }
+    }
+
     config.module.rules.push({
       test: /\.md$/,
       use: 'raw-loader',

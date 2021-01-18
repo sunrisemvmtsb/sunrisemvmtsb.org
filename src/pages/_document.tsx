@@ -1,5 +1,5 @@
 import BaseDocument, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
-import { createGlobalStyle, ServerStyleSheet } from 'styled-components'
+import { ServerStyleSheet } from 'styled-components'
 
 
 export default class Document extends BaseDocument {

@@ -1,13 +1,13 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { Data as ConfigData } from '../../plugins/Config'
+import SiteConfig from '../../domain/SiteConfig'
 import Logo from '../atoms/Illustrations/Logo.svg'
 import ButtonLink from '../atoms/ButtonLink'
 
 const Header = ({
   config,
 }: {
-  config: ConfigData,
+  config: SiteConfig,
 }) => {
   return (
     <header css={css`
@@ -60,15 +60,15 @@ const Header = ({
             display: grid;
             grid-auto-flow: column;
             grid-auto-columns: auto;
-            grid-column-gap: 16px;
+            grid-column-gap: 24px;
             align-items: center;
           `}>
-          {config.header.links.map((link, index) => {
+          {config.header.links.map((link) => {
             switch (link.type) {
               case 'Plain':
                 return (
                   <a
-                    key={index}
+                    key={link.id}
                     href={link.url}
                     css={css`
                       display: block;
@@ -81,10 +81,10 @@ const Header = ({
                 )
 
               case 'WhiteButton':
-                return <ButtonLink key={index} color="White" href={link.url}>{link.title}</ButtonLink>
+                return <ButtonLink key={link.id} color="White" href={link.url}>{link.title}</ButtonLink>
               
               case 'YellowButton':
-                return <ButtonLink key={index} color="Yellow" href={link.url}>{link.title}</ButtonLink>
+                return <ButtonLink key={link.id} color="Yellow" href={link.url}>{link.title}</ButtonLink>
             }
           })}
         </div>

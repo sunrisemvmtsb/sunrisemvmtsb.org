@@ -102,7 +102,7 @@ const MarkdownField = ({
         className="sunrisemvmtsb-markdown-editor"
         name={name}
         format="markdown"
-        focusRing={{ borderRadius: 0 }}
+        focusRing={{ borderRadius: 0, offset: { x: 16, y: 24 } }}
         imageProps={{
           parse: (media) => media.id
         }}>

@@ -1,17 +1,18 @@
 import type {} from 'styled-components/cssprop'
-import path from 'path'
 import React from 'react'
-import { AppContext, AppProps } from 'next/app'
-import { TinaProvider, ModalProvider, TinaCMS, useCMS } from 'tinacms'
+import { AppProps } from 'next/app'
+import { TinaProvider, ModalProvider, TinaCMS } from 'tinacms'
 import { createGlobalStyle, css } from 'styled-components'
 import Header from '../components/molecules/Header'
 import Footer from '../components/molecules/Footer'
-import CustomGitClient from '../infrastructure/CustomGitClient'
-import NextGitMediaStore from '../infrastructure/NextGitMediaStore'
 import Preview from '../contexts/Preview'
+
 import PageCreatorPlugin from '../plugins/PageCreatorPlugin'
 import NewsCreatorPlugin from '../plugins/NewsCreatorPlugin'
-import { useConfigScreenPlugin } from '../plugins/Config'
+import ConfigEditorPlugin from '../plugins/ConfigEditorPlugin'
+import ContentMediaStorePlugin from '../plugins/ContentMediaStorePlugin'
+
+import ContentService from '../services/ContentService'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -40,10 +41,8 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-path.resolve('./content/')
-
 const Contents = ({ Component, pageProps }: AppProps) => {
-  const config = useConfigScreenPlugin(pageProps.config)
+  const config = ConfigEditorPlugin.use(pageProps.siteConfig)
 
   return (
     <>
@@ -55,7 +54,7 @@ const Contents = ({ Component, pageProps }: AppProps) => {
         <main css={css`
           padding-bottom: 120px;
         `}>
-          <Component {...pageProps} />
+          <Component {...pageProps} siteConfig={config} />
         </main>
         <Footer />
       </div>
@@ -65,18 +64,16 @@ const Contents = ({ Component, pageProps }: AppProps) => {
 
 const Application = (props: AppProps) => {
   const cms = React.useMemo(() => {
-    const git = new CustomGitClient('/api/tina')
     const cms = new TinaCMS({
       enabled: !!props.pageProps.preview,
-      media: new NextGitMediaStore(git),
+      media: new ContentMediaStorePlugin(),
       toolbar: true,
-      sidebar: true,
+      sidebar: false,
       plugins: [
-        PageCreatorPlugin,
-        NewsCreatorPlugin,
+        new PageCreatorPlugin(),
+        new NewsCreatorPlugin(),
       ]
     })
-    cms.registerApi('git', git)
     return cms
   }, [])
 
@@ -87,7 +84,6 @@ const Application = (props: AppProps) => {
   }, [props.pageProps.preview])
 
   return (
-    <ErrorBoundary>
       <Preview.Provider preview={!!props.pageProps.preview}>
         <ModalProvider>
           <TinaProvider cms={cms}>
@@ -95,17 +91,12 @@ const Application = (props: AppProps) => {
           </TinaProvider>
         </ModalProvider>
       </Preview.Provider>
-    </ErrorBoundary>
   )
 }
 
-class ErrorBoundary extends React.Component {
-  componentDidCatch(error, errorInfo) {
-
-  }
-  render() {
-    return this.props.children
-  }
+Application.getInitialProps = async () => {
+  const siteConfig = await ContentService.instance.getSiteConfig()
+  return { pageProps: { siteConfig } }
 }
 
 export default Application

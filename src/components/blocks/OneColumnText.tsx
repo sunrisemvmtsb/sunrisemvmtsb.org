@@ -22,16 +22,21 @@ export const Component = ({
 }) => {
   return (
     <div css={css`
-      padding-top: 48px;
-      &:first-child {
+      &:first-child [data-inner] {
         padding-top: 0;
+      }
+      &:last-child [data-inner] {
+        padding-bottom: 0;
       }
     `}>
       <BlockItem index={index}>
-        <div css={css`
-          margin: 0 auto;
-          max-width: 920px;
-        `}>
+        <div
+          data-inner
+          css={css`
+            margin: 0 auto;
+            max-width: 920px;
+            padding: 24px 0;
+          `}>
           <Markdown
             name="content"
             content={data.content} />

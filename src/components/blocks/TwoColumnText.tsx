@@ -23,24 +23,25 @@ export const Component = ({
 }) => {
   return (
     <div css={css`
-      padding-top: 48px;
-      &:first-child {
+      &:first-child [data-inner] {
         padding-top: 0;
       }
-      & + & {
-        padding-top: 32px;
+      &:last-child [data-inner] {
+        padding-bottom: 0;
       }
     `}>
       <BlockItem index={index}>
-        <div css={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          padding: 0 32px;
-          grid-column-gap: 64px;
-          grid-auto-flow: column;
-          max-width: 920px;
-          margin: 0 auto;
-        `}>
+        <div
+          data-inner
+          css={css`
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-column-gap: 64px;
+            grid-auto-flow: column;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 24px 32px;
+          `}>
           <Markdown
             name="leftContent"
             content={data.leftContent} />

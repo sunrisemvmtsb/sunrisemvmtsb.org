@@ -1,4 +1,6 @@
 {
+  "title": "Hub Structure",
+  "description": "",
   "blocks": [
     {
       "_template": "HeadlineHero",

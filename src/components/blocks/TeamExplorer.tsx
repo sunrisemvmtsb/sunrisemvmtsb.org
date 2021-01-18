@@ -175,14 +175,11 @@ export const Component = ({
         if (!div || !team || didScroll) return
         div.scrollIntoView()
         setDidScroll(true)
-      }}
-      css={css`
-        padding-top: 48px;
-        &:first-child { padding-top: 0; }
-      `}>
+      }}>
       <BlockItem index={index}>
         <div css={css`
           position: relative;
+          padding: 24px 0;
           height: 70vh;
         `}>
           <div css={css`
@@ -250,9 +247,9 @@ export const Component = ({
           </div>
           <div css={css`
             position: absolute;
-            top: 0;
+            top: 24px;
             right: 0;
-            bottom: 0;
+            bottom: 24px;
             overflow-y: auto;
             width: 512px;
             box-shadow: -8px 0px 6px -5px rgba(0, 0, 0, 0.25);

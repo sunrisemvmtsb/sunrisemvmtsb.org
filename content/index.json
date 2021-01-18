@@ -1,4 +1,6 @@
 {
+  "title": "Home",
+  "description": "",
   "blocks": [
     {
       "_template": "PrimaryHero",

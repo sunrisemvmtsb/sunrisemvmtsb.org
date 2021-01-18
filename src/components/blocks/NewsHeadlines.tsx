@@ -1,11 +1,13 @@
 import React from 'react'
 import { css } from 'styled-components'
 import Typography from '../Typography'
-import SocialFeed, { SocialPost } from '../molecules/SocialFeed'
+import SocialFeed from '../molecules/SocialFeed'
 import BlockItem from '../fields/BlockItem'
+import NewsSummary from '../../domain/NewsSummary'
+import { Temporal } from 'proposal-temporal'
+import Image from '../../components/atoms/Image'
+import SocialPost from '../../domain/SocialPost'
 
-
-export type Data = {}
 
 export const template = {
   label: 'News Headlines',
@@ -16,10 +18,24 @@ export const template = {
 export const Component = ({
   index,
   posts = [],
+  news = [],
 }: {
   index: number,
+  news?: Array<NewsSummary>,
   posts?: Array<SocialPost>,
 }) => {
+  const sorted = React.useMemo(() => {
+    return news
+      .slice()
+      .sort((l, r) => Temporal.Instant.compare(r.published, l.published))
+  }, [news])
+
+  const [first, rest] = React.useMemo(() => {
+    return [sorted[0], sorted.slice(1, 7)]
+  }, [sorted])
+
+  if (sorted.length === 0) return null
+
   return (
     <BlockItem index={index}>
       <section css={css`
@@ -52,19 +68,15 @@ export const Component = ({
               padding-right: 16px;
               padding-bottom: 16px;
               border-right: 1px solid var(--sunrise-magenta);
+              align-content: start;
             `}>
-              {Array(6).fill(0).map((_, i) => (
+              {rest.map((p) => (
                 <SmallPost
-                  key={i}
-                  category="Category"
-                  author="Author Name"
-                  title="Title of the post" />
+                  key={p.title + p.published}
+                  summary={p} />
               ))}
             </div>
-            <FeaturedPost
-              category="Category"
-              title="Title of the post"
-              subtitle="Subtitle of the post" />
+            <FeaturedPost summary={first} />
             <div css={css`
               padding-left: 16px;
               border-left: 1px solid var(--sunrise-magenta);
@@ -80,23 +92,24 @@ export const Component = ({
 }
 
 const FeaturedPost = ({
-  category,
-  title,
-  subtitle,
+  summary
 }: {
-  category: string,
-  title: string,
-  subtitle: string,
+  summary: NewsSummary,
 }) => {
   return (
-    <div css={css`
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    `}>
-      <img
-        src="/images/placeholder.svg"
+    <a
+      href={summary.url}
+      css={css`
+        padding: 0 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        &:hover h3 {
+          text-decoration: underline;
+        }
+      `}>
+      <Image
+        image={summary.image}
         css={css`
           height: 360px;
           width: 100%;
@@ -113,7 +126,7 @@ const FeaturedPost = ({
         text-align: center;
         color: var(--sunrise-magenta);
       `}>
-        Category
+        {summary.category}
       </p>
       <h3 css={css`
         font-family: Source Serif Pro;
@@ -123,7 +136,7 @@ const FeaturedPost = ({
         text-align: center;
         margin: 0;
       `}>
-        Title of the post
+        {summary.title}
       </h3>
       <h4 css={css`
         font-family: Source Sans Pro;
@@ -135,76 +148,77 @@ const FeaturedPost = ({
         padding-top: 16px;
         margin: 0;
       `}>
-        Subtitle of the post
+        {summary.subtitle}
       </h4>
-    </div>
+    </a>
   )
 }
 
 const SmallPost = ({
-  author,
-  category,
-  title,
+  summary,
 }: {
-  author: string,
-  category: string,
-  title: string,
+  summary: NewsSummary,
 }) => {
   return (
-    <article css={css`
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      grid-template-rows: auto auto 1fr;
-      grid-column-gap: 8px;
-    `}>
-      <img
-        src="/images/placeholder.svg"
+    <article>
+      <a
+        href={summary.url}
         css={css`
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          object-position: center center;
-          grid-row: 1 / span 3;
-          grid-column: 1 / span 1;
-        `}/>
-      <p css={css`
-        font-family: Source Sans Pro;
-        font-weight: 700;
-        font-size: 12px;
-        line-height: 15px;
-        display: flex;
-        align-items: center;
-        color: var(--sunrise-magenta);
-        margin: 0;
-        grid-row: 1 / span 1;
-        grid-column: 2 / span 1;
-      `}>
-        {category}
-      </p>
-      <h3 css={css`
-        font-family: Source Serif Pro;
-        font-size: 18px;
-        line-height: 23px;
-        font-weight: 400;
-        color: #000;
-        margin: 0;
-        margin-bottom: 4px;
-        grid-row: 2 / span 1;
-        grid-column: 2 / span 1;
-      `}>
-        {title}
-      </h3>
-      <p css={css`
-        font-family: Source Serif Pro;
-        font-weight: 700;
-        font-size: 12px;
-        line-height: 15px;
-        margin: 0;
-        grid-row: 3 / span 1;
-        grid-column: 2 / span 1;
-      `}>
-        {author}
-      </p>
+          display: grid;
+          grid-template-columns: 80px 1fr;
+          grid-template-rows: auto auto 1fr;
+          grid-column-gap: 8px;
+          &:hover h3 {
+            text-decoration: underline;
+          }
+        `}>
+        <Image
+          image={summary.image}
+          css={css`
+            width: 80px;
+            height: 80px;
+            grid-row: 1 / span 3;
+            grid-column: 1 / span 1;
+          `} />
+        <p css={css`
+          font-family: Source Sans Pro;
+          font-weight: 700;
+          font-size: 12px;
+          line-height: 15px;
+          display: flex;
+          align-items: center;
+          color: var(--sunrise-magenta);
+          margin: 0;
+          grid-row: 1 / span 1;
+          grid-column: 2 / span 1;
+        `}>
+          {summary.category}
+        </p>
+        <h3 css={css`
+          font-family: Source Serif Pro;
+          font-size: 18px;
+          line-height: 23px;
+          font-weight: 400;
+          color: #000;
+          margin: 0;
+          margin-bottom: 4px;
+          grid-row: 2 / span 1;
+          grid-column: 2 / span 1;
+        `}>
+          {summary.title}
+        </h3>
+        <p css={css`
+          font-family: Source Serif Pro;
+          font-weight: 700;
+          font-size: 12px;
+          line-height: 15px;
+          margin: 0;
+          grid-row: 3 / span 1;
+          grid-column: 2 / span 1;
+        `}>
+          {summary.author}
+        </p>
+      </a>
     </article>
   )
 }

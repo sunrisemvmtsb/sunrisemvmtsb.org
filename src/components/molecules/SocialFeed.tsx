@@ -3,21 +3,7 @@ import { css } from 'styled-components'
 import Typography from '../Typography'
 import Theme from '../Theme'
 import Icon from '../atoms/Icon'
-
-export type SocialPost =
-  | {
-      id: string,
-      type: 'Instagram',
-      url: string,
-      image: string,
-      caption: string,
-      timestamp: number,
-      avatar: string,
-      profile: string,
-      video: boolean,
-      comments: number,
-      interactions: number,
-    }
+import SocialPost from '../../domain/SocialPost'
 
 const SocialFeed = ({
   posts,
@@ -133,7 +119,7 @@ const SocialFeed = ({
       `}>
         {sortedPosts.map((post) => {
           switch (post.type) {
-            case 'Instagram': {
+            case 'InstagramPost': {
               return (
                 <InstagramPost
                   key={`Instagram-${post.id}`}
@@ -385,7 +371,7 @@ type Token
 
 const parse = (input: string): Array<Token> => {
   let active: Token | null = null
-  const output = []
+  const output: Array<Token> = []
   const length = input.length
   for (let i = 0; i < length; i++) {
     const current = input[i]

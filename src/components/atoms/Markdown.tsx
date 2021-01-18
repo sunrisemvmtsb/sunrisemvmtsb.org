@@ -6,7 +6,7 @@ import ImageFixer from '../../infrastructure/RemarkImageFixer'
 
 const Markdown = ({
   children,
-}, {
+}: {
   children: string
 }) => {
   return (

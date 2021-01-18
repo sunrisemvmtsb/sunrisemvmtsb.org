@@ -12,7 +12,7 @@ const Editor = (props: Props) => {
   return <InlineGroup {...props} focusRing={{ borderRadius: 0, offset: 0 }} />
 }
 
-const Static = (props) => {
+const Static = (props: Props) => {
   return <div>{props.children}</div>
 }
 
