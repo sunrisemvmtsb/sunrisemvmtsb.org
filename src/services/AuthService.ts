@@ -34,7 +34,7 @@ class ServerAuthService extends AuthService {
 
       try {
         const authToken = Crypto.decrypt(data.authToken)
-        const valid = await GoogleAuth.instance.verifyAccessToken('http://localhost:1337', authToken)
+        const valid = await GoogleAuth.instance.verifyAccessToken(process.env.SERVER_ORIGIN!, authToken)
         if (valid) return handler(req, res)
         else return res.status(401).end()
       } catch {

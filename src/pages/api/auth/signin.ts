@@ -5,9 +5,9 @@ import Crypto from '../../../infrastructure/Crypto'
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') return res.status(404).end()
-  const base = 'http://localhost:1337'
+  const base = process.env.SERVER_ORIGIN!
 
-  const url = GoogleAuth.instance.getAuthorizationUrl('http://localhost:1337', req.body.state)
+  const url = GoogleAuth.instance.getAuthorizationUrl(base, req.body.state)
 
   res.setHeader('Set-Cookie', cookie.serialize('authstate', req.body.state, {
     httpOnly: true,

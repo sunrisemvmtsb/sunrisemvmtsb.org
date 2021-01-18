@@ -6,7 +6,7 @@ import Crypto from '../../../infrastructure/Crypto'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') return res.status(404).end()
-  const base = 'http://localhost:1337'
+  const base = process.env.SERVER_ORIGIN!
 
   const cookies = req.headers.cookie
   if (typeof cookies !== 'string') res.status(401).end()
@@ -28,7 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }))
 
   try {
-    const authToken = await GoogleAuth.instance.exchangeCode('http://localhost:1337', req.query.code as string)
+    const authToken = await GoogleAuth.instance.exchangeCode(base, req.query.code as string)
     const decodedState = JSON.parse(base64.decode(state))
     res
       .setPreviewData({ authToken: Crypto.encrypt(authToken) })
