@@ -34,6 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .setPreviewData({ authToken: Crypto.encrypt(authToken) })
       .redirect(decodedState.redirect)
   } catch (error) {
+    console.error(error)
     return res.status(500).end()
   }
 }
