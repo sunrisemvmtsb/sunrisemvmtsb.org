@@ -11,8 +11,10 @@ const Provider = ({ children, preview }: React.PropsWithChildren<{
 }>) => {
   const [current, setCurrent] = React.useState(preview)
   React.useEffect(() => {
-    setCurrent(sessionStorage.getItem('preview') === 'active')
-  }, [])
+    preview ?
+      sessionStorage.setItem('preview', 'active') :
+      sessionStorage.removeItem('preview')
+  }, [preview])
   React.useEffect(() => {
     const listener = () => {
       setCurrent(sessionStorage.getItem('preview') === 'active')

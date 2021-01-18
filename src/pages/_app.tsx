@@ -77,12 +77,6 @@ const Application = (props: AppProps) => {
     return cms
   }, [])
 
-  React.useEffect(() => {
-    props.pageProps.preview ?
-      sessionStorage.setItem('preview', 'active') :
-      sessionStorage.removeItem('preview')
-  }, [props.pageProps.preview])
-
   return (
       <Preview.Provider preview={!!props.pageProps.preview}>
         <ModalProvider>

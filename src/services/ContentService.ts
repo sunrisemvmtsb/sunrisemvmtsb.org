@@ -193,7 +193,11 @@ class GitHubContentService extends ContentService {
 
     })
 
-    if (!response.ok) throw Error(`Could not update ${path}`)
+    if (!response.ok) {
+      const text = await response.text()
+      console.error(response.status, text)
+      throw Error(`Could not update ${path}`)
+    }
   }
 
   async getSiteConfig(): Promise<SiteConfig> {
