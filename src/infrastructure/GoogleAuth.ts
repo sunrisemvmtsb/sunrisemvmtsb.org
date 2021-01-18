@@ -17,8 +17,14 @@ export default class GoogleAuth {
     return this._instance
   }
 
-  getAuthorizationUrl(base: string, state: string) {
-    const conn = connection(base)
+  private _baseUrl() {
+    const hostname = process.env.SERVER_HOSTNAME!
+    const https = process.env.NODE_ENV === 'production'
+    return https ? 'https://' + hostname : 'http://' + hostname
+  }
+
+  getAuthorizationUrl(state: string) {
+    const conn = connection(this._baseUrl())
     return conn.generateAuthUrl({
       prompt: 'consent',
       response_type: 'code',
@@ -28,8 +34,8 @@ export default class GoogleAuth {
     })
   }
 
-  async exchangeCode(base: string, code: string): Promise<string> {
-    const conn = connection(base)
+  async exchangeCode(code: string): Promise<string> {
+    const conn = connection(this._baseUrl())
     const data = await conn.getToken(code)
     const ticket = await conn.verifyIdToken({
       idToken: data.tokens.id_token!,
@@ -41,8 +47,8 @@ export default class GoogleAuth {
     return data.tokens.access_token!
   }
 
-  async verifyAccessToken(base: string, token: string): Promise<boolean> {
-    const conn = connection(base)
+  async verifyAccessToken(token: string): Promise<boolean> {
+    const conn = connection(this._baseUrl())
     try {
       await conn.getTokenInfo(token)
       return true
