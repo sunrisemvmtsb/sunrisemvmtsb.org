@@ -29,7 +29,7 @@ export default class Document extends BaseDocument {
       <Html>
         <Head>
           <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+Pro:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap" rel="stylesheet" />
+          <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+Pro:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=block" rel="stylesheet" />
         </Head>
         <body>
           <Main />
