@@ -59,17 +59,22 @@ const CmsWrapper = dynamic(async () => {
       return cms
     }, [])
 
-    const config = ConfigEditorPlugin.use(props.pageProps.siteConfig)
-  
     return (
       <ModalProvider>
         <TinaProvider cms={cms}>
-          <Contents {...props} config={config} />
+          <CmsInner {...props} useConfig={ConfigEditorPlugin.use} />
         </TinaProvider>
       </ModalProvider>
     )
   }
 })
+
+const CmsInner = (props: AppProps & { useConfig: (config: SiteConfig) => SiteConfig }) => {
+  const config = props.useConfig(props.pageProps.siteConfig)
+  return (
+    <Contents {...props} config={config} />
+  )
+}
 
 const NormalWrapper = (props: AppProps) => {
   return (
