@@ -3,3 +3,7 @@ declare module '*.svg' {
   const value: React.ComponentType
   export default value
 }
+
+declare module 'formidable-serverless' {
+  export { IncomingForm } from 'formidable'
+}

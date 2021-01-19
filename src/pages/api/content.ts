@@ -50,5 +50,19 @@ export default AuthService.instance.protect(async (req, res) => {
     return res.status(200).end()
   }
 
+  if (method === 'deleteMedia' && req.method === 'DELETE') {
+    const filename = req.query.filename as string | undefined
+    if (typeof filename !== 'string') return res.status(400).end()
+    await ContentService.instance.deleteMedia(filename)
+    return res.status(200).end()
+  }
+
+  if (method === 'listMedia' && req.method === 'GET') {
+    const directory = req.query.directory as string | undefined
+    if (typeof directory !== 'string') return res.status(400).end()
+    const data = await ContentService.instance.listMedia(directory)
+    return res.send(data)
+  }
+
   return res.status(404).end()
 })

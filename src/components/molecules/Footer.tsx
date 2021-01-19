@@ -3,7 +3,6 @@ import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
 import { useCMS } from 'tinacms'
 import Preview from '../../contexts/Preview'
-import base64 from 'base-64'
 
 const signin = async () => {
   const validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -12,7 +11,7 @@ const signin = async () => {
   const chars = array.map((x) => validChars.charCodeAt(x % validChars.length))
   const csrf = String.fromCharCode(...chars)
 
-  const state = base64.encode(JSON.stringify({ csrf, redirect: window.location.href }))
+  const state = btoa(JSON.stringify({ csrf, redirect: window.location.href }))
 
   const url = '/api/auth/signin'
   const response = await fetch(url, {
