@@ -1,10 +1,15 @@
-module.exports = {
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: false,
+})
+
+module.exports = withBundleAnalyzer({
   env: {},
   target: 'serverless',
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.node = {
-        fs: 'empty'
+        fs: 'empty',
+        process: false,
       }
     }
 
@@ -16,6 +21,7 @@ module.exports = {
       test: /\.svg$/,
       use: ['@svgr/webpack']
     })
+
     return config
   },
-}
+})

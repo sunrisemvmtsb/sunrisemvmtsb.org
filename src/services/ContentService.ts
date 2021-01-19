@@ -1,4 +1,4 @@
-import { Media } from 'tinacms'
+import type { Media } from 'tinacms'
 import Page from '../domain/Page'
 import SiteConfig from '../domain/SiteConfig'
 import NewsSummary from '../domain/NewsSummary'

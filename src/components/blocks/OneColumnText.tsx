@@ -7,19 +7,15 @@ export type Data = {
   content: string,
 }
 
-export const template = {
-  label: 'One Column Text',
-  defaultItem: { content: '' },
-  fields: []
-}
-
-export const Component = ({
-  index,
-  data,
-}: {
+export type Props = {
   index: number,
   data: Data,
-}) => {
+}
+
+const Component = ({
+  index,
+  data,
+}: Props) => {
   return (
     <div css={css`
       &:first-child [data-inner] {
@@ -45,3 +41,5 @@ export const Component = ({
     </div>
   )
 }
+
+export default Component

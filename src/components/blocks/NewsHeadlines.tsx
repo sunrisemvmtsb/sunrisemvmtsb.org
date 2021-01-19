@@ -8,22 +8,17 @@ import { Temporal } from 'proposal-temporal'
 import Image from '../../components/atoms/Image'
 import SocialPost from '../../domain/SocialPost'
 
-
-export const template = {
-  label: 'News Headlines',
-  defaultItem: {},
-  fields: []
-}
-
-export const Component = ({
-  index,
-  posts = [],
-  news = [],
-}: {
+export type Props = {
   index: number,
   news?: Array<NewsSummary>,
   posts?: Array<SocialPost>,
-}) => {
+}
+
+const Component = ({
+  index,
+  posts = [],
+  news = [],
+}: Props) => {
   const sorted = React.useMemo(() => {
     return news
       .slice()
@@ -153,6 +148,8 @@ const FeaturedPost = ({
     </a>
   )
 }
+
+export default Component
 
 const SmallPost = ({
   summary,

@@ -1,6 +1,12 @@
 import React from 'react'
-import { BlocksControls } from 'react-tinacms-inline'
+import type { BlocksControlsProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
+import dynamic from 'next/dynamic'
+
+const BlocksControls = dynamic<BlocksControlsProps>(() => {
+  return import('react-tinacms-inline').then((m) => m.BlocksControls)
+})
+
 
 const Editor = ({
   children,

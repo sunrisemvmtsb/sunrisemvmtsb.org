@@ -3,6 +3,7 @@ import { File } from 'formidable'
 import { IncomingForm } from 'formidable-serverless'
 import fs from 'fs'
 import ContentService from '../../../services/ContentService'
+import GoogleAuth from '../../../infrastructure/GoogleAuth'
 
 export const config = {
   api: {
@@ -44,7 +45,7 @@ const extractFileData = (form: IncomingForm, start: () => void): Promise<Buffer>
   })
 }
 
-export default async (
+export default GoogleAuth.protect(async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -65,4 +66,4 @@ export default async (
   } catch (error) {
     return res.status(500).end()
   }
-}
+})

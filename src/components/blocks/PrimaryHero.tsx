@@ -1,35 +1,23 @@
 import React from 'react'
 import { css } from 'styled-components'
 import AdjustableImage, { Data as AdjustableImageData } from '../fields/AdjustableImage'
-import { useCMS } from 'tinacms'
+import Preview from '../../contexts/Preview'
 import BlockItem from '../fields/BlockItem'
 
 export type Data = {
   background: AdjustableImageData,
 }
 
-export const template = {
-  label: 'Primary Hero',
-  fields: [],
-  defaultItem: {
-    background: {
-      path: '/images/placeholder.svg',
-      alt: '',
-      x: 'center',
-      y: 'center',
-      fit: 'cover',
-    },
-  },
-}
-
-export const Component = ({
-  index,
-  data,
-}: {
+export type Props = {
   index: number,
   data: Data,
-}) => {
-  const cms = useCMS()
+}
+
+const Component = ({
+  index,
+  data,
+}: Props) => {
+  const isPreview = Preview.use()
 
   return (
     <BlockItem index={index}>
@@ -69,7 +57,7 @@ export const Component = ({
         <div css={css`
           position: relative;
           z-index: 1;
-          pointer-events: ${cms.enabled ? 'none' : 'all'};
+          pointer-events: ${isPreview ? 'none' : 'all'};
           padding-right: 464px;
         `}>
           <h1 css={css`
@@ -94,3 +82,5 @@ export const Component = ({
     </BlockItem>
   )
 }
+
+export default Component

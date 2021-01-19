@@ -1,4 +1,4 @@
-import { TinaCMS, Field, AddContentPlugin } from 'tinacms'
+import type { TinaCMS, Field, AddContentPlugin } from 'tinacms'
 import { FORM_ERROR } from 'final-form'
 
 import NewsPost from '../domain/NewsPost'

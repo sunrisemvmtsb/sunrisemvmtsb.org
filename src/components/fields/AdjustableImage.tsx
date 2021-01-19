@@ -1,7 +1,8 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { Field } from 'tinacms'
-import { InlineGroup, InlineImage } from 'react-tinacms-inline'
+import type { Field } from 'tinacms'
+import Group from './Group'
+import Image from './Image'
 import Preview from '../../contexts/Preview'
 
 export type Data = {
@@ -36,9 +37,8 @@ const Editor = ({
           object-position: ${data.x} ${data.y};
         }
       `}>
-      <InlineGroup
+      <Group
         name={name}
-        focusRing={{ offset: 0, borderRadius: 0 }}
         insetControls
         fields={[
           {
@@ -73,12 +73,11 @@ const Editor = ({
             description: 'Adjust how the image is positioned vertically when resized',
           } as Field,
         ]}>
-        <InlineImage
+        <Image
           name="path"
-          alt={data.alt}
-          parse={(media) => media.id}
-          focusRing={{ offset: 0, borderRadius: 0 }} />
-      </InlineGroup>
+          src={data.path}
+          alt={data.alt} />
+      </Group>
     </div>
   )
 }

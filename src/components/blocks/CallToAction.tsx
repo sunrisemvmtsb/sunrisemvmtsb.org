@@ -13,19 +13,12 @@ export type Data = {
   image: string,
 }
 
-export const template = {
-  label: 'Call To Action',
-  defaultItem: {
-    callout: '',
-    title: '',
-    url: '',
-    description: '',
-    image: '/images/placeholder.svg',
-  },
-  fields: []
+export type Props = {
+  index: number,
+  data: Data
 }
 
-export const Component = ({
+const Component = ({
   index,
   data,
 }: {
@@ -131,3 +124,5 @@ export const Component = ({
     </BlockItem>
   )
 }
+
+export default Component

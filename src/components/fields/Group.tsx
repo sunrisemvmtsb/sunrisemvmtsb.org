@@ -1,10 +1,16 @@
 import React from 'react'
-import { Field } from 'tinacms'
-import { InlineGroup } from 'react-tinacms-inline'
+import type { Field } from 'tinacms'
+import dynamic from 'next/dynamic'
 import Preview from '../../contexts/Preview'
+
+const InlineGroup = dynamic<any>(() => {
+  return import('react-tinacms-inline').then((m) => m.InlineGroup)
+})
+
 
 export type Props = React.PropsWithChildren<{
   name: string
+  insetControls?: boolean,
   fields?: Array<Field>
 }>
 

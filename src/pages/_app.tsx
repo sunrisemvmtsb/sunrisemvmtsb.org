@@ -1,18 +1,14 @@
 import type {} from 'styled-components/cssprop'
 import React from 'react'
 import { AppProps } from 'next/app'
-import { TinaProvider, ModalProvider, TinaCMS } from 'tinacms'
+import dynamic from 'next/dynamic'
 import { createGlobalStyle, css } from 'styled-components'
 import Header from '../components/molecules/Header'
 import Footer from '../components/molecules/Footer'
 import Preview from '../contexts/Preview'
 
-import PageCreatorPlugin from '../plugins/PageCreatorPlugin'
-import NewsCreatorPlugin from '../plugins/NewsCreatorPlugin'
-import ConfigEditorPlugin from '../plugins/ConfigEditorPlugin'
-import ContentMediaStorePlugin from '../plugins/ContentMediaStorePlugin'
-
 import ContentService from '../services/ContentService'
+import SiteConfig from '../domain/SiteConfig'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -41,9 +37,47 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const Contents = ({ Component, pageProps }: AppProps) => {
-  const config = ConfigEditorPlugin.use(pageProps.siteConfig)
+const CmsWrapper = dynamic(async () => {
+  const { TinaProvider, ModalProvider, TinaCMS } = await import('tinacms')
+  const { default: ConfigEditorPlugin } = await import('../plugins/ConfigEditorPlugin')
+  const { default: PageCreatorPlugin } = await import('../plugins/PageCreatorPlugin')
+  const { default: NewsCreatorPlugin } = await import('../plugins/NewsCreatorPlugin')
+  const { default: ContentMediaStorePlugin } = await import('../plugins/ContentMediaStorePlugin')
 
+  return (props: AppProps) => {
+    const cms = React.useMemo(() => {
+      const cms = new TinaCMS({
+        enabled: !!props.pageProps.preview,
+        media: new ContentMediaStorePlugin(),
+        toolbar: true,
+        sidebar: false,
+        plugins: [
+          new PageCreatorPlugin(),
+          new NewsCreatorPlugin(),
+        ]
+      })
+      return cms
+    }, [])
+
+    const config = ConfigEditorPlugin.use(props.pageProps.siteConfig)
+  
+    return (
+      <ModalProvider>
+        <TinaProvider cms={cms}>
+          <Contents {...props} config={config} />
+        </TinaProvider>
+      </ModalProvider>
+    )
+  }
+})
+
+const NormalWrapper = (props: AppProps) => {
+  return (
+    <Contents {...props} config={props.pageProps.siteConfig} />
+  )
+}
+
+const Contents = ({ Component, pageProps, config }: AppProps & { config: SiteConfig }) => {
   return (
     <>
       <GlobalStyle />
@@ -62,29 +96,13 @@ const Contents = ({ Component, pageProps }: AppProps) => {
   )
 }
 
-const Application = (props: AppProps) => {
-  const cms = React.useMemo(() => {
-    const cms = new TinaCMS({
-      enabled: !!props.pageProps.preview,
-      media: new ContentMediaStorePlugin(),
-      toolbar: true,
-      sidebar: false,
-      plugins: [
-        new PageCreatorPlugin(),
-        new NewsCreatorPlugin(),
-      ]
-    })
-    return cms
-  }, [])
+const AppComponent = Preview.component(CmsWrapper, NormalWrapper)
 
+const Application = (props: AppProps) => {
   return (
-      <Preview.Provider preview={!!props.pageProps.preview}>
-        <ModalProvider>
-          <TinaProvider cms={cms}>
-            <Contents {...props} />
-          </TinaProvider>
-        </ModalProvider>
-      </Preview.Provider>
+    <Preview.Provider preview={!!props.pageProps.preview}>
+      <AppComponent {...props} />
+    </Preview.Provider>
   )
 }
 

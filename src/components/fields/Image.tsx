@@ -1,6 +1,11 @@
 import React from 'react'
-import { InlineImage } from 'react-tinacms-inline'
+import dynamic from 'next/dynamic'
+import type { InlineImageProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
+
+const InlineImage = dynamic<InlineImageProps>(() => {
+  return import('react-tinacms-inline').then((m) => m.InlineImage)
+})
 
 export type Props = {
   name: string,

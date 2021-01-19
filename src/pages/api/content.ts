@@ -1,7 +1,7 @@
-import AuthService from '../../services/AuthService'
+import GoogleAuth from '../../infrastructure/GoogleAuth'
 import ContentService from '../../services/ContentService'
 
-export default AuthService.instance.protect(async (req, res) => {
+export default GoogleAuth.protect(async (req, res) => {
   const method = req.query.method as string
   if (!method) return res.status(400).end()
 

@@ -1,4 +1,6 @@
+import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next/types'
 import { google } from 'googleapis'
+import Crypto from './Crypto'
 
 const connection = (base: string) => {
   return new google.auth.OAuth2(
@@ -7,6 +9,7 @@ const connection = (base: string) => {
     `${base}/api/auth/callback`,
   )
 }
+
 
 export default class GoogleAuth {
   private static _instance: GoogleAuth | null = null
@@ -19,6 +22,22 @@ export default class GoogleAuth {
     const hostname = process.env.SERVER_HOSTNAME!
     const https = process.env.NODE_ENV === 'production'
     return https ? 'https://' + hostname : 'http://' + hostname
+  }
+
+  static protect(handler: NextApiHandler): NextApiHandler {
+    return async (req: NextApiRequest, res: NextApiResponse) => {
+      const data = req.previewData
+      if (!data) return res.status(401).end()
+
+      try {
+        const authToken = Crypto.decrypt(data.authToken)
+        const valid = await this.instance.verifyAccessToken(authToken)
+        if (valid) return handler(req, res)
+        else return res.status(401).end()
+      } catch {
+        return res.status(401).end()
+      }
+    }
   }
 
   getAuthorizationUrl(state: string) {

@@ -1,22 +1,16 @@
 import React from 'react'
-import { Field } from 'tinacms'
+import type { Field } from 'tinacms'
 import { css } from 'styled-components'
 import Markdown from '../fields/Markdown'
 import Typography from '../Typography'
 import Color from 'color'
 import { useRouter } from 'next/router'
 import BlockItem from '../fields/BlockItem'
-import Blocks from '../fields/Blocks'
 import Text from '../fields/Text'
 import Group from '../fields/Group'
 import TeamExplorer, { Team, TeamLead } from '../../domain/blocks/TeamExplorer'
 import { v4 as uuid } from 'uuid'
 
-export const template = {
-  label: 'Team Explorer',
-  defaultItem: { teams: [] },
-  fields: []
-}
 
 const TeamEntryTemplate = ({
   index,
@@ -109,13 +103,15 @@ const TeamEntryTemplate = ({
   )
 }
 
-export const Component = ({
-  index,
-  data,
-}: {
+export type Props = {
   index: number,
   data: TeamExplorer,
-}) => {
+}
+
+const Component = ({
+  index,
+  data,
+}: Props) => {
 
   const [selected, setSelected] = React.useState(0)
   const current = data.teams[selected]
@@ -243,3 +239,5 @@ export const Component = ({
     </div>
   )
 }
+
+export default Component

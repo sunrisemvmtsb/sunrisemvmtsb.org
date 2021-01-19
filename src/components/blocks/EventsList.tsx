@@ -8,16 +8,6 @@ import { Temporal } from 'proposal-temporal'
 import ButtonLink from '../atoms/ButtonLink'
 import SiteConfig from '../../domain/SiteConfig'
 
-export type Data = {
-  
-}
-
-export const template = {
-  label: 'Events List',
-  defaultItem: {},
-  fields: []
-}
-
 type Team =
   | 'Outreach'
   | 'Finance'
@@ -88,15 +78,17 @@ const teamUrl = (input: Team): string => {
   return `/hub-structure?team=${input.toLowerCase()}`
 }
 
-export const Component = ({
-  index,
-  events = [],
-  siteConfig = SiteConfig.default,  
-}: {
+export type Props = {
   index: number,
   events?: Array<CalendarEvent>,
   siteConfig?: SiteConfig
-}) => {
+}
+
+const Component = ({
+  index,
+  events = [],
+  siteConfig = SiteConfig.default,  
+}: Props) => {
   return (
     <BlockItem index={index}>
       <div css={css`
@@ -212,3 +204,5 @@ export const Component = ({
     </BlockItem>
   )
 }
+
+export default Component

@@ -1,9 +1,9 @@
 import React from 'react'
 import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
-import { useCMS } from 'tinacms'
 import Preview from '../../contexts/Preview'
 import base64 from 'base-64'
+import AuthService from 'src/services/AuthService'
 
 const signin = async () => {
   const validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -25,26 +25,9 @@ const signin = async () => {
   window.location.assign(data.url)
 }
 
-const signout = async () => {
-  const url = '/api/auth/signout'
-  const response = await fetch(url, {
-    method: 'POST',
-    credentials: 'same-origin',
-  })
-  if (!response.ok) throw Error('failed to sign out')
-  sessionStorage.removeItem('preview')
-  window.dispatchEvent(new Event('storage'))
-}
 
 const Footer = () => {
-  const cms = useCMS()
   const preview = Preview.use()
-
-  React.useEffect(() => {
-    return cms.events.subscribe('cms:disable', () => {
-      signout()
-    })
-  }, [])
 
   return (
     <footer css={css`
@@ -65,8 +48,14 @@ const Footer = () => {
           </ButtonLink>
         </div>
         <button
-          onClick={() => {
-            preview ? cms.disable() : signin()
+          onClick={async () => {
+            if (preview) {
+              await AuthService.instance.signout()
+              window.location.reload()
+              return
+            }
+
+            signin()
           }}
           css={css`
             font-family: Source Sans Pro;

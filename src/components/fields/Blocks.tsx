@@ -1,7 +1,11 @@
 import React from 'react'
-import { InlineBlocks, Block, InlineBlocksProps } from 'react-tinacms-inline'
+import dynamic from 'next/dynamic'
+import type { InlineBlocksProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
-import { css } from 'styled-components'
+
+const InlineBlocks = dynamic<InlineBlocksProps>(() => {
+  return import('react-tinacms-inline').then((m) => m.InlineBlocks)
+})
 
 export type Props = {
   name: string,

@@ -13,6 +13,17 @@ type NewsPost = {
 }
 
 const NewsPost = {
+  default: (slug: string) => ({
+    image: AdjustableImage.default,
+    tags: [],
+    title: '',
+    subtitle: '',
+    author: '',
+    published: new Date().toISOString(),
+    url: '/news/' + slug,
+    content: '',
+    slug,
+  } as NewsPost),
   path: (post: NewsPost): string => {
     return `content/news/${post.slug}.json`
   }

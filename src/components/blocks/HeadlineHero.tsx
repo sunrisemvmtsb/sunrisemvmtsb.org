@@ -8,22 +8,15 @@ export type Data = {
   title: string,
 }
 
-export const template = {
-  label: 'Headline Hero',
-  fields: [],
-  defaultItem: {
-    lead: 'Lead',
-    title: 'Title'
-  },
-}
-
-export const Component = ({
-  index,
-  data,
-}: {
+export type Props = {
   index: number,
   data: Data,
-}) => {
+}
+
+const Component = ({
+  index,
+  data,
+}: Props) => {
   return (
     <BlockItem index={index}>
       <header
@@ -77,3 +70,5 @@ export const Component = ({
     </BlockItem>
   )
 }
+
+export default Component

@@ -1,7 +1,12 @@
 import React from 'react'
 import { css } from 'styled-components'
-import { InlineWysiwyg } from 'react-tinacms-editor'
+import type { InlineWysiwygFieldProps } from 'react-tinacms-editor'
 import Markdown from '../atoms/Markdown'
+import dynamic from 'next/dynamic'
+
+const InlineWysiwyg = dynamic<InlineWysiwygFieldProps>(() => {
+  return import('react-tinacms-editor').then((m) => m.InlineWysiwyg)
+}, { ssr: false })
 
 const MarkdownField = ({
   name,

@@ -1,6 +1,12 @@
 import React from 'react'
-import { InlineText } from 'react-tinacms-inline'
+import type { InlineTextProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
+import dynamic from 'next/dynamic'
+
+const InlineText = dynamic<InlineTextProps>(() => {
+  return import('react-tinacms-inline').then((m) => m.InlineText)
+})
+
 
 export type Props = {
   name: string,

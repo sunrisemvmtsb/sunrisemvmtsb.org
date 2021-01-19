@@ -1,18 +1,10 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
-import { InlineForm } from 'react-tinacms-inline'
-import PageEditorPlugin from '../../plugins/PageEditorPlugin'
 import GoogleCalendar, { CalendarEvent } from '../../infrastructure/GoogleCalendar'
+import dynamic from 'next/dynamic'
 
-import * as CallToAction from '../blocks/CallToAction'
-import * as EventsList from '../blocks/EventsList'
-import * as NewsHeadlines from '../blocks/NewsHeadlines'
-import * as PrimaryHero from '../blocks/PrimaryHero'
-import * as HeadlineHero from '../blocks/HeadlineHero'
-import * as OneColumnText from '../blocks/OneColumnText'
-import * as TwoColumnText from '../blocks/TwoColumnText'
-import * as TeamExplorer from '../blocks/TeamExplorer'
 import Blocks from '../fields/Blocks'
+import blocks from '../blocks'
 
 import SiteConfig from '../../domain/SiteConfig'
 import NewsSummary from '../../domain/NewsSummary'
@@ -21,47 +13,54 @@ import SocialPost from '../../domain/SocialPost'
 
 import ContentService from '../../services/ContentService'
 import SocialService from '../../services/SocialService'
+import Preview from '../../contexts/Preview'
 
-export const Component = ({
-  slug,
-  page,
-  events,
-  posts,
-  news,
-  siteConfig,
-}: {
+export type Props = {
   slug: string,
   page: Page | null,
   events: Array<CalendarEvent>,
   posts: Array<SocialPost>,
   news: Array<NewsSummary>,
   siteConfig: SiteConfig,
-}) => {
-  const [data, form] = PageEditorPlugin.use(slug, page, 'Home Page')
+}
 
+const Template = ({
+  page,
+  events,
+  posts,
+  news,
+  siteConfig,
+}: Props) => {
   return (
-    <InlineForm form={form}>
+    <>
       <Head>
-        <title>{data?.title ?? ''}</title>
-        <meta property="og:title" content={data?.title ?? ''} key="title" />
+        <title>{page?.title ?? ''}</title>
+        <meta property="og:title" content={page?.title ?? ''} key="title" />
       </Head>
       <Blocks
         name="blocks"
         itemProps={{ siteConfig, events, posts, news }}
-        data={data?.blocks ?? []} 
-        blocks={{
-          PrimaryHero,
-          HeadlineHero,
-          CallToAction,
-          EventsList,
-          NewsHeadlines,
-          OneColumnText,
-          TwoColumnText,
-          TeamExplorer,
-        }} />
-    </InlineForm>
+        data={page?.blocks ?? []} 
+        blocks={blocks} />
+    </>
   )
 }
+
+const Editor = dynamic(async () => {
+  const { default: PageEditorPlugin } = await import('../../plugins/PageEditorPlugin')
+  const { InlineForm } = await import('react-tinacms-inline')
+  return (props: Props) => {
+    const [data, form] = PageEditorPlugin.use(props.slug, props.page, 'Home Page')
+
+    return (
+      <InlineForm form={form}>
+        <Template {...props} page={data} />
+      </InlineForm>
+    )
+  }
+})
+
+export const Component = Preview.component(Editor, Template)
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await ContentService.instance.getPagePaths()

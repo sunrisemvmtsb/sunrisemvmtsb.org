@@ -1,5 +1,5 @@
 import Page from '../domain/Page'
-import { TinaCMS, Field, AddContentPlugin } from 'tinacms'
+import type { TinaCMS, Field, AddContentPlugin } from 'tinacms'
 import { FORM_ERROR } from 'final-form'
 
 type Fields = {
