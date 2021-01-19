@@ -1,4 +1,5 @@
 import React from 'react'
+import { Field } from 'tinacms'
 import { css } from 'styled-components'
 import Markdown from '../fields/Markdown'
 import Typography from '../Typography'
@@ -8,45 +9,12 @@ import BlockItem from '../fields/BlockItem'
 import Blocks from '../fields/Blocks'
 import Text from '../fields/Text'
 import Group from '../fields/Group'
-
-type TeamLead = {
-  name: string,
-  image: string,
-}
-
-type Team = {
-  name: string,
-  leads: Array<TeamLead>,
-  description: string,
-  color: string,
-}
-
-export type Data = {
-  teams: Array<Team>,
-}
-
-const defaultTeamExplorer = {
-  teams: [
-    {
-      name: 'Administrative Coordinators',
-      leads: [],
-      description: '',
-      color: '#FFDE16',
-      _template: 'Team',
-    },
-    {
-      name: 'Actions',
-      leads: [],
-      description: '',
-      color: '#FF2F2F',
-      _template: 'Team',
-    }
-  ]
-}
+import TeamExplorer, { Team, TeamLead } from '../../domain/blocks/TeamExplorer'
+import { v4 as uuid } from 'uuid'
 
 export const template = {
   label: 'Team Explorer',
-  defaultItem: defaultTeamExplorer,
+  defaultItem: { teams: [] },
   fields: []
 }
 
@@ -63,45 +31,44 @@ const TeamEntryTemplate = ({
 }) => {
   const leads = data.leads.length !== 0 ?
     data.leads :
-    [{ name: 'No lead yet', image: '/images/placeholder.svg' }]
+    [{ name: 'No lead yet', image: '/images/placeholder.svg', id: '-1' }]
 
   const router = useRouter()
   const team = router.query.team
   const [didScroll, setDidScroll] = React.useState(false)
 
   return (
-    <BlockItem index={index}>
-      <div css={css`
+    <div css={css`
         padding: ${selected === index ? 12 : 16}px;
         border: ${selected === index ? `2px solid ${data.color}` : '0'};
         background-color: ${selected === index ? Color(data.color).fade(0.75).string() : 'none'};
       `}>
-        <div
-          css={css`
+      <div
+        css={css`
             display: flex;
             flex-direction: column;
             align-items: center;
             cursor: pointer;
           `}
-          onClick={() => setSelected?.(index)}>
-          <div css={css`
+        onClick={() => setSelected?.(index)}>
+        <div css={css`
             display: flex;
             padding-bottom: 16px;
           `}>
-            {leads.map((lead, index) => {
-              return (
-                <div
-                  key={lead.name + index.toString()}
-                  css={css`
+          {leads.map((lead, index) => {
+            return (
+              <div
+                key={lead.name + index.toString()}
+                css={css`
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     margin-left: -32px;
                     &:first-child { margin-left: 0; }
                   `}>
-                  <img
-                    src={lead.image}
-                    css={css`
+                <img
+                  src={lead.image}
+                  css={css`
                       width: 120px;
                       height: 120px;
                       border-radius: 50%;
@@ -110,7 +77,7 @@ const TeamEntryTemplate = ({
                       margin-bottom: 4px;
                       display: block;
                     `} />
-                  <p css={css`
+                <p css={css`
                     font-family: 'Source Sans Pro';
                     font-style: normal;
                     font-weight: bold;
@@ -120,13 +87,13 @@ const TeamEntryTemplate = ({
                     color: #33342E;
                     margin: 0;
                   `}>
-                    {lead.name}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-          <p css={css`
+                  {lead.name}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+        <p css={css`
             margin: 0;
             font-weight: 700;
             font-size: 18px;
@@ -135,11 +102,10 @@ const TeamEntryTemplate = ({
             width: 144px;
             text-align: center;
           `}>
-            {data.name}
-          </p>
-        </div>
+          {data.name}
+        </p>
       </div>
-    </BlockItem>
+    </div>
   )
 }
 
@@ -148,9 +114,9 @@ export const Component = ({
   data,
 }: {
   index: number,
-  data: Data,
+  data: TeamExplorer,
 }) => {
-  
+
   const [selected, setSelected] = React.useState(0)
   const current = data.teams[selected]
 
@@ -181,70 +147,72 @@ export const Component = ({
           position: relative;
           padding: 24px 0;
           height: 70vh;
+          width: 100%;
         `}>
-          <div css={css`
-            width: 80%;
-          `}>
-            <Blocks
-              name="teams"
-              direction="horizontal"
-              itemProps={{
-                selected,
-                setSelected,      
-              }}
-              css={css`
+            <Group
+              name=""
+              fields={[
+                {
+                  name: 'teams',
+                  label: 'Teams',
+                  component: 'group-list',
+                  defaultItem: () => Team.default(uuid()),
+                  itemProps: (item: Team) => ({
+                    key: item.id,
+                    label: item.name,
+                  }),
+                  fields: [
+                    {
+                      label: 'Name',
+                      name: 'name',
+                      component: 'text',
+                    },
+                    {
+                      label: 'Color',
+                      name: 'color',
+                      component: 'color',
+                    },
+                    {
+                      label: 'Leads',
+                      name: 'leads',
+                      component: 'group-list',
+                      defaultItem: () => TeamLead.default(uuid()),
+                      itemProps: (item: Team) => ({
+                        key: item.id,
+                        label: item.name,
+                      }),    
+                      fields: [
+                        {
+                          label: 'Name',
+                          name: 'name',
+                          component: 'text',
+                        },
+                        {
+                          label: 'Image',
+                          name: 'image',
+                          component: 'image',
+                          defaultValue: '/images/placeholder.svg',
+                        },
+                      ]
+                    }
+                  ]
+                } as Field,
+              ]}>
+              <div css={css`
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr;
                 grid-template-rows: auto;
                 grid-auto-flow: column dense;
                 justify-items: center;
-              `}
-              data={data.teams}
-              blocks={{
-                Team: {
-                  Component: TeamEntryTemplate,
-                  template: {
-                    label: 'Team',
-                    defaultItem: {
-                      name: '',
-                      leads: [],
-                      description: '',
-                      color: '#FFDE16',
-                    },
-                    fields: [
-                      {
-                        label: 'Name',
-                        name: 'name',
-                        component: 'text',
-                      },
-                      {
-                        label: 'Color',
-                        name: 'color',
-                        component: 'color',
-                      },
-                      {
-                        label: 'Leads',
-                        name: 'leads',
-                        component: 'group-list',
-                        fields: [
-                          {
-                            label: 'Name',
-                            name: 'name',
-                            component: 'text',
-                          },
-                          {
-                            label: 'Image',
-                            name: 'image',
-                            component: 'image',
-                            defaultValue: '/images/placeholder.svg',
-                          },
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }}/>
-          </div>
+                justify-content: start;
+                align-content: flex-start;
+                position: relative;
+              `}>
+                {data.teams.map((team, index) => (
+                  <TeamEntryTemplate key={team.name} data={team} index={index} selected={selected} setSelected={setSelected} />
+                ))}
+              </div>
+            </Group>
           <div css={css`
             position: absolute;
             top: 24px;
