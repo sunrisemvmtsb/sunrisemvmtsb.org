@@ -9,7 +9,7 @@ export default abstract class ContentService {
   static get instance(): ContentService {
     if (this._instance === null) {
       if (typeof window !== 'undefined') this._instance = new ClientContentService()
-      else if (process.env.NODE_ENV !== 'production') this._instance = new GitHubContentService()
+      else if (process.env.NODE_ENV === 'production') this._instance = new GitHubContentService()
       else this._instance = new FsContentService()
     }
     return this._instance
@@ -29,7 +29,7 @@ export default abstract class ContentService {
 
   getMediaPreviewUrl(filename: string): string {
     const fixed = filename.startsWith('/') ? filename.slice(1) : filename
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'production') {
       return `https://raw.githubusercontent.com/sunrisemvmtsb/sunrisemvmtsb.org/main/public/media/${fixed}`
     }
     return `/media/${fixed}`
