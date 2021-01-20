@@ -2,16 +2,16 @@
   "header": {
     "links": [
       {
-        "title": "Home",
-        "url": "/",
-        "type": "Plain",
-        "id": "1"
-      },
-      {
         "title": "Hub Structure",
         "url": "/hub-structure",
         "type": "Plain",
         "id": "2"
+      },
+      {
+        "title": "Home",
+        "url": "/",
+        "type": "Plain",
+        "id": "1"
       },
       {
         "title": "Take Action",
