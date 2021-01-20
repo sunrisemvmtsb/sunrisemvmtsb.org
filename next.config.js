@@ -9,7 +9,7 @@ module.exports = withBundleAnalyzer({
     if (!isServer) {
       config.node = {
         fs: 'empty',
-        process: false,
+        process: 'mock',
       }
     }
 

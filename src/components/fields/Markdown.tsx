@@ -3,18 +3,53 @@ import { css } from 'styled-components'
 import type { InlineWysiwygFieldProps } from 'react-tinacms-editor'
 import Markdown from '../atoms/Markdown'
 import dynamic from 'next/dynamic'
+import Preview from 'src/contexts/Preview'
 
 const InlineWysiwyg = dynamic<InlineWysiwygFieldProps>(() => {
   return import('react-tinacms-editor').then((m) => m.InlineWysiwyg)
 }, { ssr: false })
 
-const MarkdownField = ({
-  name,
-  content,
-}: {
+export type Props = {
   name: string,
   content: string,
-}) => {
+}
+
+const EditorInner = ({ name, content }: Props) => {
+  return (
+    <InlineWysiwyg
+      className="sunrisemvmtsb-markdown-editor"
+      name={name}
+      format="markdown"
+      focusRing={{ borderRadius: 0, offset: { x: 16, y: 24 } }}
+      imageProps={{
+        parse: (media) => media.id
+      }}>
+      {!content &&
+        <div css={css`
+          font-family: 'Source Serif Pro';
+          font-size: 18px;
+          font-style: italic;
+          line-height: 1.4;
+          color: rgba(0,0,0,0.48);
+          padding: 8px 0;
+        `}>
+          Write something here.
+        </div>
+      }
+      <Markdown>{content}</Markdown>
+    </InlineWysiwyg>
+  )
+}
+
+const StaticInner = ({ name, content }: Props) => {
+  return (
+    <Markdown>{content}</Markdown>
+  )
+}
+
+const Inner = Preview.component(EditorInner, StaticInner)
+
+const MarkdownField = (props: Props) => {
   return (
     <div css={css`
       color: #33342E;
@@ -103,28 +138,7 @@ const MarkdownField = ({
         padding-top: 0;
       }
     `}>
-      <InlineWysiwyg
-        className="sunrisemvmtsb-markdown-editor"
-        name={name}
-        format="markdown"
-        focusRing={{ borderRadius: 0, offset: { x: 16, y: 24 } }}
-        imageProps={{
-          parse: (media) => media.id
-        }}>
-        {!content &&
-          <div css={css`
-            font-family: 'Source Serif Pro';
-            font-size: 18px;
-            font-style: italic;
-            line-height: 1.4;
-            color: rgba(0,0,0,0.48);
-            padding: 8px 0;
-          `}>
-            Write something here.
-          </div>
-        }
-        <Markdown>{content}</Markdown>
-      </InlineWysiwyg>
+      <Inner {...props} />
     </div>
   )
 }

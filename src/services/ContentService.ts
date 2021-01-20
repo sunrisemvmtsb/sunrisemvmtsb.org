@@ -9,7 +9,7 @@ export default abstract class ContentService {
   static get instance(): ContentService {
     if (this._instance === null) {
       if (typeof window !== 'undefined') this._instance = new ClientContentService()
-      else if (process.env.NODE_ENV === 'production') this._instance = new GitHubContentService()
+      else if (process.env.NODE_ENV !== 'production') this._instance = new GitHubContentService()
       else this._instance = new FsContentService()
     }
     return this._instance
@@ -29,7 +29,7 @@ export default abstract class ContentService {
 
   getMediaPreviewUrl(filename: string): string {
     const fixed = filename.startsWith('/') ? filename.slice(1) : filename
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV !== 'production') {
       return `https://raw.githubusercontent.com/sunrisemvmtsb/sunrisemvmtsb.org/main/public/media/${fixed}`
     }
     return `/media/${fixed}`
@@ -234,6 +234,10 @@ class GitHubContentService extends ContentService {
     return Buffer.from(str, 'utf-8').toString('base64')
   }
 
+  private _b64DecodeUnicode(str: string): string {
+    return Buffer.from(str, 'base64').toString('utf-8')
+  }
+
   private async _getPreviousSha(path: string): Promise<string | undefined> {
     const query = `query { 
       repository(name: "sunrisemvmtsb.org", owner: "sunrisemvmtsb") { 
@@ -291,11 +295,24 @@ class GitHubContentService extends ContentService {
     }
   }
 
-  async getSiteConfig(): Promise<SiteConfig> {
-    const url = 'https://raw.githubusercontent.com/sunrisemvmtsb/sunrisemvmtsb.org/main/content/config.json'
-    const response = await fetch(url)
+  private async _getFile(path: string): Promise<string | null> {
+    const url = `https://api.github.com/repos/sunrisemvmtsb/sunrisemvmtsb.org/contents/${path}?ref=main`
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `token ${process.env.GITHUB_ACCESS_TOKEN}`,
+      },
+    })
+    if (response.status === 404) return null
     const data = await response.json()
-    return data
+    return this._b64DecodeUnicode(data.content)
+  }
+
+  async getSiteConfig(): Promise<SiteConfig> {
+    const contents = await this._getFile('content/config.json')
+    if (!contents) throw Error('site config should exist')
+    return JSON.parse(contents)
   }
 
   async saveSiteConfig(config: SiteConfig): Promise<void> {
@@ -313,10 +330,12 @@ class GitHubContentService extends ContentService {
       headers: { 'Accept': 'application/vnd.github.v3+json' }
     })
     const directoryData = await directoryResponse.json()
-    return Promise.all(directoryData.map(async (d: any) => {
-      const url = `https://raw.githubusercontent.com/sunrisemvmtsb/sunrisemvmtsb.org/main/${d.path}`
-      const response = await fetch(url)
-      const data = await response.json()
+    const contents: Array<{ path: string, contents: string | null }> = await Promise.all(directoryData.map(async (d: any) => {
+      const contents = await this._getFile(d.path)
+      return { path: d.path, contents }
+    }))
+    return contents.filter((s) => s.contents !== null).map((s) => {
+      const data = JSON.parse(s.contents!)
       return {
         image: data.image,
         category: data.tags[0],
@@ -324,16 +343,16 @@ class GitHubContentService extends ContentService {
         subtitle: data.subtitle,
         author: data.author,
         published: data.published,
-        url: '/news/' + path.basename(d.path, '.json'),
-        slug: path.basename(d.path, '.json'),
+        url: '/news/' + path.basename(s.path, '.json'),
+        slug: path.basename(s.path, '.json'),
       }
-    }))
+    })
   }
 
-  async getNewsPost(slug: string): Promise<NewsPost> {
-    const url = `https://raw.githubusercontent.com/sunrisemvmtsb/sunrisemvmtsb.org/main/content/news/${slug}.json`
-    const response = await fetch(url)
-    const data = await response.json()
+  async getNewsPost(slug: string): Promise<NewsPost | null> {
+    const contents = await this._getFile(`content/news/${slug}.json`)
+    if (!contents) return null
+    const data = JSON.parse(contents)
     return { ...data, slug }
   }
 
@@ -346,11 +365,9 @@ class GitHubContentService extends ContentService {
   }
 
   async getPage(slug: string): Promise<Page | null> {
-    const url = `https://raw.githubusercontent.com/sunrisemvmtsb/sunrisemvmtsb.org/main/content/${slug === '' ? 'index' : 'pages/' + slug}.json`
-    const response = await fetch(url)
-    if (response.status === 404) return null
-    const data = await response.json()
-    return data
+    const contents = await this._getFile(`content/${slug === '' ? 'index' : 'pages/' + slug}.json`)
+    if (!contents) return null
+    return JSON.parse(contents)
   }
 
   async getPagePaths(): Promise<Array<string>> {
