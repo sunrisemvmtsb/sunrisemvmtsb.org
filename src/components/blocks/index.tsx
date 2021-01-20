@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic'
 import type { InlineBlocksProps } from 'react-tinacms-inline'
 import type { Props as CallToActionProps } from './CallToAction'
 import type { Props as EventsListProps } from './EventsList'
@@ -7,19 +8,13 @@ import type { Props as HeadlineHeroProps } from './HeadlineHero'
 import type { Props as OneColumnTextProps } from './OneColumnText'
 import type { Props as TwoColumnTextProps } from './TwoColumnText'
 import type { Props as TeamExplorerProps } from './TeamExplorer'
-import dynamic from 'next/dynamic'
+import CallToActionData from '../../domain/blocks/CallToAction'
 
 const CallToAction = {
   Component: dynamic<CallToActionProps>(() => import('./CallToAction')) as any,
   template: {
     label: 'Call To Action',
-    defaultItem: {
-      callout: '',
-      title: '',
-      url: '',
-      description: '',
-      image: '/images/placeholder.svg',
-    },
+    defaultItem: CallToActionData.default,
     fields: []
   },
 }

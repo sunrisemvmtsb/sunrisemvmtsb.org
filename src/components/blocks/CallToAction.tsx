@@ -4,18 +4,13 @@ import BlockItem from '../fields/BlockItem'
 import Textarea from '../fields/Textarea'
 import Image from '../fields/Image'
 import Typography from '../Typography'
-
-export type Data = {
-  callout: string,
-  title: string,
-  url: string,
-  description: string,
-  image: string,
-}
+import EveryActionForm from '../atoms/EveryActionForm'
+import CallToAction from '../../domain/blocks/CallToAction'
+import Group from '../fields/Group'
 
 export type Props = {
   index: number,
-  data: Data
+  data: CallToAction
 }
 
 const Component = ({
@@ -23,7 +18,7 @@ const Component = ({
   data,
 }: {
   index: number,
-  data: Data,
+  data: CallToAction,
 }) => {
   return (
     <BlockItem index={index}>
@@ -97,27 +92,50 @@ const Component = ({
           <div css={css`
             position: relative;
           `}>
-            <div css={css`
-              border-image-source: linear-gradient(to bottom, #8F0D56, #EF4C39, #FFDE16);
-              border-style: solid;
-              border-image-slice: 1;
-              border-width: 5px;
-              padding: 0 16px;
-              padding-bottom: 24px;
-              transform: translateY(-40%);
-              z-index: calc(var(--tina-z-index-1) - 1);
-              position: absolute;
-              width: 100%;
-            `}>
               <div css={css`
-                background-color: var(--sunrise-yellow);
-                margin-top: -53px;
-                box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
-                position: relative;
-                min-height: 480px;
+                border-image-source: linear-gradient(to bottom, #8F0D56, #EF4C39, #FFDE16);
+                border-style: solid;
+                border-image-slice: 1;
+                border-width: 5px;
+                padding: 0 16px;
+                padding-bottom: 24px;
+                transform: translateY(-40%);
+                z-index: calc(var(--tina-z-index-1) - 1);
+                position: absolute;
+                width: 100%;
               `}>
+                <Group
+                  name=""
+                  insetControls
+                  fields={[
+                    {
+                      name: 'form',
+                      label: 'Form URL',
+                      description: 'Go into EveryAction, find the embed code for your form, and find the URL in the embed code next to data-form-url. It will look like https://secure.everyaction.com/v1/Form/[Form ID].',
+                      component: 'text',
+                      format: (value) => value ?? '',
+                      validate: (value) => {
+                        try {
+                          const url = new URL(value)
+                          if (url.hostname !== 'secure.everyaction.com') return 'Not an EveryAction link'
+                          if (!url.pathname.startsWith('/v1/Forms/')) return 'Not an EveryAction form embed. See instructions above.'
+                        } catch (e) {
+                          return 'Not a valid URL'
+                        }
+                      }
+                    }
+                  ]}>
+                  <div css={css`
+                    background-color: var(--sunrise-yellow);
+                    margin-top: -53px;
+                    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
+                    position: relative;
+                    min-height: 420px;
+                  `}>
+                      {data.form && <EveryActionForm url={data.form} /> }
+                  </div>
+                </Group>
               </div>
-            </div>
           </div>
         </div>
       </div>
