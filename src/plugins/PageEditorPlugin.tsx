@@ -171,10 +171,11 @@ export default class PageEditorPlugin {
       )
     }, [router, activePage, form])
 
-    usePlugins([
-      form,
-      renamePlugin,
-    ])
+    usePlugins(
+      slug === '' ?
+        [form] :
+        [form, renamePlugin]
+    )
 
     return [Object.assign({}, page, values), form]
   }

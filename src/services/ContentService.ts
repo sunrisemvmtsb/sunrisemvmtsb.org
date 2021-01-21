@@ -413,7 +413,7 @@ class GitHubContentService extends ContentService {
   async getPage(slug: string): Promise<Page | null> {
     const contents = await this._getFile(`content/${slug === '' ? 'index' : 'pages/' + slug}.json`)
     if (!contents) return null
-    return JSON.parse(contents)
+    return { ...JSON.parse(contents), slug }
   }
 
   async getPagePaths(): Promise<Array<string>> {
