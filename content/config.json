@@ -30,10 +30,7 @@
   "calendar": "https://calendar.google.com/calendar/u/0/embed?src=sunrisemvmtsb@gmail.com",
   "infrastructure": {
     "redirects": {
-      "pages": {
-        "hub-structure": "hub-structure-3",
-        "hub-structure-2": "hub-structure-3"
-      }
+      "pages": {}
     }
   }
 }
