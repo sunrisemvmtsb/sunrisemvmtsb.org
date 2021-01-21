@@ -29,12 +29,12 @@ const SiteConfig = {
       },
     }
   },
-  addPageRedirect: (from: string, to: string, config: SiteConfig) => {
+  addPageRedirect: (from: string, to: string, config: SiteConfig): SiteConfig => {
     return {
       ...config,
       infrastructure: {
         ...config.infrastructure,
-        redirections: {
+        redirects: {
           ...config.infrastructure.redirects,
           pages: Object.fromEntries(Object
             .entries({ ...config.infrastructure.redirects.pages, [from]: to })
