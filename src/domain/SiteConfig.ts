@@ -24,9 +24,27 @@ const SiteConfig = {
       links: [],
     },
     infrastructure: {
-      redirects: []
+      redirects: {
+        pages: {}
+      },
     }
   },
+  addPageRedirect: (from: string, to: string, config: SiteConfig) => {
+    return {
+      ...config,
+      infrastructure: {
+        ...config.infrastructure,
+        redirections: {
+          ...config.infrastructure.redirects,
+          pages: Object.fromEntries(Object
+            .entries({ ...config.infrastructure.redirects.pages, [from]: to })
+            .map(([someFrom, someTo]) => someTo === from ? [someFrom, to] : [someFrom, someTo])
+            .filter(([someFrom, someTo]) => someFrom !== someTo)
+          )
+        }
+      }
+    }
+  }
 }
 
 export default SiteConfig

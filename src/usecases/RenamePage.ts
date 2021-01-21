@@ -1,6 +1,7 @@
 import ContentService from '../services/ContentService'
 import StorageService from '../services/StorageService'
 import Page from '../domain/Page'
+import SiteConfig from '../domain/SiteConfig'
 
 class RenamePage {
   async exec(page: Page, title: string): Promise<Page> {
@@ -21,8 +22,7 @@ class RenamePage {
       if (existing.includes(slug)) throw new RenamePage.PageExistsError(Page.href({ ...page, slug }))
       const updated = await ContentService.instance.movePage(newPage, slug)
       const siteConfig = await ContentService.instance.getSiteConfig()
-      siteConfig.infrastructure.redirects.pages[page.slug] = updated.slug
-      await ContentService.instance.saveSiteConfig(siteConfig)
+      await ContentService.instance.saveSiteConfig(SiteConfig.addPageRedirect(page.slug, updated.slug, siteConfig))
       return updated
     } catch (e) {
       throw new RenamePage.ServiceError(e)
