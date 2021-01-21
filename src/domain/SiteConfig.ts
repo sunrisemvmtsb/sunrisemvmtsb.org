@@ -10,6 +10,11 @@ type SiteConfig = {
     links: Array<Link>,
   },
   calendar: string,
+  infrastructure: {
+    redirects: {
+      pages: Record<string, string>,
+    }
+  }
 }
 
 const SiteConfig = {
@@ -18,6 +23,9 @@ const SiteConfig = {
     header: {
       links: [],
     },
+    infrastructure: {
+      redirects: []
+    }
   },
 }
 

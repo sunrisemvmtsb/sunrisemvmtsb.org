@@ -23,6 +23,9 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     <link rel="stylesheet" href="https://d3rse9xjbp8270.cloudfront.net/at.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+Pro:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=block" rel="stylesheet" />
     <script>
+      console.time = () => {}
+      console.timeStamp = () => {}
+      console.timeEnd = () => {}
       const getHeight = () => {
         return document.querySelector('.ngp-form').getBoundingClientRect().height
       }
@@ -31,18 +34,18 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       nvtag_callbacks.postRender = nvtag_callbacks.postRender || []
       nvtag_callbacks.postRender.push(() => {
         const height = getHeight()
-        console.log('[postrender]', height)
+        console.debug('[postrender]', height)
         window.postMessage(height)
       })
       window.addEventListener('resize', () => {
         const height = getHeight()
-        console.log('[resize]', height)
+        console.debug('[resize]', height)
         window.postMessage(height)
       })
       window.addEventListener('message', (event) => {
         if (event.data !== 'reflow') return
         const height = getHeight()
-        console.log('[reflow]', height)
+        console.debug('[reflow]', height)
         window.postMessage(height)
       })
     </script>

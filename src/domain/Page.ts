@@ -26,7 +26,28 @@ const Page = {
   path: (page: Page): string => {
     if (page.slug === '') return 'content/index.json'
     return `content/pages/${page.slug}.json`
-  }
+  },
+  href: (page: Page): string => {
+    return '/' + page.slug
+  },
+  slugify: (page: Page): string => {
+    return slugifyTitle(page.title)
+  },
+  default: (title: string): Page => ({
+    slug: slugifyTitle(title),
+    title: title,
+    description: '',
+    blocks: [],
+  })
+}
+
+const slugifyTitle = (title: string) => {
+  return title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
 }
 
 export default Page

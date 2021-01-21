@@ -1,6 +1,7 @@
 import Page from '../domain/Page'
 import type { TinaCMS, Field, AddContentPlugin } from 'tinacms'
-import { FORM_ERROR } from 'final-form'
+import ContentService from 'src/services/ContentService'
+import StorageService from '../services/StorageService'
 
 type Fields = {
   title: string,
@@ -9,7 +10,7 @@ type Fields = {
 
 export default class PageCreatorPlugin implements AddContentPlugin<Fields> {
   __type: 'content-creator' = 'content-creator'
-  name: AddContentPlugin<Fields>['name'] = 'Page'
+  name: AddContentPlugin<Fields>['name'] = 'Create Page'
   fields: AddContentPlugin<Fields>['fields'] = [
     {
       name: 'title',
@@ -27,39 +28,23 @@ export default class PageCreatorPlugin implements AddContentPlugin<Fields> {
     } as Field,
   ]
 
-  private _storagePromise: Promise<LocalForage> | null = null
-  private _getStorage(): Promise<LocalForage> {
-    if (this._storagePromise) return this._storagePromise
-    this._storagePromise = import('localforage')
-      .then(({ default: localForage }) => {
-        const storage = localForage.createInstance({
-          driver: localForage.INDEXEDDB,
-          name: 'sunrisemvmtsb_org',
-          version: 1.0,
-          storeName: 'pages',
-          description: 'locally cached page changes'
-        })
-        this._storagePromise = Promise.resolve(storage)
-        return storage
-      })
-    return this._storagePromise
-  }
-
   async onSubmit(form: Fields, cms: TinaCMS) {
-    const slug = this.slugify(form.title)
-    const page: Page = {
-      slug,
-      title: form.title,
+    const page = {
+      ...Page.default(form.title),
       description: form.description,
-      blocks: [],
     }
 
     try {
-      const storage = await this._getStorage()
-      await storage.setItem(`pages:${slug}`, page)
-      window.location.assign('/' + slug)
+      const existing = await ContentService.instance.getPagePaths()
+      if (existing.includes(page.slug)) {
+        cms.alerts.error(`A page with path ${Page.href(page)} already exists.`)
+        return
+      }
+
+      await StorageService.instance.savePage(page)
+      window.location.assign(Page.href(page))
     } catch (e) {
-      return { [FORM_ERROR]: e } as unknown as void // lol cool types guys
+      cms.alerts.error(`Page creation failed: ${e.message}`)
     }
   }
 

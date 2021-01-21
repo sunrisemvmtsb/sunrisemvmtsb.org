@@ -38,7 +38,7 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const CmsWrapper = dynamic(async () => {
-  const { TinaProvider, ModalProvider, TinaCMS } = await import('tinacms')
+  const { TinaProvider, TinaCMS } = await import('tinacms')
   const { default: ConfigEditorPlugin } = await import('../plugins/ConfigEditorPlugin')
   const { default: PageCreatorPlugin } = await import('../plugins/PageCreatorPlugin')
   const { default: NewsCreatorPlugin } = await import('../plugins/NewsCreatorPlugin')
@@ -60,11 +60,9 @@ const CmsWrapper = dynamic(async () => {
     }, [])
 
     return (
-      <ModalProvider>
-        <TinaProvider cms={cms}>
-          <CmsInner {...props} useConfig={ConfigEditorPlugin.use} />
-        </TinaProvider>
-      </ModalProvider>
+      <TinaProvider cms={cms}>
+        <CmsInner {...props} useConfig={ConfigEditorPlugin.use} />
+      </TinaProvider>
     )
   }
 })

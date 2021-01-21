@@ -13,7 +13,7 @@ type Fields = {
 
 export default class NewsCreatorPlugin implements AddContentPlugin<Fields> {
   __type: 'content-creator' = 'content-creator'
-  name: AddContentPlugin<Fields>['name'] = 'Page'
+  name: AddContentPlugin<Fields>['name'] = 'Create News Post'
   fields: AddContentPlugin<Fields>['fields'] = [
     {
       name: 'title',
@@ -40,8 +40,8 @@ export default class NewsCreatorPlugin implements AddContentPlugin<Fields> {
           driver: localForage.INDEXEDDB,
           name: 'sunrisemvmtsb_org',
           version: 1.0,
-          storeName: 'pages',
-          description: 'locally cached page changes'
+          storeName: 'news',
+          description: 'locally cached news post changes'
         })
         this._storagePromise = Promise.resolve(storage)
         return storage

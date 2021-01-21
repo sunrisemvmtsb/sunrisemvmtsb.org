@@ -1,4 +1,5 @@
 import type { Media } from 'tinacms'
+import type { Octokit } from '@octokit/rest'
 import Page from '../domain/Page'
 import SiteConfig from '../domain/SiteConfig'
 import NewsSummary from '../domain/NewsSummary'
@@ -23,6 +24,7 @@ export default abstract class ContentService {
   abstract getPage(slug: string): Promise<Page | null>
   abstract getPagePaths(): Promise<Array<string>>
   abstract savePage(page: Page): Promise<void>
+  abstract movePage(page: Page, slug: string): Promise<Page>
   abstract saveMedia(filename: string, data: ArrayBuffer): Promise<void>
   abstract deleteMedia(filename: string): Promise<void>
   abstract listMedia(directory: string): Promise<Array<Media>>
@@ -88,7 +90,10 @@ class ClientContentService extends ContentService {
   }
 
   async getPagePaths(): Promise<Array<string>> {
-    throw Error('not implemented')
+    const url = '/api/content?method=getPagePaths'
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
   }
 
   async savePage(page: Page): Promise<void> {
@@ -99,6 +104,18 @@ class ClientContentService extends ContentService {
       headers: { 'Content-Type': 'application/json' }
     })
     if (!response.ok) throw Error('failed to save')
+  }
+
+  async movePage(page: Page, slug: string): Promise<Page> {
+    const url = `/api/content?method=movePage`
+    const body = { page, slug }
+    const response = await fetch(url, {
+      body: JSON.stringify(body),
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    if (!response.ok) throw Error('failed to move page')
+    return { ...page, slug }
   }
 
   async saveMedia(filename: string, data: ArrayBuffer) {
@@ -198,6 +215,17 @@ class FsContentService extends ContentService {
     fs.writeFileSync(pagePath, JSON.stringify(page, null, 2), { encoding: 'utf-8' })
   }
 
+  async movePage(page: Page, slug: string): Promise<Page> {
+    const fs = await import('fs')
+    const oldPagePath = Page.path(page)
+    const newPage = { ...page, slug }
+    const newPagePath = Page.path(newPage)
+    if (fs.existsSync(newPagePath)) throw Error('Page already exists')
+    fs.renameSync(oldPagePath, newPagePath)
+    await this.savePage(newPage)
+    return newPage
+  }
+
   async saveMedia(filename: string, data: ArrayBuffer) {
     const { default: mkdirp } = await import('mkdirp')
     const fs = await import('fs')
@@ -236,6 +264,24 @@ class GitHubContentService extends ContentService {
 
   private _b64DecodeUnicode(str: string): string {
     return Buffer.from(str, 'base64').toString('utf-8')
+  }
+
+  private async _octokit(): Promise<Octokit> {
+    const octokit = await import('@octokit/rest')
+    return new octokit.Octokit({
+      auth: process.env.GITHUB_ACCESS_TOKEN,
+      request: { fetch }
+    })
+  }
+
+  private _getRequest(url: string) {
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `token ${process.env.GITHUB_ACCESS_TOKEN}`,
+      },
+    })
   }
 
   private async _getPreviousSha(path: string): Promise<string | undefined> {
@@ -386,6 +432,63 @@ class GitHubContentService extends ContentService {
       Page.path(page),
       `Update /${page.slug} from CMS`,
     )
+  }
+
+  async movePage(page: Page, slug: string): Promise<Page> {
+    const octokit = await this._octokit()
+    const owner = 'sunrisemvmtsb'
+    const repo = 'sunrisemvmtsb.org'
+    const oldPagePath = Page.path(page)
+    const newPage = { ...page, slug }
+    const newPagePath = Page.path(newPage)
+
+    const currentBranch = await octokit.repos.getBranch({
+      owner,
+      repo,
+      branch: 'main',
+    })
+
+    const oldPageSha = await this._getPreviousSha(oldPagePath)
+
+    const newTree = await octokit.git.createTree({
+      owner,
+      repo,
+      base_tree: currentBranch.data.commit.sha,
+      tree: [
+        {
+          mode: '100644',
+          type: 'blob',
+          path: newPagePath,
+          sha: oldPageSha,
+        },
+        {
+          mode: '100644',
+          type: 'blob',
+          path: newPagePath,
+          content: JSON.stringify(newPage, null, 2),
+        }
+      ]
+    })
+
+    const commit = await octokit.git.createCommit({
+      message: `Move page ${Page.href(page)} to ${Page.href(newPage)} and update content`,
+      owner,
+      repo,
+      tree: newTree.data.sha,
+      committer: {
+        name: 'Sunrise SB Staff',
+        email: 'website@sunrisemvmtsb.org',
+      },
+    })
+
+    await octokit.git.updateRef({
+      owner,
+      repo,
+      ref: 'heads/main',
+      sha: commit.data.sha,
+    })
+
+    return newPage
   }
 
   async saveMedia(filename: string, data: ArrayBuffer) {

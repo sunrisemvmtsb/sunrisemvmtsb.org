@@ -27,5 +27,10 @@
       }
     ]
   },
-  "calendar": "https://calendar.google.com/calendar/u/0/embed?src=sunrisemvmtsb@gmail.com"
+  "calendar": "https://calendar.google.com/calendar/u/0/embed?src=sunrisemvmtsb@gmail.com",
+  "infrastructure": {
+    "redirects": {
+      "pages": {}
+    }
+  }
 }

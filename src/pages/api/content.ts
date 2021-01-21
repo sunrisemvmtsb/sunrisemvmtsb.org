@@ -20,6 +20,18 @@ export default GoogleAuth.protect(async (req, res) => {
     return res.status(200).end()
   }
 
+  if (method === 'getPagePaths' && req.method === 'GET') {
+    const data = await ContentService.instance.getPagePaths()
+    return res.send(data)
+  }
+
+  if (method === 'movePage' && req.method === 'PUT') {
+    const { page, slug } = req.body
+    if (!page || !slug) return res.status(400).end()
+    await ContentService.instance.movePage(page, slug)
+    return res.status(200).end()
+  }
+
   if (method === 'getNewsSummaries' && req.method === 'GET') {
     const summaries = await ContentService.instance.getNewsSummaries()
     return res.send(summaries)
