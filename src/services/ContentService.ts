@@ -10,7 +10,7 @@ export default abstract class ContentService {
   static get instance(): ContentService {
     if (this._instance === null) {
       if (typeof window !== 'undefined') this._instance = new ClientContentService()
-      else if (process.env.NODE_ENV === 'production') this._instance = new GitHubContentService()
+      else if (process.env.NODE_ENV !== 'production') this._instance = new GitHubContentService()
       else this._instance = new FsContentService()
     }
     return this._instance
@@ -448,34 +448,40 @@ class GitHubContentService extends ContentService {
       branch: 'main',
     })
 
-    const oldPageSha = await this._getPreviousSha(oldPagePath)
-
-    const newTree = await octokit.git.createTree({
+    const branchTree = await octokit.git.getTree({
       owner,
       repo,
-      base_tree: currentBranch.data.commit.sha,
-      tree: [
-        {
+      tree_sha: currentBranch.data.commit.sha,
+      recursive: '1',
+    })
+
+    const treeEntries = branchTree
+      .data
+      .tree
+      .filter((entry) => entry.type !== 'tree')
+      .map((entry) => {
+        if (entry.path !== oldPagePath) return entry
+        return {
           mode: '100644',
           type: 'blob',
           path: newPagePath,
-          sha: oldPageSha,
-        },
-        {
-          mode: '100644',
-          type: 'blob',
-          path: newPagePath,
-          content: JSON.stringify(newPage, null, 2),
+          content: JSON.stringify(newPage, null, 2)
         }
-      ]
+      })
+
+    const updateTree = await octokit.git.createTree({
+      owner,
+      repo,
+      tree: treeEntries as any,
     })
 
     const commit = await octokit.git.createCommit({
       message: `Move page ${Page.href(page)} to ${Page.href(newPage)} and update content`,
       owner,
       repo,
-      tree: newTree.data.sha,
-      committer: {
+      tree: updateTree.data.sha,
+      parents: [branchTree.data.sha],
+      author: {
         name: 'Sunrise SB Staff',
         email: 'website@sunrisemvmtsb.org',
       },
