@@ -1,0 +1,122 @@
+{
+  "title": "Hub Structure 2",
+  "description": "",
+  "blocks": [
+    {
+      "_template": "HeadlineHero",
+      "lead": "Sunrise Santa Barbara's",
+      "title": "Hub Structure"
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "# Building Our Power Through Your Participation\n\nSunrise Santa Barbara has a distributed leadership model that relies on the participation of our members (whether you can give 5 mins a week or 40 hours) to succeed. When everybody actively plugs in, sets realistic expectations (both for themselves and their teams), and contributes how they can, our movement thrives! We are able to grow our numbers, our power and influence, sustain our community, and pass policies and elect leaders who stand up for climate justice and the health and wellbeing of all people."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "## How to plug in\n\nTo get involved, sign up to participate at one of these levels:"
+    },
+    {
+      "_template": "TwoColumnText",
+      "content": "",
+      "leftContent": "### Team Members\n\nTeam members are focused on implementing the activities of a team, with a primary role of showing up and giving what you can to help your team succeed. This role usually requires less time and responsibility, though you will still have direct opportunities to make decisions and form strategy and will still be responsible for communicating with your team leads and fulfilling any tasks you’ve volunteered for.",
+      "rightContent": "### Team Leads\n\nTeam leads are responsible for coordinating the activities of a team, ensuring team goals are set and met, and supporting team members to participate. Team Leads are supported by each other, and attend weekly core meetings. This role usually requires a high level of capacity and commitment."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "You are encouraged to sign up to participate in as many teams as you wish! If you’re interested in joining a team, or leading or co-leading a team, email us at sunrisemvmtsb@gmail.com."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "## Participation & Meeting Rhythm\n\nThe Sunrise Santa Barbara Hub meets and builds our movement in the following ways:"
+    },
+    {
+      "_template": "TwoColumnText",
+      "content": "",
+      "leftContent": "### Full-Hub Meetings\n\nWe have Full-Hub Meetings where all teams and members are invited to come together in person for community building, coordination, leadership development and taking action! These meetings are held on an as-needed basis.",
+      "rightContent": "### Core Team Meetings\n\nThe core team meets once a week to collaborate on the hub’s direction and operation. Core is mostly comprised of Team Leads and higher capacity Team Members."
+    },
+    {
+      "_template": "TwoColumnText",
+      "content": "",
+      "leftContent": "### Team Meetings\n\nEach team meets as necessary in between Full-Hub Meetings to accomplish their core functions and responsibilities. It is up to Team Leads to coordinate how often, where, and in what ways their teams meet.",
+      "rightContent": "### Actions, Events & Opportunities\n\nAll Sunrise SB Members are invited to participate in relevant actions, events, and opportunities as they arise. Hub Coordinators, Team Leads, and Team Members work collectively to identify these opportunities and communicate them to members."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "When possible, Hub Members are highly encouraged to attend the Full-Hub meeting, at least one Team meeting, and attend one event/action each month. If we all do this to the best of our ability, our Sunrise Movement will become an unstoppable force for change! Let’s do this!"
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "# Roles, Team Descriptions & Team Leads"
+    },
+    {
+      "_template": "TeamExplorer",
+      "teams": [
+        {
+          "name": "Creative",
+          "leads": [],
+          "description": "",
+          "color": "#3793D6",
+          "id": "43159e1e-3467-4ec4-a470-476ba01399bc"
+        },
+        {
+          "name": "Outreach",
+          "leads": [],
+          "description": "",
+          "color": "#6DF172",
+          "id": "c8d2b4ac-fbc8-46d6-b656-c2eefc0bfaaf"
+        },
+        {
+          "name": "Administrative Coordinators",
+          "id": "1",
+          "leads": [
+            {
+              "image": "/images/placeholder.svg",
+              "name": "Mikala Butson",
+              "id": "1"
+            },
+            {
+              "image": "/images/placeholder.svg",
+              "name": "Chris Kracha",
+              "id": "2"
+            }
+          ],
+          "description": "The hub has 1-3 administrative coordinators, which oversee the technical operations of the hub. They are responsible for:\n\n* Scheduling weekly core meetings and reserving meeting spaces\n* Routine maintenance of the website, ensuring it has up-to-date information\n* Ensuring Sunrise SB is in good standing with OSL office\n* Matching Team Leads with each other for weekly check-ins\n* Planning weekly or biweekly bonding opportunities for members\n* Scheduling quarterly leadership development session for core team, in collaboration with training team.\n  * Includes organizing 1 annual leadership retreat to set year-long strategy and develop team connections\n  * So, 4 sessions total\n\nIf 3 coordinators, one coordinator should be the **Justice, Equity & Anti-Oppression Lead**. In the beginning, one person should volunteer to be the **Sunrise National Delegate**. Once the hub grows, this position will rotate quarterly between core members.\n\n**Expected time commitment: 5-10 hours**",
+          "color": "#FFDE16"
+        },
+        {
+          "name": "Actions",
+          "leads": [],
+          "description": "Hello world",
+          "color": "#FF2F2F",
+          "id": "2"
+        }
+      ]
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "## Core Team\n\nThe Core Team guides, steers and supports the work of the Hub’s various Teams."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "### Responsibilities\n\n* Guiding the overall work and direction of the hub\n* Coordinating and supporting the work of all teams\n* Ensuring that the Hub’s activities stay true to Sunrise’s Principles, Policy Priorities and Guidelines for Political Engagement.\n* One delegate to Sunrise National \n* Stewarding a welcoming, inclusive, productive and fun hub culture"
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "### Requirements\n\n* Regularly attend and actively participate in the weekly core meeting. Fn unable to attend, inform team ASAP, review the agenda and meeting notes, and vote virtually, if possible. If a member misses 2 or more consecutive meetings, for academic or personal reasons, their involvement in core team will be discussed among remaining core team members and put up to a vote at the following meeting. \n* \\[Involvement requirement -- be part of a project/event/team/etc\\]\n* Take a turn being a notetaker and a facilitator\n* Hold regular check-in meetings with your team and show progress on your goals.\n* Do 1:1s with interested new members (as coordinated by Outreach Team Lead(s)) as needed\n* Weekly time commitment: ???hr"
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "### Process for involvement\n\nAll interested members are encouraged to attend core team meetings to understand the strategy and decision-making guiding the hub’s activities. However, only official core team members are allowed to vote, introduce motions, or add agenda items. If a non-core team member wishes to speak on a topic, they are welcome to, though requested to consider the relevance/length of their comment??\n\n* If you’ve regularly attended events/meetings and/or have volunteered at a previous Sunrise SB action/event\n* \\[participation in a team/ongoing contribution to hub’s activities somewhere\\] \n* \\[ongoing leadership and activity within their team (not just stagnant)\\] \n* \\[once these criteria are met ^, individual may ask that week’s facilitator to add their name to be voted into core\\] \n* \\[Voting requirements\\]\n* Term limit: Renew every academic quarter."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "### Appointment\n\nIndividuals interested in serving in a role (i.e. team lead, admin coordinator, etc) may add “\\[Person's name\\] Role Appointment” as an Agenda Item for that week’s core meeting.\n\nAt the meeting, the interested individual shall have 5 minutes to express their qualifications, skills, reason they’re interested in the role, goals for the role, and ability to meet role requirements. Once the individual is done speaking, core team members may ask direct questions for up to 10 minutes. Then, the facilitator will take a motion to vote on the individual’s appointment.\n\nAt least ⅔ of core team members present must vote on the matter. There must be consensus.\n\nRoles will serve for a term of one quarter with the option of self-nominating again for renewal at the end of their term."
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "### Removal\n\n* Miss 2 or more consecutive meetings -- put up to a vote at next core meeting \n* If participation has dwindled (e.g. not fulfilling coordinating duties, not following through on bottom lines, not holding team meetings, etc) \n* If 3 or more members have a concern about the way a lead is carrying out their role, their appointment shall be up for discussion at the next core meeting."
+    }
+  ],
+  "slug": "hub-structure-2"
+}
