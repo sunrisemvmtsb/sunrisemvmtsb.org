@@ -10,7 +10,7 @@ export default abstract class ContentService {
   static get instance(): ContentService {
     if (this._instance === null) {
       if (typeof window !== 'undefined') this._instance = new ClientContentService()
-      else if (process.env.NODE_ENV !== 'production') this._instance = new GitHubContentService()
+      else if (process.env.NODE_ENV === 'production') this._instance = new GitHubContentService()
       else this._instance = new FsContentService()
     }
     return this._instance
