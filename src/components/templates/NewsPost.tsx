@@ -174,12 +174,13 @@ export const getStaticProps: GetStaticProps = async ({
   preview,
   params,
 }) => {
+  const siteConfig = await ContentService.instance.getSiteConfig()
   const slug = params?.slug
   if (!slug || Array.isArray(slug)) throw Error('No news post can be accessed without a slug in the URL. If this error happens something is really wrong.')
 
   const post = await ContentService.instance.getNewsPost(slug)
   return {
-    props: { slug, post, preview: !!preview },
+    props: { siteConfig, slug, post, preview: !!preview },
     revalidate: 2,
   }
 }

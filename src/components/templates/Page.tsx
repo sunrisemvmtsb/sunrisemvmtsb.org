@@ -64,19 +64,12 @@ export const Component = Preview.component(Editor, Template)
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await ContentService.instance.getPagePaths()
-  const config = await ContentService.instance.getSiteConfig()
-
-  const pages = paths.map((slug) => ({
-    params: { slug },
-  }))
-
-  const redirects = Object.entries(config.infrastructure.redirects.pages).map(([from, to]) => ({
-    params: { slug: from }
-  }))
 
   return {
-    paths: pages.concat(redirects),
-    fallback: false,
+    paths: paths.map((slug) => ({
+      params: { slug },
+    })),
+    fallback: 'blocking',
   }
 }
 
@@ -85,17 +78,16 @@ export const getStaticProps: GetStaticProps = async ({
   params,
 }) => {
   const slug = params?.slug as string ?? ''
-  const config = await ContentService.instance.getSiteConfig()
+  const siteConfig = await ContentService.instance.getSiteConfig()
 
-  if (!preview && config.infrastructure.redirects.pages[slug]) {
+  if (!preview && siteConfig.infrastructure.redirects.pages[slug]) {
     return {
       redirect: {
-        destination: '/' + config.infrastructure.redirects.pages[slug],
+        destination: '/' + siteConfig.infrastructure.redirects.pages[slug],
         permanent: false,
       }
     }
   }
-
 
   const events = await GoogleCalendar.instance.load()
   const posts = await SocialService.instance.getPosts()
@@ -107,7 +99,7 @@ export const getStaticProps: GetStaticProps = async ({
   }
 
   return {
-    props: { slug, posts, events, page, news, preview: !!preview },
+    props: { siteConfig, slug, posts, events, page, news, preview: !!preview },
     revalidate: 2,
   }
 }
