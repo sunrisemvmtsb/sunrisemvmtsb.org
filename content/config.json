@@ -31,7 +31,8 @@
   "infrastructure": {
     "redirects": {
       "pages": {
-        "hub-structure-2": "hub-structure"
+        "hub-structure-2": "hub-structure",
+        "test-page-2": "test-page-4"
       }
     }
   }
