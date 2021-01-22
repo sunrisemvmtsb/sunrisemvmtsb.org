@@ -1,0 +1,11 @@
+{
+  "slug": "test-page-2",
+  "title": "Test Page 2",
+  "blocks": [
+    {
+      "_template": "HeadlineHero",
+      "lead": "Lol",
+      "title": "Nice"
+    }
+  ]
+}
