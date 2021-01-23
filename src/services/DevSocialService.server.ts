@@ -1,16 +1,7 @@
 import SocialPost from '../domain/SocialPost'
+import ISocialService from './ISocialService'
 
-export default abstract class SocialService {
-  private static _instance: SocialService | null = null
-  static get instance(): SocialService {
-    if (this._instance === null) this._instance = new FakeSocialService()
-    return this._instance
-  }
-
-  abstract getPosts(): Promise<Array<SocialPost>>
-}
-
-class FakeSocialService extends SocialService {
+export default class DevSocialService implements ISocialService {
   async getPosts(): Promise<Array<SocialPost>> {
     return fakeInstagramPosts
   }

@@ -2,31 +2,11 @@ import React from 'react'
 import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
 import Preview from '../../contexts/Preview'
-import base64 from 'base-64'
-import AuthService from 'src/services/AuthService'
-
-const signin = async () => {
-  const validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  const array = new Uint8Array(40)
-  crypto.getRandomValues(array)
-  const chars = array.map((x) => validChars.charCodeAt(x % validChars.length))
-  const csrf = String.fromCharCode(...chars)
-
-  const state = base64.encode(JSON.stringify({ csrf, redirect: window.location.href }))
-
-  const url = '/api/auth/signin'
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'same-origin',
-    body: JSON.stringify({ state }),
-  })
-  const data = await response.json()
-  window.location.assign(data.url)
-}
-
+import AuthService from 'src/services/AuthService.client'
+import container from '../../infrastructure/Container.client'
 
 const Footer = () => {
+  const auth = container.get(AuthService)
   const preview = Preview.use()
 
   return (
@@ -50,12 +30,12 @@ const Footer = () => {
         <button
           onClick={async () => {
             if (preview) {
-              await AuthService.instance.signout()
+              await auth.signout()
               window.location.reload()
               return
             }
 
-            signin()
+            auth.signin()
           }}
           css={css`
             font-family: Source Sans Pro;

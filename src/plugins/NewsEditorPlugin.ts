@@ -1,8 +1,10 @@
 
 import { useForm, useCMS, Form, usePlugin } from 'tinacms'
 import { FORM_ERROR } from 'final-form'
-import ContentService from '../services/ContentService'
 import NewsPost from '../domain/NewsPost'
+import container from '../infrastructure/Container.client'
+import StorageService from '../services/StorageService.client'
+import NewsService from '../services/NewsService'
 
 export default class NewsEditorPlugin {
   private static _instance: NewsEditorPlugin | null = null
@@ -11,41 +13,23 @@ export default class NewsEditorPlugin {
     return this._instance
   }
 
-  private _storagePromise: Promise<LocalForage> | null = null
-  private _getStorage(): Promise<LocalForage> {
-    if (this._storagePromise) return this._storagePromise
-    this._storagePromise = import('localforage')
-      .then(({ default: localForage }) => {
-        const storage = localForage.createInstance({
-          driver: localForage.INDEXEDDB,
-          name: 'sunrisemvmtsb_org',
-          version: 1.0,
-          storeName: 'news',
-          description: 'locally cached news post changes'
-        })
-        this._storagePromise = Promise.resolve(storage)
-        return storage
-      })
-    return this._storagePromise
+  private _storage: StorageService
+  private _news: NewsService
+
+  constructor() {
+    this._storage = container.get(StorageService)
+    this._news = container.get(NewsService)
   }
 
   async latest(slug: string): Promise<NewsPost | null> {
-    const storage = await this._getStorage()
-    const local = await storage.getItem<any>(`news:${slug}`)
+    const local = await this._storage.getNewsPost(slug)
     if (local) return { ...local, slug }
-    return ContentService.instance.getNewsPost(slug)
+    return this._news.getNewsPost(slug)
   }
 
   async save(post: NewsPost): Promise<void> {
-    await ContentService.instance.saveNewsPost(post)
-    const storage = await this._getStorage()
-    await storage.removeItem(`news:${post.slug}`)
-  }
-
-  async persist(post: NewsPost): Promise<void> {
-    const storage = await this._getStorage()
-    const local = await storage.getItem<NewsPost>(`news:${post.slug}`)
-    if (local) await storage.setItem(`news:${post.slug}`, post)
+    await this._news.saveNewsPost(post)
+    await this._storage.removeNewsPost(post)
   }
 
   static use(slug: string, post: NewsPost | null, label: string): [NewsPost, Form] {
@@ -67,11 +51,6 @@ export default class NewsEditorPlugin {
         } catch (e) {
           return { [FORM_ERROR]: e }
         }
-      },
-      async reset() {
-        const page = await NewsEditorPlugin.instance.latest(slug)
-        if (!page) return
-        await NewsEditorPlugin.instance.persist(page)
       },
     }, {
       label

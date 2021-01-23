@@ -2,8 +2,9 @@ import React from 'react'
 import { useForm, useCMS, Form, usePlugin, GlobalFormPlugin } from 'tinacms'
 import { SettingsIcon } from '@tinacms/icons'
 import SiteConfig from '../domain/SiteConfig'
-import ContentService from '../services/ContentService'
 import * as uuid from 'uuid'
+import container from '../infrastructure/Container.client'
+import SiteConfigService from '../services/SiteConfigService'
 
 export default class ConfigEditorPlugin {
   private static _instance: ConfigEditorPlugin | null = null
@@ -12,12 +13,17 @@ export default class ConfigEditorPlugin {
     return this._instance
   }
 
+  private _siteConfig: SiteConfigService
+  constructor() {
+    this._siteConfig = container.get(SiteConfigService)
+  }
+
   async latest(): Promise<SiteConfig> {
-    return ContentService.instance.getSiteConfig()
+    return this._siteConfig.get()
   }
 
   async save(config: SiteConfig): Promise<void> {
-    await ContentService.instance.saveSiteConfig(config)
+    await this._siteConfig.save(config)
   }
 
   static use(config: SiteConfig): SiteConfig {
@@ -77,10 +83,10 @@ export default class ConfigEditorPlugin {
       ],
       async loadInitialValues() {
         if (cms.disabled) return config
-        return ContentService.instance.getSiteConfig()
+        return ConfigEditorPlugin.instance.latest()
       },
       async onSubmit(values) {
-        ContentService.instance.saveSiteConfig(values)
+        return ConfigEditorPlugin.instance.save(values)
       },
     }, {
       label: 'Site Config'

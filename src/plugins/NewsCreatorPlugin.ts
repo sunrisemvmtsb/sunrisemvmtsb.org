@@ -3,8 +3,9 @@ import { FORM_ERROR } from 'final-form'
 
 import NewsPost from '../domain/NewsPost'
 import AdjustableImage from '../domain/AdjustableImage'
-
-import ContentService from '../services/ContentService'
+import container from '../infrastructure/Container.client'
+import StorageService from '../services/StorageService.client'
+import NewsService from '../services/NewsService'
 
 type Fields = {
   title: string,
@@ -31,27 +32,17 @@ export default class NewsCreatorPlugin implements AddContentPlugin<Fields> {
     } as Field,
   ]
 
-  private _storagePromise: Promise<LocalForage> | null = null
-  private _getStorage(): Promise<LocalForage> {
-    if (this._storagePromise) return this._storagePromise
-    this._storagePromise = import('localforage')
-      .then(({ default: localForage }) => {
-        const storage = localForage.createInstance({
-          driver: localForage.INDEXEDDB,
-          name: 'sunrisemvmtsb_org',
-          version: 1.0,
-          storeName: 'news',
-          description: 'locally cached news post changes'
-        })
-        this._storagePromise = Promise.resolve(storage)
-        return storage
-      })
-    return this._storagePromise
+  private _storage: StorageService
+  private _news: NewsService
+
+  constructor() {
+    this._storage = container.get(StorageService)
+    this._news = container.get(NewsService)
   }
 
   async onSubmit(form: Fields, cms: TinaCMS) {
     const slugStart = this.slugify(form.title)
-    const summaries = await ContentService.instance.getNewsSummaries()
+    const summaries = await this._news.listNewsSummaries()
     const existingCount = summaries.filter((s) => s.slug.startsWith(slugStart)).length
     const postfix = existingCount === 0 ? '' : `-${existingCount}`
     const slug = slugStart + postfix
@@ -69,8 +60,7 @@ export default class NewsCreatorPlugin implements AddContentPlugin<Fields> {
     }
 
     try {
-      const storage = await this._getStorage()
-      await storage.setItem(`news:${slug}`, post)
+      this._storage.saveNewsPost(post)
       window.location.assign('/news/' + slug)
     } catch (e) {
       return { [FORM_ERROR]: e } as unknown as void // lol cool types guys

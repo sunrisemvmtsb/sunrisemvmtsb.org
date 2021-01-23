@@ -28,18 +28,22 @@ const formatDate = (input: Date) => {
 const FIVE_MINUTES = 1000 * 60 * 5
 
 export default class GoogleCalendar {
-  private static _instance: GoogleCalendar | null = null
-  static get instance() {
-    if (!this._instance) this._instance = new GoogleCalendar()
-    return this._instance
-  }
-
   private _lastFetched: number
   private _cache: Array<CalendarEvent>
+  private readonly _auth: string
+  private readonly _calendar: string
 
-  constructor() {
+  constructor({
+    auth,
+    calendar,
+  }: {
+    auth: string,
+    calendar: string,
+  }) {
     this._lastFetched = 0
     this._cache = []
+    this._auth = auth
+    this._calendar = calendar
   }
 
   async load(): Promise<Array<CalendarEvent>> {
@@ -56,12 +60,12 @@ export default class GoogleCalendar {
   }
 
   private async _fetch(): Promise<Array<CalendarEvent>> {
-    const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent('sunrisemvmtsb@gmail.com')}/events`)
+    const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(this._calendar)}/events`)
     url.searchParams.append('orderBy', 'startTime')
     url.searchParams.append('singleEvents', 'true')
     url.searchParams.append('timeMin', formatDate(new Date()))
     url.searchParams.append('maxResults', '4')
-    url.searchParams.append('key', process.env.GOOGLE_CALENDAR_API_KEY!)
+    url.searchParams.append('key', this._auth)
     const response = await fetch(url.href)
     const data = await response.json()
     return data.items.map((event: any) => ({

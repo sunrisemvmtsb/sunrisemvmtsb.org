@@ -6,26 +6,35 @@ import type {
   MediaList,
 } from '@tinacms/core'
 
-import ContentService from '../services/ContentService'
+import container from '../infrastructure/Container.client'
+import IContentBackend from '../services/IContentBackend'
 
 export default class ContentMediaStorePlugin implements MediaStore {
-  accept = '*/*'
+  public readonly accept: string
+  private readonly _backend: IContentBackend
+  private _previewEndpoint: string | null
 
-  private _constructFilename(directory: string, filename: string) {
-    return directory === '/' || !directory ?
-      filename :
-      directory.slice(1) + '/' + filename
+  constructor() {
+    this.accept = '*/*'
+    this._backend = container.get(IContentBackend)
+    this._previewEndpoint = null
   }
 
   async persist(files: MediaUploadOptions[]): Promise<Media[]> {
     const uploaded: Media[] = []
 
     for (const { file, directory } of files) {
-      const filename = this._constructFilename(directory, file.name)
-      const data = await file.arrayBuffer()
+      if (directory) throw Error('directories not supported')
+
+      const filename = file.name
+      const content = await file.arrayBuffer()
 
       try {
-        const result = await ContentService.instance.saveMedia(filename, data)
+        const result = await this._backend.uploadMedia({
+          filename,
+          content,
+        })
+
         uploaded.push({
           id: filename,
           type: 'file',
@@ -39,10 +48,13 @@ export default class ContentMediaStorePlugin implements MediaStore {
   }
 
   async previewSrc(src: string) {
-    const result = src === '/images/placeholder.svg' ?
-      src :
-      ContentService.instance.getMediaPreviewUrl(src)
-    return result
+    if (src === '/images/placeholder.svg') return '/images/placeholder.svg'
+
+    if (!this._previewEndpoint) {
+      this._previewEndpoint = await this._backend.getMediaPreviewEndpoint()
+    }
+
+    return this._previewEndpoint + src.slice(1)
   }
 
   async list(options?: MediaListOptions): Promise<MediaList> {
@@ -50,27 +62,35 @@ export default class ContentMediaStorePlugin implements MediaStore {
     const limit = options?.limit ?? 50
     const offset = options?.offset ?? 0
 
-    const allEntries = await ContentService.instance.listMedia(directory)
+    if (options?.directory) {
+      return { items: [], offset, limit, totalCount: 0 }
+    }
+
+    const allEntries = await this._backend.listMedia()
     const totalCount = allEntries.length
     const output = {
       items: await Promise.all(allEntries
         .slice(offset, offset + limit)
-        .map(async (media) => ({
-          ...media,
-          previewSrc: media.type === 'file' ? await this.previewSrc(media.id) : undefined,
+        .map(async (filename) => ({
+          type: 'file' as const,
+          id: filename,
+          filename,
+          directory: '',
+          previewSrc: await this.previewSrc('/' + filename),
         }))),
       offset,
       limit,
       totalCount,
       nextOffset: this._nextOffset(offset, limit, totalCount),
     }
+
     return output
   }
 
   async delete(media: Media): Promise<void> {
     if (media.type === 'dir') return
-    console.log(this._constructFilename(media.directory, media.filename))
-    await ContentService.instance.deleteMedia(this._constructFilename(media.directory, media.filename))
+    console.log(media.directory, media.filename)
+    // await ContentService.instance.deleteMedia(this._constructFilename(media.directory, media.filename))
   }
 
   private _nextOffset(offset: number, limit: number, count: number) {

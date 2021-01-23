@@ -4,7 +4,7 @@ import type { InlineBlocksProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
 
 const InlineBlocks = dynamic<InlineBlocksProps>(() => {
-  return import('react-tinacms-inline').then((m) => m.InlineBlocks)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineBlocks)
 })
 
 export type Props = {

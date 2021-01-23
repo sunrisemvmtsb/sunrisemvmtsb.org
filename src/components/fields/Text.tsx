@@ -4,7 +4,7 @@ import Preview from '../../contexts/Preview'
 import dynamic from 'next/dynamic'
 
 const InlineText = dynamic<InlineTextProps>(() => {
-  return import('react-tinacms-inline').then((m) => m.InlineText)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineText)
 })
 
 

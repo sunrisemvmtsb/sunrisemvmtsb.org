@@ -1,14 +1,15 @@
 import type {} from 'styled-components/cssprop'
+import 'reflect-metadata'
 import React from 'react'
-import { AppProps } from 'next/app'
+import { AppProps, AppContext, AppInitialProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import { createGlobalStyle, css } from 'styled-components'
 import Header from '../components/molecules/Header'
 import Footer from '../components/molecules/Footer'
 import Preview from '../contexts/Preview'
-
-import ContentService from '../services/ContentService'
 import SiteConfig from '../domain/SiteConfig'
+import SiteConfigService from '../services/SiteConfigService'
+import { NextApiRequest } from 'next'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -38,11 +39,11 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const CmsWrapper = dynamic(async () => {
-  const { TinaProvider, TinaCMS } = await import('tinacms')
-  const { default: ConfigEditorPlugin } = await import('../plugins/ConfigEditorPlugin')
-  const { default: PageCreatorPlugin } = await import('../plugins/PageCreatorPlugin')
-  const { default: NewsCreatorPlugin } = await import('../plugins/NewsCreatorPlugin')
-  const { default: ContentMediaStorePlugin } = await import('../plugins/ContentMediaStorePlugin')
+  const { TinaProvider, TinaCMS } = await import(/* webpackChunkName: "tina" */ 'tinacms')
+  const { default: ConfigEditorPlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/ConfigEditorPlugin')
+  const { default: PageCreatorPlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/PageCreatorPlugin')
+  const { default: NewsCreatorPlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/NewsCreatorPlugin')
+  const { default: ContentMediaStorePlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/ContentMediaStorePlugin')
 
   return (props: AppProps) => {
     const cms = React.useMemo(() => {
@@ -109,9 +110,25 @@ const Application = (props: AppProps) => {
   )
 }
 
-Application.getInitialProps = async () => {
-  const siteConfig = await ContentService.instance.getSiteConfig()
-  return { pageProps: { siteConfig } }
+// const getContainer = async (req?: NextApiRequest) => {
+//   if (req) {
+//     const { v4: uuid } = await import('uuid')
+//     const { default: inject } = await import('../infrastructure/Container.server')
+//     return inject(uuid())
+//   } else if (typeof window === 'undefined') {
+//     const { default: inject } = await import('../infrastructure/Container.server')
+//     return inject('prerender')
+//   } else {
+//     const { default: container } = await import('../infrastructure/Container.client')
+//     return container
+//   }
+// }
+
+Application.getInitialProps = async ({ ctx }: AppContext): Promise<AppInitialProps> => {
+  // const container = await getContainer()
+  // const siteConfigService = container.get(SiteConfigService)
+  // const siteConfig = await siteConfigService.get()
+  return { pageProps: { siteConfig: SiteConfig.default } }
 }
 
 export default Application

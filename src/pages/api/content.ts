@@ -1,80 +1,74 @@
-import GoogleAuth from '../../infrastructure/GoogleAuth'
-import ContentService from '../../services/ContentService'
+import type { NextApiRequest, NextApiResponse } from 'next/types'
+import GoogleAuth from '../../infrastructure/GoogleAuth.server'
+import inject from '../../infrastructure/Container.server'
+import IContentBackend from '../../services/IContentBackend'
+import { v4 as uuid } from 'uuid'
 
-export default GoogleAuth.protect(async (req, res) => {
-  const method = req.query.method as string
-  if (!method) return res.status(400).end()
+export default (req: NextApiRequest, res: NextApiResponse) => {
+  const container = inject(uuid())
+  const auth = container.get(GoogleAuth)
+  const backend = container.get(IContentBackend)
 
-  if (method === 'getPage' && req.method === 'GET') {
-    const slug = req.query.slug as string | undefined
-    if (typeof slug === 'undefined') return res.status(400).end()
-    const page = await ContentService.instance.getPage(slug)
-    if (page === null) return res.status(404).end()
-    return res.send(page)
-  }
+  return auth.protect(req, res, async (req, res) => {
+    const method = req.query.method as string
+    if (!method) return res.status(400).end()
 
-  if (method === 'savePage' && req.method === 'POST') {
-    const slug = req.query.slug as string | undefined
-    if (typeof slug === 'undefined') return res.status(400).end()
-    await ContentService.instance.savePage(req.body)
-    return res.status(200).end()
-  }
+    if (method === 'getTextFile' && req.method === 'GET') {
+      const filename = req.query.filename as string | undefined
+      const bucket = req.query.bucket as string | undefined
+      const exclude = typeof req.query.exclude === 'undefined' ?
+        [] :
+        typeof req.query.exclude === 'string' ?
+          [req.query.exclude] :
+          req.query.exclude
+      if (typeof filename === 'undefined' || typeof bucket === 'undefined') return res.status(400).end()
+      const content = await backend.getTextFile({ bucket, filename, exclude })
+      if (content === null) return res.status(404).end()
+      return res.send(content)
+    }
 
-  if (method === 'getPagePaths' && req.method === 'GET') {
-    const data = await ContentService.instance.getPagePaths()
-    return res.send(data)
-  }
+    if (method === 'saveTextFile' && req.method === 'POST') {
+      await backend.saveTextFile(req.body)
+      return res.status(200).end()
+    }
 
-  if (method === 'movePage' && req.method === 'PUT') {
-    const { page, slug } = req.body
-    if (!page || !slug) return res.status(400).end()
-    await ContentService.instance.movePage(page, slug)
-    return res.status(200).end()
-  }
+    if (method === 'renameAndSaveTextFile' && req.method === 'PUT') {
+      await backend.renameAndSaveTextFile(req.body)
+      return res.status(200).end()
+    }
 
-  if (method === 'getNewsSummaries' && req.method === 'GET') {
-    const summaries = await ContentService.instance.getNewsSummaries()
-    return res.send(summaries)
-  }
+    if (method === 'listTextBucket' && req.method === 'GET') {
+      const bucket = req.query.bucket as string | undefined
+      if (typeof bucket === 'undefined') return res.status(400).end()
+      const data = await backend.listTextBucket({ bucket })
+      return res.send(data)
+    }
 
-  if (method === 'getNewsPost' && req.method === 'GET') {
-    const slug = req.query.slug as string | undefined
-    if (typeof slug === 'undefined') return res.status(400).end()
-    const page = await ContentService.instance.getNewsPost(slug)
-    if (page === null) return res.status(404).end()
-    return res.send(page)
-  }
+    if (method === 'deleteTextFile' && req.method === 'DELETE') {
+      const filename = req.query.filename as string | undefined
+      const bucket = req.query.bucket as string | undefined
+      if (typeof filename === 'undefined' || typeof bucket === 'undefined') return res.status(400).end()
+      await backend.deleteTextFile({ bucket, filename })
+      return res.status(200).end()
+    }
 
-  if (method === 'saveNewsPost' && req.method === 'POST') {
-    const slug = req.query.slug as string | undefined
-    if (typeof slug === 'undefined') return res.status(400).end()
-    await ContentService.instance.saveNewsPost(req.body)
-    return res.status(200).end()
-  }
+    if (method === 'listMedia' && req.method === 'GET') {
+      const data = await backend.listMedia()
+      return res.send(data)
+    }
 
-  if (method === 'getSiteConfig' && req.method === 'GET') {
-    const config = await ContentService.instance.getSiteConfig()
-    return res.send(config)
-  }
+    if (method === 'deleteMedia' && req.method === 'DELETE') {
+      const filename = req.query.filename as string | undefined
+      if (typeof filename === 'undefined') return res.status(400).end()
+      await backend.deleteMedia({ filename })
+      return res.status(200).end()
+    }
 
-  if (method === 'saveSiteConfig' && req.method === 'PUT') {
-    await ContentService.instance.saveSiteConfig(req.body)
-    return res.status(200).end()
-  }
+    if (method === 'getMediaPreviewEndpoint' && req.method === 'GET') {
+      const url = await backend.getMediaPreviewEndpoint()
+      return res.send({ url })
+    }
 
-  if (method === 'deleteMedia' && req.method === 'DELETE') {
-    const filename = req.query.filename as string | undefined
-    if (typeof filename !== 'string') return res.status(400).end()
-    await ContentService.instance.deleteMedia(filename)
-    return res.status(200).end()
-  }
-
-  if (method === 'listMedia' && req.method === 'GET') {
-    const directory = req.query.directory as string | undefined
-    if (typeof directory !== 'string') return res.status(400).end()
-    const data = await ContentService.instance.listMedia(directory)
-    return res.send(data)
-  }
-
-  return res.status(404).end()
-})
+    return res.status(404).end()
+  })
+}

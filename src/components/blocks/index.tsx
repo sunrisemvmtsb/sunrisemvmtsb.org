@@ -10,8 +10,9 @@ import type { Props as TwoColumnTextProps } from './TwoColumnText'
 import type { Props as TeamExplorerProps } from './TeamExplorer'
 import CallToActionData from '../../domain/blocks/CallToAction'
 
+const CallToActionComponent = dynamic<CallToActionProps>(() => import(/* webpackChunkName: "blocks" */ './CallToAction'))
 const CallToAction = {
-  Component: dynamic<CallToActionProps>(() => import('./CallToAction')) as any,
+  Component: CallToActionComponent as any,
   template: {
     label: 'Call To Action',
     defaultItem: CallToActionData.default,
@@ -19,8 +20,9 @@ const CallToAction = {
   },
 }
 
+const EventsListComponent = dynamic<EventsListProps>(() => import(/* webpackChunkName: "blocks" */ './EventsList'))
 const EventsList = {
-  Component: dynamic<EventsListProps>(() => import('./EventsList')) as any,
+  Component: EventsListComponent as any,
   template:  {
     label: 'Events List',
     defaultItem: {},
@@ -28,8 +30,9 @@ const EventsList = {
   }
 }
 
+const NewsHeadlinesComponent = dynamic<NewsHeadlinesProps>(() => import(/* webpackChunkName: "blocks" */ './NewsHeadlines'))
 const NewsHeadlines = {
-  Component: dynamic<NewsHeadlinesProps>(() => import('./NewsHeadlines')) as any,
+  Component: NewsHeadlinesComponent as any,
   template:  {
     label: 'News Headlines',
     defaultItem: {},
@@ -37,8 +40,9 @@ const NewsHeadlines = {
   }
 }
 
+const PrimaryHeroComponent = dynamic<PrimaryHeroProps>(() => import(/* webpackChunkName: "blocks" */ './PrimaryHero'))
 const PrimaryHero = {
-  Component: dynamic<PrimaryHeroProps>(() => import('./PrimaryHero')) as any,
+  Component: PrimaryHeroComponent as any,
   template:  {
     label: 'Primary Hero',
     fields: [],
@@ -54,8 +58,9 @@ const PrimaryHero = {
   }
 }
 
+const HeadlineHeroComponent = dynamic<HeadlineHeroProps>(() => import(/* webpackChunkName: "blocks" */ './HeadlineHero'))
 const HeadlineHero = {
-  Component: dynamic<HeadlineHeroProps>(() => import('./HeadlineHero')) as any,
+  Component: HeadlineHeroComponent as any,
   template:  {
     label: 'Headline Hero',
     fields: [],
@@ -66,8 +71,9 @@ const HeadlineHero = {
   }
 }
 
+const OneColumnTextComponent = dynamic<OneColumnTextProps>(() => import(/* webpackChunkName: "blocks" */ './OneColumnText'))
 const OneColumnText = {
-  Component: dynamic<OneColumnTextProps>(() => import('./OneColumnText')) as any,
+  Component: OneColumnTextComponent as any,
   template: {
     label: 'One Column Text',
     defaultItem: { content: '' },
@@ -75,8 +81,9 @@ const OneColumnText = {
   }
 }
 
+const TwoColumnTextComponent = dynamic<TwoColumnTextProps>(() => import(/* webpackChunkName: "blocks" */ './TwoColumnText'))
 const TwoColumnText = {
-  Component: dynamic<TwoColumnTextProps>(() => import('./TwoColumnText')) as any,
+  Component: TwoColumnTextComponent as any,
   template: {
     label: 'Two Column Text',
     defaultItem: {
@@ -88,8 +95,9 @@ const TwoColumnText = {
 }
 
 
+const TeamExplorerComponent = dynamic<TeamExplorerProps>(() => import(/* webpackChunkName: "blocks" */ './TeamExplorer'))
 const TeamExplorer = {
-  Component: dynamic<TeamExplorerProps>(() => import('./TeamExplorer')) as any,
+  Component: TeamExplorerComponent as any,
   template: {
     label: 'Team Explorer',
     defaultItem: { teams: [] },

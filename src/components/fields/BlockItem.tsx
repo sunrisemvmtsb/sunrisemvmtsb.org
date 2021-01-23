@@ -4,7 +4,7 @@ import Preview from '../../contexts/Preview'
 import dynamic from 'next/dynamic'
 
 const BlocksControls = dynamic<BlocksControlsProps>(() => {
-  return import('react-tinacms-inline').then((m) => m.BlocksControls)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.BlocksControls)
 })
 
 

@@ -4,7 +4,7 @@ import type { InlineImageProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
 
 const InlineImage = dynamic<InlineImageProps>(() => {
-  return import('react-tinacms-inline').then((m) => m.InlineImage)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineImage)
 })
 
 export type Props = {

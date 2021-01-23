@@ -14,25 +14,24 @@ export type InstagramPost = {
 const FIVE_MINUTES = 1000 * 60 * 5
 
 export default class Instagram {
-  private static _instance: Instagram | null = null
-  static get instance() {
-    if (!this._instance) this._instance = new Instagram()
-    return this._instance
-  }
-
   private _lastFetched: number
   private _cache: Array<InstagramPost>
+  private _username: string
 
-  constructor() {
+  constructor({
+    username,
+  }: {
+    username: string,
+  }) {
     this._lastFetched = 0
     this._cache = []
+    this._username = username
   }
 
   async load(): Promise<Array<InstagramPost>> {
     const now = Date.now()
     if (now - this._lastFetched > FIVE_MINUTES) {
       try {
-        console.info('Reloading Instagram feed')
         const data = process.env.NODE_ENV === 'development' ? [] : await this._fetch()
         this._lastFetched = now
         this._cache = data
@@ -46,7 +45,7 @@ export default class Instagram {
 
 
   private async _fetch(): Promise<Array<InstagramPost>> {
-    const response = await fetch('https://www.instagram.com/sunrisemvmtsb/')
+    const response = await fetch(`https://www.instagram.com/${this._username}/`)
     const html = await response.text()
     const firstHalf = html.split('window._sharedData = ')[1]
     const contents = firstHalf.split(';</script>')[0]

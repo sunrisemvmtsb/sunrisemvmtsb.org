@@ -1,7 +1,8 @@
 import Page from '../domain/Page'
 import type { TinaCMS, Field, AddContentPlugin } from 'tinacms'
-import ContentService from 'src/services/ContentService'
-import StorageService from '../services/StorageService'
+import StorageService from '../services/StorageService.client'
+import container from '../infrastructure/Container.client'
+import PagesService from '../services/PagesService'
 
 type Fields = {
   title: string,
@@ -28,6 +29,14 @@ export default class PageCreatorPlugin implements AddContentPlugin<Fields> {
     } as Field,
   ]
 
+  private _storage: StorageService
+  private _pages: PagesService
+
+  constructor() {
+    this._storage = container.get(StorageService)
+    this._pages = container.get(PagesService)
+  }
+
   async onSubmit(form: Fields, cms: TinaCMS) {
     const page = {
       ...Page.default(form.title),
@@ -35,30 +44,16 @@ export default class PageCreatorPlugin implements AddContentPlugin<Fields> {
     }
 
     try {
-      const existing = await ContentService.instance.getPagePaths()
-      if (existing.includes(page.slug)) {
+      const existing = await this._pages.listSlugs()
+      if (page.slug === '' || existing.includes(page.slug)) {
         cms.alerts.error(`A page with path ${Page.href(page)} already exists.`)
         return
       }
 
-      await StorageService.instance.savePage(page)
+      await this._storage.savePage(page)
       window.location.assign(Page.href(page))
     } catch (e) {
       cms.alerts.error(`Page creation failed: ${e.message}`)
     }
-  }
-
-  slugify(title: string): string {
-    return (
-      title
-        .trim()
-        .toLowerCase()
-        //replace invalid chars
-        .replace(/[^a-z0-9 -]/g, '')
-        // Collapse whitespace and replace by -
-        .replace(/\s+/g, '-')
-        // Collapse dashes
-        .replace(/-+/g, '-')
-    )
   }
 }

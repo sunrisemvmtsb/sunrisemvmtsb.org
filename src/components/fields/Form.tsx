@@ -4,7 +4,7 @@ import type { InlineFormProps } from 'react-tinacms-inline'
 import Preview from '../../contexts/Preview'
 
 const InlineForm = dynamic<InlineFormProps>(() => {
-  return import('react-tinacms-inline').then((m) => m.InlineForm)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineForm)
 })
 
 export type Props = InlineFormProps

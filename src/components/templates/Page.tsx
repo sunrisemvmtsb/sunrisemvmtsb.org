@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
-import GoogleCalendar, { CalendarEvent } from '../../infrastructure/GoogleCalendar'
 import dynamic from 'next/dynamic'
+import type { CalendarEvent } from '../../infrastructure/GoogleCalendar.server'
 
 import Blocks from '../fields/Blocks'
 import blocks from '../blocks'
@@ -11,9 +11,11 @@ import NewsSummary from '../../domain/NewsSummary'
 import Page from '../../domain/Page'
 import SocialPost from '../../domain/SocialPost'
 
-import ContentService from '../../services/ContentService'
-import SocialService from '../../services/SocialService'
+import ISocialService from '../../services/ISocialService'
 import Preview from '../../contexts/Preview'
+import SiteConfigService from '../../services/SiteConfigService'
+import PagesService from '../../services/PagesService'
+import NewsService from '../../services/NewsService'
 
 export type Props = {
   slug: string,
@@ -47,8 +49,8 @@ const Template = ({
 }
 
 const Editor = dynamic(async () => {
-  const { default: PageEditorPlugin } = await import('../../plugins/PageEditorPlugin')
-  const { InlineForm } = await import('react-tinacms-inline')
+  const { default: PageEditorPlugin } = await import(/* webpackChunkName: "tina" */ '../../plugins/PageEditorPlugin')
+  const { InlineForm } = await import(/* webpackChunkName: "tina" */ 'react-tinacms-inline')
   return (props: Props) => {
     const [data, form] = PageEditorPlugin.use(props.slug, props.page, 'Home Page')
 
@@ -63,7 +65,10 @@ const Editor = dynamic(async () => {
 export const Component = Preview.component(Editor, Template)
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = await ContentService.instance.getPagePaths()
+  const { default: inject } = await import('../../infrastructure/Container.server')
+  const container = inject('prerender')
+  const pagesService = container.get(PagesService)
+  const paths = await pagesService.listSlugs()
 
   return {
     paths: paths.map((slug) => ({
@@ -78,7 +83,17 @@ export const getStaticProps: GetStaticProps = async ({
   params,
 }) => {
   const slug = params?.slug as string ?? ''
-  const siteConfig = await ContentService.instance.getSiteConfig()
+  const { default: inject } = await import('../../infrastructure/Container.server')
+  const { default: GoogleCalendar } = await import('../../infrastructure/GoogleCalendar.server')
+
+  const container = inject('prerender')
+  const googleCalendar = container.get(GoogleCalendar)
+  const socialService = container.get(ISocialService)
+  const siteConfigService = container.get(SiteConfigService)
+  const pagesService = container.get(PagesService)
+  const newsService = container.get(NewsService)
+
+  const siteConfig = await siteConfigService.get()
 
   if (!preview && siteConfig.infrastructure.redirects.pages[slug]) {
     return {
@@ -89,15 +104,16 @@ export const getStaticProps: GetStaticProps = async ({
     }
   }
 
-  const events = await GoogleCalendar.instance.load()
-  const posts = await SocialService.instance.getPosts()
-  const page = await ContentService.instance.getPage(slug)
-  const news = await ContentService.instance.getNewsSummaries()
-
+  const page = await pagesService.getPage(slug)
+  
   if (!preview && page === null) {
     return { notFound: true }
   }
 
+  const events = await googleCalendar.load()
+  const posts = await socialService.getPosts()
+  const news = await newsService.listNewsSummaries()
+  
   return {
     props: { siteConfig, slug, posts, events, page, news, preview: !!preview },
     revalidate: 2,

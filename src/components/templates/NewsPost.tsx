@@ -5,12 +5,13 @@ import dynamic from 'next/dynamic'
 
 import Typography from '../Typography'
 import NewsPost from '../../domain/NewsPost'
-import ContentService from '../../services/ContentService'
 
 import Markdown from '../fields/Markdown'
 import AdjustableImage from '../fields/AdjustableImage'
 import PostSummary from '../molecules/PostSummary'
 import Preview from '../../contexts/Preview'
+import SiteConfigService from '../../services/SiteConfigService'
+import NewsService from '../../services/NewsService'
 
 export type Props = {
   post: NewsPost | null,
@@ -145,8 +146,8 @@ export const Template = (props: Props) => {
 }
 
 const Editor = dynamic(async () => {
-  const { default: NewsEditorPlugin } = await import('../../plugins/NewsEditorPlugin')
-  const { InlineForm } = await import('react-tinacms-inline')
+  const { default: NewsEditorPlugin } = await import(/* webpackChunkName: "tina" */ '../../plugins/NewsEditorPlugin')
+  const { InlineForm } = await import(/* webpackChunkName: "tina" */ 'react-tinacms-inline')
   return (props: Props) => {
     const [data, form] = NewsEditorPlugin.use(props.slug, props.post, 'News Article')
 
@@ -161,7 +162,10 @@ const Editor = dynamic(async () => {
 export const Component = Preview.component(Editor, Template)
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const summaries = await ContentService.instance.getNewsSummaries()
+  const { default: inject } = await import('../../infrastructure/Container.server')
+  const container = inject('prerender')
+  const newsService = container.get(NewsService)
+  const summaries = await newsService.listNewsSummaries()
   return {
     paths: summaries.map((s) => ({
       params: { slug: s.slug },
@@ -174,11 +178,16 @@ export const getStaticProps: GetStaticProps = async ({
   preview,
   params,
 }) => {
-  const siteConfig = await ContentService.instance.getSiteConfig()
+  const { default: inject } = await import('../../infrastructure/Container.server')
+  const container = inject('prerender')
+  const siteConfigService = container.get(SiteConfigService)
+  const newsService = container.get(NewsService)
+
+  const siteConfig = await siteConfigService.get()
   const slug = params?.slug
   if (!slug || Array.isArray(slug)) throw Error('No news post can be accessed without a slug in the URL. If this error happens something is really wrong.')
 
-  const post = await ContentService.instance.getNewsPost(slug)
+  const post = await newsService.getNewsPost(slug)
   return {
     props: { siteConfig, slug, post, preview: !!preview },
     revalidate: 2,

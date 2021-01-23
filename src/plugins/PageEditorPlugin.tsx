@@ -3,12 +3,14 @@ import { useForm, useCMS, Form, usePlugins, Modal, PopupModal, ModalHeader, Moda
 import { LoadingDots } from '@tinacms/react-forms'
 import { Button } from '@tinacms/styles'
 import { FORM_ERROR } from 'final-form'
-import ContentService from '../services/ContentService'
-import StorageService from '../services/StorageService'
+import container from '../infrastructure/Container.client'
+import StorageService from '../services/StorageService.client'
 import Page from '../domain/Page'
 import { useRouter } from 'next/router'
 import RenamePage from '../usecases/RenamePage'
 import SiteConfig from 'src/domain/SiteConfig'
+import PagesService from '../services/PagesService'
+import SiteConfigService from '../services/SiteConfigService'
 
 const RenameAction = ({
   page,
@@ -106,25 +108,28 @@ export default class PageEditorPlugin {
   }
 
   async latest(slug: string): Promise<Page | null> {
+    const pagesService = container.get(PagesService)
+    const storageService = container.get(StorageService)
+
     if (slug === '') {
-      return ContentService.instance.getPage(slug)  
+      return pagesService.getPage(slug)  
     }
     
-    const local = await StorageService.instance.getPage(slug)
+    const local = await storageService.getPage(slug)
     if (local) return { ...local, slug }
-    return ContentService.instance.getPage(slug)
+    return pagesService.getPage(slug)
   }
 
   async save(page: Page): Promise<void> {
-    await ContentService.instance.savePage(page)
-    await StorageService.instance.removePage(page)
-    const config = await ContentService.instance.getSiteConfig()
-    delete config.infrastructure.redirects.pages[page.slug]
-    await ContentService.instance.saveSiteConfig(config)
-  }
+    const pagesService = container.get(PagesService)
+    const storageService = container.get(StorageService)
+    const siteConfigService = container.get(SiteConfigService)
 
-  async persist(page: Page): Promise<void> {
-    StorageService.instance.savePage(page)
+    await pagesService.savePage(page)
+    await storageService.removePage(page)
+    const config = await siteConfigService.get()
+    delete config.infrastructure.redirects.pages[page.slug]
+    await siteConfigService.save(config)
   }
 
   static use(slug: string, page: Page | null, label: string): [Page, Form] {

@@ -1,20 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next/types'
-import GoogleAuth from '../../../infrastructure/GoogleAuth'
+import { v4 as uuid } from 'uuid'
+import GoogleAuth from '../../../infrastructure/GoogleAuth.server'
 import base64 from 'base-64'
 import cookie from 'cookie'
-import Crypto from '../../../infrastructure/Crypto'
+import Crypto from '../../../infrastructure/Crypto.server'
+import inject from '../../../infrastructure/Container.server'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') return res.status(404).end()
 
-  const cookies = req.headers.cookie
-  if (typeof cookies !== 'string') res.status(401).end()
+  const container = inject(uuid())
+  const crypto = container.get(Crypto)
+  const auth = container.get(GoogleAuth)
 
-  const parsed = cookie.parse(cookies!, {
-    decode: Crypto.decrypt,
-  })
+  const encryptedAuthState = req.cookies.authstate
+  if (!encryptedAuthState) return res.status(401).end()
 
-  const state = parsed.authstate
+  const state = crypto.decrypt(encryptedAuthState)
 
   if (state !== req.query.state) return res.status(401).end()
 
@@ -27,10 +29,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }))
 
   try {
-    const authToken = await GoogleAuth.instance.exchangeCode(req.query.code as string)
+    const authToken = await auth.exchangeCode(req.query.code as string)
     const decodedState = JSON.parse(base64.decode(state))
     res
-      .setPreviewData({ authToken: Crypto.encrypt(authToken) })
+      .setPreviewData({ authToken: crypto.encrypt(authToken) })
       .redirect(decodedState.redirect)
   } catch (error) {
     console.error(error)

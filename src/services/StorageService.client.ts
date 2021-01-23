@@ -1,17 +1,7 @@
-import type { Media } from 'tinacms'
-import type { Octokit } from '@octokit/rest'
 import Page from '../domain/Page'
-import SiteConfig from '../domain/SiteConfig'
-import NewsSummary from '../domain/NewsSummary'
 import NewsPost from '../domain/NewsPost'
 
 export default class StorageService {
-  private static _instance: StorageService | null = null
-  static get instance(): StorageService {
-    if (this._instance === null) this._instance = new StorageService()
-    return this._instance
-  }
-
   private _storagePromise: Promise<LocalForage> | null = null
   private _getStorage(): Promise<LocalForage> {
     if (this._storagePromise) return this._storagePromise
@@ -44,5 +34,21 @@ export default class StorageService {
   async removePage(page: Page): Promise<void> {
     const storage = await this._getStorage()
     await storage.removeItem(`pages:${page.slug}`)
+  }
+
+  async saveNewsPost(post: NewsPost): Promise<void> {
+    const storage = await this._getStorage()
+    await storage.setItem(`news:${post.slug}`, post)
+  }
+
+  async getNewsPost(slug: string): Promise<NewsPost | null> {
+    const storage = await this._getStorage()
+    const post = await storage.getItem<NewsPost>(`news:${slug}`)
+    return post ?? null
+  }
+
+  async removeNewsPost(post: NewsPost): Promise<void> {
+    const storage = await this._getStorage()
+    await storage.removeItem(`news:${post.slug}`)
   }
 }

@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import Preview from 'src/contexts/Preview'
 
 const InlineWysiwyg = dynamic<InlineWysiwygFieldProps>(() => {
-  return import('react-tinacms-editor').then((m) => m.InlineWysiwyg)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-editor').then((m) => m.InlineWysiwyg)
 }, { ssr: false })
 
 export type Props = {

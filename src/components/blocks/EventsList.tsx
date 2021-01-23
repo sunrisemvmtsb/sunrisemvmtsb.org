@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from 'styled-components'
 import Typography from '../Typography'
-import { CalendarEvent } from '../../infrastructure/GoogleCalendar'
+import type { CalendarEvent } from '../../infrastructure/GoogleCalendar.server'
 import Icon from '../atoms/Icon'
 import BlockItem from '../fields/BlockItem'
 import { Temporal } from 'proposal-temporal'

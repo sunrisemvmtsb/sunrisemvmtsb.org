@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import Preview from '../../contexts/Preview'
 
 const InlineGroup = dynamic<any>(() => {
-  return import('react-tinacms-inline').then((m) => m.InlineGroup)
+  return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineGroup)
 })
 
 
