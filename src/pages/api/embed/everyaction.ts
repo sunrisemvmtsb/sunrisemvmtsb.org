@@ -27,26 +27,29 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       console.timeStamp = () => {}
       console.timeEnd = () => {}
       const getHeight = () => {
-        return document.querySelector('.ngp-form').getBoundingClientRect().height
+        return document.documentElement.offsetHeight
       }
-      window.nvtag_callbacks = window.nvtag_callbacks || {}
-      const nvtag_callbacks = window.nvtag_callbacks
-      nvtag_callbacks.postRender = nvtag_callbacks.postRender || []
-      nvtag_callbacks.postRender.push(() => {
-        const height = getHeight()
-        console.debug('[postrender]', height)
-        window.postMessage(height)
+      window.addEventListener('load', () => {
+        const observer = new MutationObserver(() => {
+          window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
+        })
+        const div = document.querySelector('div.ngp-form')
+        if (!div) return
+        observer.observe(div, {
+          subtree: true,
+          childList: true,
+          attributes: true,
+          characterData: true,
+        })
+        window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
       })
       window.addEventListener('resize', () => {
-        const height = getHeight()
-        console.debug('[resize]', height)
-        window.postMessage(height)
+        window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
       })
       window.addEventListener('message', (event) => {
-        if (event.data !== 'reflow') return
+        if (event.data.type !== 'request') return
         const height = getHeight()
-        console.debug('[reflow]', height)
-        window.postMessage(height)
+        window.parent.postMessage({ type: 'EveryActionForm:respond', id: '${req.query.id}', height: height }, window.location.origin)
       })
     </script>
     <script type="text/javascript" src="https://d3rse9xjbp8270.cloudfront.net/at.js" crossOrigin="anonymous" async></script>
@@ -168,6 +171,9 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 
       section.at-inner {
         background: none !important;
+      }
+      .at small.info {
+        margin: 0 !important;
       }
     </style>
   </head>

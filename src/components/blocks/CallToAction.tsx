@@ -41,6 +41,7 @@ const Component = ({
             grid-template-columns: auto 1fr;
             grid-row-gap: 32px;
             grid-column-gap: 40px;
+            align-content: start;
           `}>
             <div css={css`
               grid-row: 1 / span 1;
@@ -99,10 +100,9 @@ const Component = ({
                 border-width: 5px;
                 padding: 0 16px;
                 padding-bottom: 24px;
-                transform: translateY(-40%);
-                z-index: calc(var(--tina-z-index-1) - 1);
-                position: absolute;
+                position: relative;
                 width: 100%;
+                margin-top: -160px;
               `}>
                 <Group
                   name=""
