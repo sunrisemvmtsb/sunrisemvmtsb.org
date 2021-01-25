@@ -33,6 +33,9 @@ const Page = {
   slugify: (page: Page): string => {
     return slugifyTitle(page.title)
   },
+  isSlugValid: (slug: string): boolean => {
+    return !/[^a-z0-9-]/.test(slug) && !slug.includes('--') && !slug.startsWith('-') && !slug.endsWith('-')
+  },
   default: (title: string): Page => ({
     slug: slugifyTitle(title),
     title: title,

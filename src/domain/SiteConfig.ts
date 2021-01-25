@@ -13,6 +13,7 @@ type SiteConfig = {
   infrastructure: {
     redirects: {
       pages: Record<string, string>,
+      news: Record<string, string>,
     }
   }
 }
@@ -25,7 +26,8 @@ const SiteConfig = {
     },
     infrastructure: {
       redirects: {
-        pages: {}
+        pages: {},
+        news: {},
       },
     }
   },
@@ -38,6 +40,22 @@ const SiteConfig = {
           ...config.infrastructure.redirects,
           pages: Object.fromEntries(Object
             .entries({ ...config.infrastructure.redirects.pages, [from]: to })
+            .map(([someFrom, someTo]) => someTo === from ? [someFrom, to] : [someFrom, someTo])
+            .filter(([someFrom, someTo]) => someFrom !== someTo)
+          )
+        }
+      }
+    }
+  },
+  addNewsRedirect: (from: string, to: string, config: SiteConfig): SiteConfig => {
+    return {
+      ...config,
+      infrastructure: {
+        ...config.infrastructure,
+        redirects: {
+          ...config.infrastructure.redirects,
+          news: Object.fromEntries(Object
+            .entries({ ...config.infrastructure.redirects.news, [from]: to })
             .map(([someFrom, someTo]) => someTo === from ? [someFrom, to] : [someFrom, someTo])
             .filter(([someFrom, someTo]) => someFrom !== someTo)
           )

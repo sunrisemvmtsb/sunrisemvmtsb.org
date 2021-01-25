@@ -53,7 +53,7 @@ export default class NewsCreatorPlugin implements AddContentPlugin<Fields> {
       author: form.author,
       content: '',
       image: AdjustableImage.default,
-      published: new Date().toISOString(),
+      published: null,
       subtitle: '',
       tags: [],
       url: '/news/' + slug

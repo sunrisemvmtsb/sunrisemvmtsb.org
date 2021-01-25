@@ -6,7 +6,7 @@ type NewsPost = {
   title: string,
   subtitle: string,
   author: string,
-  published: string,
+  published: string | null,
   url: string,
   content: string,
   slug: string,
@@ -19,14 +19,14 @@ const NewsPost = {
     title: '',
     subtitle: '',
     author: '',
-    published: new Date().toISOString(),
+    published: null,
     url: '/news/' + slug,
     content: '',
     slug,
   } as NewsPost),
   path: (post: NewsPost): string => {
     return `content/news/${post.slug}.json`
-  }
+  },
 }
 
 export default NewsPost

@@ -103,7 +103,7 @@ export const Template = (props: Props) => {
               font-family: Source Serif Pro;
             `}>
               {post.author}{' • '}
-              {Temporal.PlainDate.from(post.published).toLocaleString('default', {
+              {Temporal.PlainDate.from(post.published ?? new Date().toISOString()).toLocaleString('default', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
@@ -188,6 +188,11 @@ export const getStaticProps: GetStaticProps = async ({
   if (!slug || Array.isArray(slug)) throw Error('No news post can be accessed without a slug in the URL. If this error happens something is really wrong.')
 
   const post = await newsService.getNewsPost(slug)
+
+  if (!post?.published && !preview) {
+    return { notFound: true }
+  }
+
   return {
     props: { siteConfig, slug, post, preview: !!preview },
     revalidate: 2,

@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next/types'
 import type { ContainerInstance } from 'typedi'
-import { google } from 'googleapis'
+import { google, Auth } from 'googleapis'
 import Crypto from './Crypto.server'
-
+import cookie from 'cookie'
 
 export default class GoogleAuth {
   private readonly _crypto: Crypto
@@ -35,18 +35,27 @@ export default class GoogleAuth {
     this._clientSecret = clientSecret
   }
 
-  private _connection(): any {
+  private _conn: Auth.OAuth2Client | null = null
+  private _connection(): Auth.OAuth2Client {
+    if (this._conn) return this._conn
     const baseUrl = this._secure ? 'https://' + this._hostname : 'http://' + this._hostname
-    return new google.auth.OAuth2(
+    this._conn = new google.auth.OAuth2(
       this._clientId,
       this._clientSecret,
       `${baseUrl}/api/auth/callback`,
     )
+    return this._conn
   }
 
   async protect(req: NextApiRequest, res: NextApiResponse, handler: NextApiHandler): Promise<void> {
     const data = req.previewData
     if (!data) return res.status(401).end()
+
+    const conn = this._connection()
+    conn.on('tokens', (tokens) => {
+      if (!tokens.access_token) return
+      res.setPreviewData({ authToken: this._crypto.encrypt(tokens.access_token) })
+    })
 
     try {
       const authToken = this._crypto.decrypt(data.authToken)
@@ -66,7 +75,8 @@ export default class GoogleAuth {
       response_type: 'code',
       state: state,
       scope: 'https://www.googleapis.com/auth/userinfo.email',
-      login_hint: this._allowed[0]
+      login_hint: this._allowed[0],
+      access_type: 'offline',
     })
   }
 
