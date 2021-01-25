@@ -149,8 +149,9 @@ const Editor = dynamic(async () => {
   const { default: NewsEditorPlugin } = await import(/* webpackChunkName: "tina" */ '../../plugins/NewsEditorPlugin')
   const { InlineForm } = await import(/* webpackChunkName: "tina" */ 'react-tinacms-inline')
   return (props: Props) => {
+    console.log(props.post)
     const [data, form] = NewsEditorPlugin.use(props.slug, props.post, 'News Article')
-
+    console.log(data)
     return (
       <InlineForm form={form}>
         <Template {...props} post={data} />

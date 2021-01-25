@@ -16,6 +16,7 @@ export default class ApiContentBackend implements IContentBackend {
     url.searchParams.append('filename', filename)
     exclude.forEach((key) => url.searchParams.append('exclude', key))
     const response = await fetch(url.href)
+    debugger
     if (response.status === 404) return null
     const data = await response.json()
     return data

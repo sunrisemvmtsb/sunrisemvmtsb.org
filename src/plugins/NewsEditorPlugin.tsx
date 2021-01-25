@@ -120,6 +120,6 @@ export default class NewsEditorPlugin {
       plugin,
     ])
 
-    return [Object.assign({}, post ?? {}, values), form]
+    return [Object.assign({}, post ?? NewsPost.default(slug), values), form]
   }
 }

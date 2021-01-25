@@ -45,6 +45,7 @@ export default class NewsService {
       exclude: [],
     })
 
+    if (!file) return null
     return { ...file as NewsPost, slug }
   }
 
