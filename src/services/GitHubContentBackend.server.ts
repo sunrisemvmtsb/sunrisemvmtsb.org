@@ -213,6 +213,6 @@ export default class GitHubContentBackend implements IContentBackend {
   }
 
   async getMediaPreviewEndpoint(): Promise<string> {
-    return this._github.getDownloadUrl({ path: '/' })
+    return this._github.getDownloadUrl({ path: '' })
   }
 }
