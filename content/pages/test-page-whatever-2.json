@@ -1,6 +1,6 @@
 {
-  "slug": "test-page-whatever",
-  "title": "Test Page Whatever",
+  "slug": "test-page-whatever-2",
+  "title": "Test Page",
   "blocks": [
     {
       "_template": "HeadlineHero",
