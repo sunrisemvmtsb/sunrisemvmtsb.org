@@ -32,7 +32,8 @@
     "redirects": {
       "pages": {
         "test-page-2": "test-page-4",
-        "hub-structure": "hub-structure-2"
+        "hub-structure": "hub-structure-2",
+        "test-page-whatever": "test-page-whatever-2"
       },
       "news": {}
     }
