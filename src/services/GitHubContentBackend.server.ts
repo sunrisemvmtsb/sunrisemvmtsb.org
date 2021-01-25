@@ -40,12 +40,17 @@ export default class GitHubContentBackend implements IContentBackend {
     const path = `content/${bucket}/${filename}`
 
     const cached = this._textCache.get(path)
-    if (cached) return cached.toString('utf-8')
+    if (cached) {
+      const data = JSON.parse(cached.toString('utf-8'))
+      exclude.forEach((key) => delete data[key])
+      return data
+    }
 
     const buffer = await this._github.getFileContent({ path })
     if (buffer === null) return null
 
     this._textCache.put(path, buffer)
+
     const data = JSON.parse(buffer.toString('utf-8'))
     exclude.forEach((key) => delete data[key])
     return data
