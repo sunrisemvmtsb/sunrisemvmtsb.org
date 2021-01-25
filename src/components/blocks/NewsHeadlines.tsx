@@ -22,7 +22,12 @@ const Component = ({
   const sorted = React.useMemo(() => {
     return news
       .slice()
-      .sort((l, r) => Temporal.Instant.compare(r.published, l.published))
+      .sort((l, r) => {
+        return Temporal.Instant.compare(
+          r.published ?? Temporal.Instant.fromEpochSeconds(0),
+          l.published ?? Temporal.Instant.fromEpochSeconds(0),
+        )
+      })
   }, [news])
 
   const [first, rest] = React.useMemo(() => {

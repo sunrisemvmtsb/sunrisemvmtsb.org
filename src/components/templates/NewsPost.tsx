@@ -103,7 +103,7 @@ export const Template = (props: Props) => {
               font-family: Source Serif Pro;
             `}>
               {post.author}{' • '}
-              {Temporal.PlainDate.from(post.published).toLocaleString('default', {
+              {Temporal.PlainDate.from(post.published ?? new Date().toISOString()).toLocaleString('default', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
