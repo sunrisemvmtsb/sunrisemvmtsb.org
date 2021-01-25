@@ -1,0 +1,15 @@
+{
+  "slug": "test-page-whatever",
+  "title": "Test Page Whatever",
+  "blocks": [
+    {
+      "_template": "HeadlineHero",
+      "lead": "Test",
+      "title": "Page"
+    },
+    {
+      "_template": "OneColumnText",
+      "content": "This is some text"
+    }
+  ]
+}
