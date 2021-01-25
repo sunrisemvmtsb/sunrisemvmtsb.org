@@ -69,7 +69,7 @@ export default (id: string): ContainerInstance => {
   const container = Container.of(id)
 
   container.set(IContentBackend,
-    process.env.NODE_ENV !== 'production' ?
+    process.env.NODE_ENV === 'production' ?
       new GitHubContentBackend({ container }) :
       new FileSystemContentBackend()
   )
