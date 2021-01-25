@@ -116,18 +116,20 @@ const FeaturedPost = ({
           object-fit: cover;
           object-position: center;
         `} />
-      <p css={css`
-        margin: 0;
-        padding: 8px 0;
-        font-family: Source Sans Pro;
-        font-weight: 700;
-        font-size: 18px;
-        line-height: 23px;
-        text-align: center;
-        color: var(--sunrise-magenta);
-      `}>
-        {summary.category}
-      </p>
+      {summary.category &&
+        <p css={css`
+          margin: 0;
+          padding: 8px 0;
+          font-family: Source Sans Pro;
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 23px;
+          text-align: center;
+          color: var(--sunrise-magenta);
+        `}>
+          {summary.category}
+        </p>
+      }
       <h3 css={css`
         font-family: Source Serif Pro;
         font-weight: 400;
@@ -182,20 +184,22 @@ const SmallPost = ({
             grid-row: 1 / span 3;
             grid-column: 1 / span 1;
           `} />
-        <p css={css`
-          font-family: Source Sans Pro;
-          font-weight: 700;
-          font-size: 12px;
-          line-height: 15px;
-          display: flex;
-          align-items: center;
-          color: var(--sunrise-magenta);
-          margin: 0;
-          grid-row: 1 / span 1;
-          grid-column: 2 / span 1;
-        `}>
-          {summary.category}
-        </p>
+        {summary.category &&
+          <p css={css`
+            font-family: Source Sans Pro;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 15px;
+            display: flex;
+            align-items: center;
+            color: var(--sunrise-magenta);
+            margin: 0;
+            grid-row: 1 / span 1;
+            grid-column: 2 / span 1;
+          `}>
+            {summary.category}
+          </p>
+        }
         <h3 css={css`
           font-family: Source Serif Pro;
           font-size: 18px;

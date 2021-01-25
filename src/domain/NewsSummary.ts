@@ -3,7 +3,7 @@ import AdjustableImage from './AdjustableImage'
 
 type NewsSummary = {
   image: AdjustableImage,
-  category: string,
+  category: string | null,
   title: string,
   subtitle: string,
   author: string,

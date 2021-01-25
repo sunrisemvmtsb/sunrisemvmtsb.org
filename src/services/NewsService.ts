@@ -28,7 +28,7 @@ export default class NewsService {
       .filter(([, file]) => file !== null)
       .map(([filename, file]) => ({
         image: file!.image,
-        category: file!.tags[0],
+        category: file!.tags[0] ?? null,
         title: file!.title,
         subtitle: file!.subtitle,
         author: file!.author,
