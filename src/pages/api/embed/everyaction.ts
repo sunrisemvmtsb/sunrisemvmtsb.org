@@ -29,6 +29,12 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       const getHeight = () => {
         return document.documentElement.offsetHeight
       }
+      window.nvtag_callbacks = window.nvtag_callbacks || []
+      const nvtag_callbacks = window.nvtag_callbacks
+      nvtag_callbacks.postRender = nvtag_callbacks.postRender || []
+      nvtag_callbacks.postRender.push(() => {
+        window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
+      })
       window.addEventListener('load', () => {
         const observer = new MutationObserver(() => {
           window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
