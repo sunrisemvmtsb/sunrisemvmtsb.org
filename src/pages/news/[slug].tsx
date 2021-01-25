@@ -192,7 +192,7 @@ export const getStaticProps: GetStaticProps = async ({
 
   console.log('preview', !!preview)
 
-  if (post && !post.published && !preview) {
+  if (!post?.published && !preview) {
     return { notFound: true }
   }
 
