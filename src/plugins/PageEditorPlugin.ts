@@ -4,7 +4,7 @@ import container from '../infrastructure/Container.client'
 import StorageService from '../services/StorageService.client'
 import Page from '../domain/Page'
 import { useRouter } from 'next/router'
-import EditPageDetails from '../usecases/EditPageDetails'
+import EditPageDetails from '../usecases/EditPageDetails.client'
 import PagesService from '../services/PagesService'
 import SiteConfigService from '../services/SiteConfigService'
 import { useToolbarFormPlugin } from './ToolbarFormPlugin'
@@ -117,8 +117,8 @@ export default class PageEditorPlugin {
         },
       ],
       onSubmit: async (details) => {
-        const usecase = new EditPageDetails()
         try {
+          const usecase = container.get(EditPageDetails)
           const updated = await usecase.exec(pageForm.values, details)
           pageForm.updateInitialValues(updated)
           pageForm.updateValues(updated)
@@ -126,7 +126,6 @@ export default class PageEditorPlugin {
             shallow: true,
           })
         } catch (e) {
-          debugger
           if (e instanceof EditPageDetails.HomeIsNotEditableError) cms.alerts.error('Cannot edit URL of home page')
           if (e instanceof EditPageDetails.HomeIsReservedError) cms.alerts.error('Cannot use a blank URL - this is the URL of the home page')
           if (e instanceof EditPageDetails.PageExistsError) cms.alerts.error('This page already exists')

@@ -1,11 +1,20 @@
-import { css } from 'styled-components'
 import React from 'react'
+import { useRouter } from 'next/router'
+import { css } from 'styled-components'
 import { useForm, useCMS, Form, usePlugins, Toggle, FieldMeta } from 'tinacms'
 import { FORM_ERROR } from 'final-form'
-import NewsPost from '../domain/NewsPost'
+
 import container from '../infrastructure/Container.client'
+
 import StorageService from '../services/StorageService.client'
 import NewsService from '../services/NewsService'
+import { UnauthenticatedError } from '../application/ServiceError'
+
+import NewsPost from '../domain/NewsPost'
+
+import GetLatestNewsPost from '../usecases/GetLatestNewsPost.client'
+import UpdateNewsPost from '../usecases/UpdateNewsPost.client'
+
 
 const createToolbarPublishedPlugin = (stuff: any) => ({
   __type: 'toolbar:widget',
@@ -15,33 +24,17 @@ const createToolbarPublishedPlugin = (stuff: any) => ({
 })
 
 export default class NewsEditorPlugin {
-  private static _instance: NewsEditorPlugin | null = null
-  static get instance(): NewsEditorPlugin {
-    if (this._instance === null) this._instance = new NewsEditorPlugin()
-    return this._instance
-  }
-
-  private _storage: StorageService
-  private _news: NewsService
-
-  constructor() {
-    this._storage = container.get(StorageService)
-    this._news = container.get(NewsService)
-  }
-
-  async latest(slug: string): Promise<NewsPost | null> {
-    const local = await this._storage.getNewsPost(slug)
-    if (local) return { ...local, slug }
-    return this._news.getNewsPost(slug)
-  }
-
-  async save(post: NewsPost): Promise<void> {
-    await this._news.saveNewsPost(post)
-    await this._storage.removeNewsPost(post)
-  }
-
-  static use(slug: string, post: NewsPost | null, label: string): [NewsPost, Form] {
+  static use(slug: string, maybePost: NewsPost | null, label: string): [NewsPost, Form] {
     const cms = useCMS()
+    const router = useRouter()
+    const post = React.useMemo(() => maybePost ?? NewsPost.default(slug), [maybePost, slug])
+    const originalPublished = React.useMemo(() => maybePost?.published ?? null, [maybePost])
+
+    const onLoggedOut = React.useCallback(() => {
+      cms.alerts.error('You have been logged out. Please log in and try again.')
+      cms.disable()
+    }, [cms])
+
     const [values, form] = useForm({
       id: `news:${slug}`,
       label: label,
@@ -57,16 +50,33 @@ export default class NewsEditorPlugin {
         }
       },
       async loadInitialValues() {
-        if (cms.disabled) return post ?? {}
-        const initial = await NewsEditorPlugin.instance.latest(slug)
-        if (!initial) throw Error('Not found')
-        return initial
+        if (cms.disabled) return post
+        try {
+          const usecase = container.get(GetLatestNewsPost)
+          const post = await usecase.exec(slug)
+
+          if (post === null) {
+            cms.alerts.error(`News post with URL /news/${slug} could not be found.`)
+            router.push('/')
+            return
+          }
+
+          return { ...post, tagBlocks: post.tags.map((v, index) => ({ tag: v, id: index, _template: 'TagItem' })) }
+        } catch (error) {
+          if (error instanceof UnauthenticatedError) return onLoggedOut()
+          throw error
+        }
       },
       async onSubmit(values) {
         try {
-          await NewsEditorPlugin.instance.save(values)
-        } catch (e) {
-          return { [FORM_ERROR]: e }
+          const usecase = container.get(UpdateNewsPost)
+          const { tagBlocks, ...other } = values
+          const post = { ...other, tags: tagBlocks.map((v: any) => v.tag).filter((t: string) => t) }
+          console.log(post)
+          await usecase.exec(post)
+        } catch (error) {
+          if (error instanceof UnauthenticatedError) onLoggedOut()
+          return { [FORM_ERROR]: error.message }
         }
       },
     }, {
@@ -90,19 +100,14 @@ export default class NewsEditorPlugin {
                 component: 'toggle',
                 name: 'published',
                 label: 'Published?',
-                parse: (p) => {
-                  return p ?
-                    new Date().toISOString() :
-                    null
-                },
                 format: (a) => !!a
               }}
               input={{
                 value: !!form.values.published,
                 label: 'Published?',
-                onChange: (e: any) => {
+                onChange: () => {
                   form.mutators.change('published',
-                    form.values.published ? null : new Date().toISOString()
+                    form.values.published ? null : (originalPublished ?? new Date().toISOString())
                   )
                 },
               }}
@@ -120,6 +125,6 @@ export default class NewsEditorPlugin {
       plugin,
     ])
 
-    return [Object.assign({}, post ?? NewsPost.default(slug), values), form]
+    return [Object.assign({}, post, values), form]
   }
 }

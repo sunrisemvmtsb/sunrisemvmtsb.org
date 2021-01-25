@@ -12,15 +12,22 @@ export type Props = {
   name: string,
   placeholder?: string,
   children: React.ReactChild,
+  className?: string,
 }
 
 const Editor = (props: Props) => {
-  return <InlineText focusRing={{ borderRadius: 0 }} {...props} />
+  return (
+    <InlineText
+      focusRing={{ borderRadius: 0 }}
+      {...props}
+      className={props.className}
+    />
+  )
 }
 
 const Static = (props: Props) => {
   return (
-    <div>{props.children}</div>
+    <div className={props.className}>{props.children}</div>
   )
 }
 

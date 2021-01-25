@@ -1,4 +1,5 @@
 import IContentBackend from './IContentBackend'
+import { UnauthenticatedError } from '../application/ServiceError'
 
 export default class ApiContentBackend implements IContentBackend {
   async getTextFile({
@@ -16,7 +17,7 @@ export default class ApiContentBackend implements IContentBackend {
     url.searchParams.append('filename', filename)
     exclude.forEach((key) => url.searchParams.append('exclude', key))
     const response = await fetch(url.href)
-    debugger
+    if (response.status === 401) throw new UnauthenticatedError()
     if (response.status === 404) return null
     const data = await response.json()
     return data
@@ -38,6 +39,7 @@ export default class ApiContentBackend implements IContentBackend {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     })
+    if (response.status === 401) throw new UnauthenticatedError()
     if (!response.ok) throw Error('failed to save')
   }
 
@@ -59,6 +61,7 @@ export default class ApiContentBackend implements IContentBackend {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' }
     })
+    if (response.status === 401) throw new UnauthenticatedError()
     if (!response.ok) throw Error('failed to rename')
   }
 
@@ -72,6 +75,7 @@ export default class ApiContentBackend implements IContentBackend {
     url.searchParams.append('method', 'listTextBucket')
     url.searchParams.append('bucket', bucket)
     const response = await fetch(url.href)
+    if (response.status === 401) throw new UnauthenticatedError()
     const data = await response.json()
     return data
   }
@@ -91,6 +95,7 @@ export default class ApiContentBackend implements IContentBackend {
     const response = await fetch(url.href, {
       method: 'DELETE',
     })
+    if (response.status === 401) throw new UnauthenticatedError()
     if (!response.ok) throw Error('failed to delete')
   }
 
@@ -98,6 +103,7 @@ export default class ApiContentBackend implements IContentBackend {
     const url = new URL('/api/content', window.location.origin)
     url.searchParams.append('method', 'listMedia')
     const response = await fetch(url.href)
+    if (response.status === 401) throw new UnauthenticatedError()
     const data = await response.json()
     return data
   }
@@ -119,6 +125,7 @@ export default class ApiContentBackend implements IContentBackend {
       method: 'POST',
       body: formData,
     })
+    if (response.status === 401) throw new UnauthenticatedError()
     if (!response.ok) throw Error('failed to upload')
   }
 
@@ -134,6 +141,7 @@ export default class ApiContentBackend implements IContentBackend {
     const response = await fetch(url.href, {
       method: 'DELETE',
     })
+    if (response.status === 401) throw new UnauthenticatedError()
     if (!response.ok) throw Error('failed to delete')
   }
 
@@ -141,6 +149,7 @@ export default class ApiContentBackend implements IContentBackend {
     const url = new URL('/api/content', window.location.origin)
     url.searchParams.append('method', 'getMediaPreviewEndpoint')
     const response = await fetch(url.href)
+    if (response.status === 401) throw new UnauthenticatedError()
     const data = await response.json()
     return data.url
   }

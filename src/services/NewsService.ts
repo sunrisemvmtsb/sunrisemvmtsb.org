@@ -3,7 +3,7 @@ import IContentBackend from './IContentBackend'
 import NewsPost from '../domain/NewsPost'
 import NewsSummary from '../domain/NewsSummary'
 
-export default class NewsService {
+class NewsService {
   private _backend: IContentBackend
 
   constructor({
@@ -28,7 +28,7 @@ export default class NewsService {
       .filter(([, file]) => file !== null)
       .map(([filename, file]) => ({
         image: file!.image,
-        category: file!.tags[0] ?? null,
+        tags: file!.tags,
         title: file!.title,
         subtitle: file!.subtitle,
         author: file!.author,
@@ -39,14 +39,18 @@ export default class NewsService {
   }
 
   async getNewsPost(slug: string): Promise<NewsPost | null> {
-    const file = await this._backend.getTextFile({
-      bucket: 'news',
-      filename: `${slug}.json`,
-      exclude: [],
-    })
-
-    if (!file) return null
-    return { ...file as NewsPost, slug }
+    try {
+      const file = await this._backend.getTextFile({
+        bucket: 'news',
+        filename: `${slug}.json`,
+        exclude: [],
+      })
+      if (!file) return null
+      return { ...file as NewsPost, slug }
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
   }
 
   async saveNewsPost(post: NewsPost): Promise<void> {
@@ -57,3 +61,9 @@ export default class NewsService {
     })
   }
 }
+
+namespace NewsService {
+  export class UnauthenticatedError extends Error { }
+}
+
+export default NewsService

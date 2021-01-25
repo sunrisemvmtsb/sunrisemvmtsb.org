@@ -51,7 +51,11 @@ export default class ContentMediaStorePlugin implements MediaStore {
     if (src === '/images/placeholder.svg') return '/images/placeholder.svg'
 
     if (!this._previewEndpoint) {
-      this._previewEndpoint = await this._backend.getMediaPreviewEndpoint()
+      try {
+        this._previewEndpoint = await this._backend.getMediaPreviewEndpoint()
+      } catch (error) {
+        console.error(error)
+      }
     }
 
     return this._previewEndpoint + src.slice(1)

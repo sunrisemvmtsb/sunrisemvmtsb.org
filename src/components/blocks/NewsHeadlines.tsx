@@ -21,16 +21,13 @@ const Component = ({
 }: Props) => {
   const sorted = React.useMemo(() => {
     return news
-      .slice()
-      .sort((l, r) => {
-        return Temporal.Instant.compare(
-          r.published ?? Temporal.Instant.fromEpochSeconds(0),
-          l.published ?? Temporal.Instant.fromEpochSeconds(0),
-        )
-      })
+      .filter(s => s.published)
+      .sort(NewsSummary.compare)
   }, [news])
 
   const [first, rest] = React.useMemo(() => {
+    const featured = sorted.find(NewsSummary.isFeatured)
+    if (featured) return [featured, sorted.filter((s) => s !== featured)]
     return [sorted[0], sorted.slice(1, 7)]
   }, [sorted])
 
@@ -116,7 +113,7 @@ const FeaturedPost = ({
           object-fit: cover;
           object-position: center;
         `} />
-      {summary.category &&
+      {summary.tags.length &&
         <p css={css`
           margin: 0;
           padding: 8px 0;
@@ -127,7 +124,7 @@ const FeaturedPost = ({
           text-align: center;
           color: var(--sunrise-magenta);
         `}>
-          {summary.category}
+          {NewsSummary.category(summary)}
         </p>
       }
       <h3 css={css`
@@ -184,7 +181,7 @@ const SmallPost = ({
             grid-row: 1 / span 3;
             grid-column: 1 / span 1;
           `} />
-        {summary.category &&
+        {NewsSummary.category(summary) &&
           <p css={css`
             font-family: Source Sans Pro;
             font-weight: 700;
@@ -197,7 +194,7 @@ const SmallPost = ({
             grid-row: 1 / span 1;
             grid-column: 2 / span 1;
           `}>
-            {summary.category}
+            {NewsSummary.category(summary)}
           </p>
         }
         <h3 css={css`

@@ -33,11 +33,11 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       const nvtag_callbacks = window.nvtag_callbacks
       nvtag_callbacks.postRender = nvtag_callbacks.postRender || []
       nvtag_callbacks.postRender.push(() => {
-        window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
+        window.parent.postMessage({ type: 'EveryActionForm:resize' }, window.location.origin)
       })
       window.addEventListener('load', () => {
         const observer = new MutationObserver(() => {
-          window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
+          window.parent.postMessage({ type: 'EveryActionForm:resize' }, window.location.origin)
         })
         const div = document.querySelector('div.ngp-form')
         if (!div) return
@@ -47,15 +47,15 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
           attributes: true,
           characterData: true,
         })
-        window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
+        window.parent.postMessage({ type: 'EveryActionForm:resize' }, window.location.origin)
       })
       window.addEventListener('resize', () => {
-        window.parent.postMessage({ type: 'EveryActionForm:resize', id: '${req.query.id}' }, window.location.origin)
+        window.parent.postMessage({ type: 'EveryActionForm:resize' }, window.location.origin)
       })
       window.addEventListener('message', (event) => {
         if (event.data.type !== 'request') return
         const height = getHeight()
-        window.parent.postMessage({ type: 'EveryActionForm:respond', id: '${req.query.id}', height: height }, window.location.origin)
+        window.parent.postMessage({ type: 'EveryActionForm:respond', id: event.data.id, height: height }, window.location.origin)
       })
     </script>
     <script type="text/javascript" src="https://d3rse9xjbp8270.cloudfront.net/at.js" crossOrigin="anonymous" async></script>

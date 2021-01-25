@@ -1,31 +1,90 @@
+import React from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { css } from 'styled-components'
 import { Temporal } from 'proposal-temporal'
 import dynamic from 'next/dynamic'
 
 import Typography from '../../components/Typography'
+import Markdown from '../../components/fields/Markdown'
+import PostSummary from '../../components/molecules/PostSummary'
+import AdjustableImage from '../../components/fields/AdjustableImage'
+import Text from '../../components/fields/Text'
+import Blocks from '../../components/fields/Blocks'
+import BlockItem from '../../components/fields/BlockItem'
+
+import Preview from '../../contexts/Preview'
+
 import NewsPost from '../../domain/NewsPost'
 
-import Markdown from '../../components/fields/Markdown'
-import AdjustableImage from '../../components/fields/AdjustableImage'
-import PostSummary from '../../components/molecules/PostSummary'
-import Preview from '../../contexts/Preview'
 import SiteConfigService from '../../services/SiteConfigService'
 import NewsService from '../../services/NewsService'
+import NewsSummary from '../../domain/NewsSummary'
 
 export type Props = {
   post: NewsPost | null,
   slug: string,
+  summaries: Array<NewsSummary>
+}
+
+const TagItemComponent = ({
+  data,
+  index,
+}: {
+  data: { tag: string },
+  index: number,
+}) => {
+  return (
+    <div css={css`
+      & [data-react-beautiful-dnd-draggable], input {
+        width: fit-content !important;
+      }
+      margin-right: 16px;
+    `}>
+    <BlockItem index={index} inset={false}>
+      <span css={css`
+        color: var(--sunrise-magenta);
+        text-transform: uppercase;
+        font-weight: 700;
+        width: fit-content !important;
+      `}>
+        <Text name="tag">
+          {data.tag}
+        </Text>
+      </span>
+    </BlockItem>
+    </div>
+  )
+}
+
+const TagItem = {
+  Component: TagItemComponent,
+  template: {
+    label: 'Tag',
+    defaultItem: { value: '' },
+    fields: []
+  },
 }
 
 export const Template = (props: Props) => {
   const post = props.post ?? NewsPost.default(props.slug)
+  const preview = Preview.use()
+  const tagBlockData = React.useMemo(() => {
+    return post.tags.map((tag, index) => ({ _template: 'TagItem', tag, id: index }))
+  }, [post.tags])
+
+  const featured = React.useMemo(() => {
+    return props
+      .summaries
+      .filter(s => s.published && NewsSummary.isFeatured(s))
+      .sort(NewsSummary.compare)
+      .slice(0, 5)
+  }, [props.summaries])
 
   return (
     <article css={css`
       max-width: 1200px;
       margin: 0 auto;
-      padding-top: 32px;
+      padding: 32px;
     `}>
       <h3 css={css`
         margin: 0;
@@ -56,25 +115,17 @@ export const Template = (props: Props) => {
             border-width: 0;
             border-bottom-width: 2px;
           `}>
-            <div css={css`
-              display: flex;
-              flex-wrap: wrap;
-              align-items: center;
-              margin-bottom: 8px;
-            `}>
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  css={css`
-                    color: var(--sunrise-magenta);
-                    text-transform: uppercase;
-                    font-weight: 700;
-                    margin-right: 16px;
-                  `}>
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <Blocks
+              blocks={{ TagItem }}
+              name="tagBlocks"
+              data={tagBlockData}
+              direction="horizontal"
+              css={css`
+                margin-bottom: 8px;
+                border: ${preview ? '1px solid var(--theme-color-divider)' : '0'};
+                flex-wrap: wrap;
+                display: flex;
+              `} />
             <h1 css={css`
               font-weight: 400;
               font-size: 56px;
@@ -82,7 +133,11 @@ export const Template = (props: Props) => {
               font-family: Source Serif Pro;
               padding-bottom: 12px;
             `}>
-              {post.title}
+              <Text
+                name="title"
+                placeholder="Title">
+                {post.title}
+              </Text>
             </h1>
             {post.subtitle &&
               <h3 css={css`
@@ -101,13 +156,27 @@ export const Template = (props: Props) => {
               padding-bottom: 24px;
               font-size: 20px;
               font-family: Source Serif Pro;
+              display: grid;
+              grid-auto-flow: column;
+              grid-template-columns: auto auto 1fr;
+              grid-column-gap: 4px;
+              align-items: center;
+              justify-content: start;
             `}>
-              {post.author}{' • '}
-              {Temporal.PlainDate.from(post.published ?? new Date().toISOString()).toLocaleString('default', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
+              <span>
+                {!post.published ?
+                  '(unpublished)' :
+                  Temporal.PlainDate.from(post.published).toLocaleString('default', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })
+                }
+              </span>
+              <span>{(preview || !!post.author) ? ' • ' : ''}</span>
+              <Text name="author" placeholder="Author Name">
+                {post.author}
+              </Text>
             </div>
           </div>
           <div css={css`
@@ -118,28 +187,26 @@ export const Template = (props: Props) => {
               content={post.content} />
           </div>
         </div>
-        <div css={css`
-          display: grid;
-          grid-auto-rows: auto;
-          grid-row-gap: 16px;
-          align-content: start;
-        `}>
-          <Typography variant="ContentTitle">
-            Featured Posts
-          </Typography>
-          <PostSummary
-            author="Luke Westby"
-            category="Featured"
-            title="Hello world lolol" />
-          <PostSummary
-            author="Luke Westby"
-            category="Featured"
-            title="Hello world lolol" />
-          <PostSummary
-            author="Luke Westby"
-            category="Featured"
-            title="Hello world lolol" />
-        </div>
+        {featured.length &&
+          <div css={css`
+            display: grid;
+            grid-auto-rows: auto;
+            grid-row-gap: 16px;
+            align-content: start;
+          `}>
+            <Typography variant="ContentTitle">
+              Featured Posts
+            </Typography>
+            {featured.map((s) => (
+              <PostSummary
+                key={s.slug}
+                author={s.author}
+                category="Featured"
+                title={s.title}
+                href={NewsSummary.href(s)} />
+            ))}
+          </div>
+        }
       </div>
     </article>
   )
@@ -149,9 +216,7 @@ const Editor = dynamic(async () => {
   const { default: NewsEditorPlugin } = await import(/* webpackChunkName: "tina" */ '../../plugins/NewsEditorPlugin')
   const { InlineForm } = await import(/* webpackChunkName: "tina" */ 'react-tinacms-inline')
   return (props: Props) => {
-    console.log(props.post)
     const [data, form] = NewsEditorPlugin.use(props.slug, props.post, 'News Article')
-    console.log(data)
     return (
       <InlineForm form={form}>
         <Template {...props} post={data} />
@@ -190,14 +255,14 @@ export const getStaticProps: GetStaticProps = async ({
 
   const post = await newsService.getNewsPost(slug)
 
-  console.log('preview', !!preview)
-
   if (!post?.published && !preview) {
     return { notFound: true }
   }
 
+  const summaries = await newsService.listNewsSummaries()
+
   return {
-    props: { siteConfig, slug, post, preview: !!preview },
+    props: { siteConfig, summaries, slug, post, preview: !!preview },
     revalidate: 2,
   }
 }

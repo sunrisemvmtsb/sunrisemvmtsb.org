@@ -54,15 +54,15 @@ const EveryActionForm = (props: { url: string }) => {
 
   React.useEffect(() => {
     const handler = (event: MessageEvent) => {
-      if (event.data.type !== 'EveryActionForm:resize' || event.data.id !== idRef.current) return
+      if (event.data.type !== 'EveryActionForm:resize') return
       if (!iframeRef.current) return
-      iframeRef.current.contentWindow?.postMessage({ type: 'request' }, window.location.origin)
+      iframeRef.current.contentWindow?.postMessage({ type: 'request', id: idRef.current }, window.location.origin)
     }
     window.addEventListener('message', handler)
     return () => {
       window.removeEventListener('message', handler)
     }
-  })
+  }, [])
 
   return (
     <div css={css`
@@ -72,7 +72,7 @@ const EveryActionForm = (props: { url: string }) => {
       transition: height 100ms linear;
     `}>
       <iframe
-        src={`/api/embed/everyaction?url=${url}&padding=32&id=${idRef.current}`}
+        src={`/api/embed/everyaction?url=${url}&padding=32`}
         ref={(element: HTMLIFrameElement | null) => {
           if (!element) return
           if(element !== iframeRef.current) {

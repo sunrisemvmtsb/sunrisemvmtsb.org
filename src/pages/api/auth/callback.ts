@@ -17,7 +17,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (!encryptedAuthState) return res.status(401).end()
 
   const state = crypto.decrypt(encryptedAuthState)
-
   if (state !== req.query.state) return res.status(401).end()
 
   res.setHeader('Set-Cookie', cookie.serialize('authstate', '', {
@@ -28,11 +27,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     path: '/',
   }))
 
+
   try {
-    const authToken = await auth.exchangeCode(req.query.code as string)
+    const tokens = await auth.exchangeCode(req.query.code as string)
     const decodedState = JSON.parse(base64.decode(state))
+    auth.setAuthCookie(tokens, res)
     res
-      .setPreviewData({ authToken: crypto.encrypt(authToken) })
+      .setPreviewData({ enabled: true })
       .redirect(decodedState.redirect)
   } catch (error) {
     console.error(error)

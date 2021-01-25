@@ -10,8 +10,10 @@
     "y": "center",
     "fit": "cover"
   },
-  "published": "2021-01-25T03:33:08.696Z",
+  "published": "2021-01-24T03:33:08.696Z",
   "subtitle": "",
-  "tags": [],
+  "tags": [
+    "Press Release"
+  ],
   "url": "/news/test-2021-01-24"
 }

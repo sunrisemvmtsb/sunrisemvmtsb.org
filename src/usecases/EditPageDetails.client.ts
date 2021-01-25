@@ -1,4 +1,4 @@
-import container from '../infrastructure/Container.client'
+import { ContainerInstance } from 'typedi'
 import StorageService from '../services/StorageService.client'
 import Page from '../domain/Page'
 import SiteConfig from '../domain/SiteConfig'
@@ -10,7 +10,11 @@ class EditPageDetails {
   private _pages: PagesService
   private _storage: StorageService
 
-  constructor() {
+  constructor({
+    container,
+  }: {
+    container: ContainerInstance,
+  }) {
     this._siteConfig = container.get(SiteConfigService)
     this._pages = container.get(PagesService)
     this._storage = container.get(StorageService)

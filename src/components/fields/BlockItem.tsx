@@ -11,13 +11,15 @@ const BlocksControls = dynamic<BlocksControlsProps>(() => {
 const Editor = ({
   children,
   index,
+  inset = true,
 }: {
   index: number,
   children: React.ReactChild | Array<React.ReactChild>
+  inset?: boolean,
 }) => {
   return (
     <BlocksControls
-      insetControls={true}
+      insetControls={inset}
       index={index}
       focusRing={{ borderRadius: 0, offset: 0 }}
       children={children} />
@@ -37,12 +39,14 @@ const Static = ({
 const BlockItem = ({
   children,
   index,
+  inset,
 }: {
   index: number,
   children: React.ReactChild | Array<React.ReactChild>
+  inset?: boolean,
 }) => {
   const preview = Preview.use()
-  if (preview) return <Editor index={index} children={children} />
+  if (preview) return <Editor index={index} children={children} inset={inset} />
   else return <Static index={index} children={children} />
 }
 

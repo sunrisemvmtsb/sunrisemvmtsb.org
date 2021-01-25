@@ -4,6 +4,11 @@ import { google, Auth } from 'googleapis'
 import Crypto from './Crypto.server'
 import cookie from 'cookie'
 
+type Tokens = {
+  access: string,
+  refresh: string
+}
+
 export default class GoogleAuth {
   private readonly _crypto: Crypto
   private readonly _allowed: Array<string>
@@ -51,15 +56,63 @@ export default class GoogleAuth {
     const data = req.previewData
     if (!data) return res.status(401).end()
 
+
+    const previewData = req.previewData
+    if (!previewData || !previewData.enabled) return res.status(401).end()
+
+    const authCookie = req.cookies.auth
+    if (!authCookie) return res.status(401).end()
+
+    const decrypted = this._crypto.decrypt(authCookie)
+    if (!decrypted) return res.status(401).end()
+
     try {
-      const authToken = this._crypto.decrypt(data.authToken)
-      if (!authToken) return res.status(401).end()
-      const valid = await this.verifyAccessToken(authToken)
-      if (valid) return handler(req, res)
-      else return res.status(401).end()
+      const conn = this._connection()
+      const tokens = JSON.parse(decrypted)
+      conn.setCredentials({
+        access_token: tokens.access,
+        refresh_token: tokens.refresh,
+      })
+
+      conn.on('tokens', (newTokens) => {
+        if (!newTokens.access_token) return
+        console.log('tokens')
+        this.setAuthCookie({
+          access: newTokens.access_token,
+          refresh: newTokens.refresh_token ?? tokens.refresh,
+        }, res)
+      })
+
+      const valid = await this.verifyAccessToken(tokens.access)
+      if (valid) {
+        console.log(valid)
+        return handler(req, res)
+      } else {
+        return res.status(401).end()
+      }
     } catch {
       return res.status(401).end()
     }
+  }
+
+  setAuthCookie(tokens: Tokens, res: NextApiResponse) {
+    res.setHeader('Set-Cookie', cookie.serialize('auth', this._crypto.encrypt(JSON.stringify(tokens)), {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    }))
+  }
+
+  clearAuthCookie(res: NextApiResponse) {
+    res.setHeader('Set-Cookie', cookie.serialize('auth', '', {
+      httpOnly: true,
+      maxAge: -1,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    }))
   }
 
   getAuthorizationUrl(state: string) {
@@ -74,7 +127,7 @@ export default class GoogleAuth {
     })
   }
 
-  async exchangeCode(code: string): Promise<string> {
+  async exchangeCode(code: string): Promise<{ access: string, refresh: string }> {
     const conn = this._connection()
     const data = await conn.getToken(code)
     const ticket = await conn.verifyIdToken({
@@ -84,7 +137,9 @@ export default class GoogleAuth {
     const payload = ticket.getPayload()
     if (!payload || !payload.email) throw Error('Invalid auth response')
     if (!this._allowed.includes(payload.email)) throw Error('Invalid email address')
-    return data.tokens.access_token!
+    if (!data.tokens.access_token) throw Error('No access token')
+    if (!data.tokens.refresh_token) throw Error('No refresh token')
+    return { access: data.tokens.access_token, refresh: data.tokens.refresh_token }
   }
 
   async verifyAccessToken(token: string): Promise<boolean> {

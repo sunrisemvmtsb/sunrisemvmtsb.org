@@ -1,0 +1,20 @@
+{
+  "slug": "test-test-test-2021-01-24",
+  "title": "test test test",
+  "content": "",
+  "image": {
+    "path": "/images/placeholder.svg",
+    "alt": "",
+    "x": "center",
+    "y": "center",
+    "fit": "cover"
+  },
+  "published": "2021-01-25T19:50:56.840Z",
+  "subtitle": "",
+  "author": "Luke Westby",
+  "tags": [
+    "Featured",
+    "Press Release"
+  ],
+  "url": "/news/test-test-test-2021-01-24"
+}
