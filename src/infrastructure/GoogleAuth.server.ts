@@ -51,12 +51,6 @@ export default class GoogleAuth {
     const data = req.previewData
     if (!data) return res.status(401).end()
 
-    const conn = this._connection()
-    conn.on('tokens', (tokens) => {
-      if (!tokens.access_token) return
-      res.setPreviewData({ authToken: this._crypto.encrypt(tokens.access_token) })
-    })
-
     try {
       const authToken = this._crypto.decrypt(data.authToken)
       if (!authToken) return res.status(401).end()
