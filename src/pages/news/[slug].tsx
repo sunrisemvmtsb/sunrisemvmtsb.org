@@ -190,7 +190,9 @@ export const getStaticProps: GetStaticProps = async ({
 
   const post = await newsService.getNewsPost(slug)
 
-  if (!post?.published && !preview) {
+  console.log('preview', !!preview)
+
+  if (post && !post.published && !preview) {
     return { notFound: true }
   }
 
