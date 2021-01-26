@@ -3,6 +3,53 @@ import { css } from 'styled-components'
 import ReactMarkdown from 'react-markdown'
 import Gfm from 'remark-gfm'
 import ImageFixer from '../../infrastructure/RemarkImageFixer'
+import UnwrapImages from 'remark-unwrap-images'
+import Image from 'next/image'
+import Typography from '../Typography'
+
+const ImageRenderer = (props: any) => {
+  const mounted = React.useRef(true)
+  React.useEffect(() => {
+    mounted.current = true
+    return () => {mounted.current = false }
+  }, [])
+
+  const [height, setHeight] = React.useState(500)
+
+  return (
+    <figure css={css`
+      display: block;
+      margin: 0;
+      width: 100%;
+      height: fit-content(750px);
+      position: relative;
+      padding-top: 24px;
+      padding-bottom: 8px;
+    `}>
+      <Image
+        src={props.src}
+        layout="intrinsic"
+        width={750}
+        height={height}
+        objectFit="cover"
+        onLoad={async (e) => {
+          const target = e.target as HTMLImageElement
+          await target.decode()
+          if (!mounted.current) return
+          setHeight(target.naturalHeight / target.naturalWidth * 750)
+        }} />
+      <figcaption css={css`
+        padding-top: 4px;
+        text-align: center;
+        color: rgba(0,0,0,0.6);
+      `}>
+        <Typography variant="Caption">
+          {props.title}
+        </Typography>
+      </figcaption>
+    </figure>
+  )
+}
 
 const Markdown = ({
   children,
@@ -88,14 +135,14 @@ const Markdown = ({
         text-decoration: underline;
       }
 
-      img {
-        display: block;
-        width: 100%;
-      }
-
       color: #33342E;
     `}>
-      <ReactMarkdown plugins={[Gfm, ImageFixer]}>
+      <ReactMarkdown
+        plugins={[Gfm, ImageFixer, UnwrapImages]}
+        
+        renderers={{
+          image: ImageRenderer,
+        }}>
         {children}
       </ReactMarkdown>
     </div>

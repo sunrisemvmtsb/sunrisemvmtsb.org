@@ -56,10 +56,6 @@ export default class GoogleAuth {
     const data = req.previewData
     if (!data) return res.status(401).end()
 
-
-    const previewData = req.previewData
-    if (!previewData || !previewData.enabled) return res.status(401).end()
-
     const authCookie = req.cookies.auth
     if (!authCookie) return res.status(401).end()
 
@@ -76,7 +72,6 @@ export default class GoogleAuth {
 
       conn.on('tokens', (newTokens) => {
         if (!newTokens.access_token) return
-        console.log('tokens')
         this.setAuthCookie({
           access: newTokens.access_token,
           refresh: newTokens.refresh_token ?? tokens.refresh,
@@ -85,7 +80,9 @@ export default class GoogleAuth {
 
       const valid = await this.verifyAccessToken(tokens.access)
       if (valid) {
-        console.log(valid)
+        res.setPreviewData({ enabled: true }, {
+          maxAge: 24 * 60 * 60
+        })
         return handler(req, res)
       } else {
         return res.status(401).end()
@@ -96,6 +93,9 @@ export default class GoogleAuth {
   }
 
   setAuthCookie(tokens: Tokens, res: NextApiResponse) {
+    res.setPreviewData({ enabled: true }, {
+      maxAge: 24 * 60 * 60
+    })
     res.setHeader('Set-Cookie', cookie.serialize('auth', this._crypto.encrypt(JSON.stringify(tokens)), {
       httpOnly: true,
       maxAge: 24 * 60 * 60,

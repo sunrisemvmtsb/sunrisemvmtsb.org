@@ -5,6 +5,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 module.exports = withBundleAnalyzer({
   env: {},
   target: 'serverless',
+  images: {
+    domains: [
+      'raw.githubusercontent.com',
+    ],
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.node = {

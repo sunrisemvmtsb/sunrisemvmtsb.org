@@ -5,7 +5,7 @@ const plugin = () => {
   return (tree: Node) => {
     visit(tree, ['image'], (node: Node) => {
       const url = node.url as string
-      if (url.startsWith('/')) node.url = '/media' + url
+      if (!url.startsWith('http')) node.url = '/media' + (url.startsWith('/') ? url : '/' + url)
     })
   }
 }

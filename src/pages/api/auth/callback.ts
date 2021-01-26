@@ -32,9 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const tokens = await auth.exchangeCode(req.query.code as string)
     const decodedState = JSON.parse(base64.decode(state))
     auth.setAuthCookie(tokens, res)
-    res
-      .setPreviewData({ enabled: true })
-      .redirect(decodedState.redirect)
+    res.redirect(decodedState.redirect)
   } catch (error) {
     console.error(error)
     return res.status(500).end()

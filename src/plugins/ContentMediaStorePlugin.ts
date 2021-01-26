@@ -48,7 +48,9 @@ export default class ContentMediaStorePlugin implements MediaStore {
   }
 
   async previewSrc(src: string) {
-    if (src === '/images/placeholder.svg') return '/images/placeholder.svg'
+    const fixedSrc = src.startsWith('/') ? src.slice(1) : src
+
+    if (fixedSrc === 'images/placeholder.svg') return '/images/placeholder.svg'
 
     if (!this._previewEndpoint) {
       try {
@@ -58,15 +60,15 @@ export default class ContentMediaStorePlugin implements MediaStore {
       }
     }
 
-    return this._previewEndpoint + src.slice(1)
+    return this._previewEndpoint + fixedSrc
   }
 
   async list(options?: MediaListOptions): Promise<MediaList> {
-    const directory = options?.directory ?? ''
+    const directory = options?.directory ?? '/'
     const limit = options?.limit ?? 50
     const offset = options?.offset ?? 0
 
-    if (options?.directory) {
+    if (directory !== '/') {
       return { items: [], offset, limit, totalCount: 0 }
     }
 
@@ -80,7 +82,7 @@ export default class ContentMediaStorePlugin implements MediaStore {
           id: filename,
           filename,
           directory: '',
-          previewSrc: await this.previewSrc('/' + filename),
+          previewSrc: await this.previewSrc(filename),
         }))),
       offset,
       limit,

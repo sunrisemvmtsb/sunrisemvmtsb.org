@@ -15,14 +15,16 @@ export type Props = {
 }
 
 const EditorInner = ({ name, content }: Props) => {
+  const updatedRef = React.useRef(false)
   return (
     <InlineWysiwyg
       className="sunrisemvmtsb-markdown-editor"
       name={name}
       format="markdown"
       focusRing={{ borderRadius: 0, offset: { x: 16, y: 24 } }}
+      sticky="var(--tina-toolbar-height)"
       imageProps={{
-        parse: (media) => media.id
+        parse: (media) => media.filename,
       }}>
       {!content &&
         <div css={css`

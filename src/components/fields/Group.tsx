@@ -11,11 +11,14 @@ const InlineGroup = dynamic<any>(() => {
 export type Props = React.PropsWithChildren<{
   name: string
   insetControls?: boolean,
-  fields?: Array<Field>
+  fields?: Array<Field>,
+  focusRing?: {
+    offset?: number | { x?: number, y?: number }
+  }
 }>
 
 const Editor = (props: Props) => {
-  return <InlineGroup {...props} focusRing={{ borderRadius: 0, offset: 0 }} />
+  return <InlineGroup {...props} focusRing={{ borderRadius: 0, offset: 0, ...(props.focusRing ?? {}) }} />
 }
 
 const Static = (props: Props) => {

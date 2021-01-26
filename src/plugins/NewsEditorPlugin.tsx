@@ -60,8 +60,8 @@ export default class NewsEditorPlugin {
             router.push('/')
             return
           }
-
-          return { ...post, tagBlocks: post.tags.map((v, index) => ({ tag: v, id: index, _template: 'TagItem' })) }
+          
+          return post
         } catch (error) {
           if (error instanceof UnauthenticatedError) return onLoggedOut()
           throw error
@@ -70,10 +70,7 @@ export default class NewsEditorPlugin {
       async onSubmit(values) {
         try {
           const usecase = container.get(UpdateNewsPost)
-          const { tagBlocks, ...other } = values
-          const post = { ...other, tags: tagBlocks.map((v: any) => v.tag).filter((t: string) => t) }
-          console.log(post)
-          await usecase.exec(post)
+          await usecase.exec(values)
         } catch (error) {
           if (error instanceof UnauthenticatedError) onLoggedOut()
           return { [FORM_ERROR]: error.message }

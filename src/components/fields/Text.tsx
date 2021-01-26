@@ -1,5 +1,6 @@
 import React from 'react'
 import type { InlineTextProps } from 'react-tinacms-inline'
+import { css } from 'styled-components'
 import Preview from '../../contexts/Preview'
 import dynamic from 'next/dynamic'
 
@@ -20,6 +21,10 @@ const Editor = (props: Props) => {
     <InlineText
       focusRing={{ borderRadius: 0 }}
       {...props}
+      css={css`
+        font-family: inherit;
+        font-style: inherit;
+      `}
       className={props.className}
     />
   )

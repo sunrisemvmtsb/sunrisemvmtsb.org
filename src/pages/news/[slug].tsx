@@ -1,4 +1,5 @@
 import React from 'react'
+import type { Field } from 'tinacms'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { css } from 'styled-components'
 import { Temporal } from 'proposal-temporal'
@@ -11,6 +12,7 @@ import AdjustableImage from '../../components/fields/AdjustableImage'
 import Text from '../../components/fields/Text'
 import Blocks from '../../components/fields/Blocks'
 import BlockItem from '../../components/fields/BlockItem'
+import Group from '../../components/fields/Group'
 
 import Preview from '../../contexts/Preview'
 
@@ -24,45 +26,6 @@ export type Props = {
   post: NewsPost | null,
   slug: string,
   summaries: Array<NewsSummary>
-}
-
-const TagItemComponent = ({
-  data,
-  index,
-}: {
-  data: { tag: string },
-  index: number,
-}) => {
-  return (
-    <div css={css`
-      & [data-react-beautiful-dnd-draggable], input {
-        width: fit-content !important;
-      }
-      margin-right: 16px;
-    `}>
-    <BlockItem index={index} inset={false}>
-      <span css={css`
-        color: var(--sunrise-magenta);
-        text-transform: uppercase;
-        font-weight: 700;
-        width: fit-content !important;
-      `}>
-        <Text name="tag">
-          {data.tag}
-        </Text>
-      </span>
-    </BlockItem>
-    </div>
-  )
-}
-
-const TagItem = {
-  Component: TagItemComponent,
-  template: {
-    label: 'Tag',
-    defaultItem: { value: '' },
-    fields: []
-  },
 }
 
 export const Template = (props: Props) => {
@@ -115,17 +78,42 @@ export const Template = (props: Props) => {
             border-width: 0;
             border-bottom-width: 2px;
           `}>
-            <Blocks
-              blocks={{ TagItem }}
-              name="tagBlocks"
-              data={tagBlockData}
-              direction="horizontal"
-              css={css`
+            <Group
+              name="."
+              focusRing={{ offset: 16 }}
+              fields={[
+                {
+                  component: 'list',
+                  name: 'tags',
+                  label: 'Tags',
+                  field: {
+                    component: 'text',
+                    validate: (current: string, fields: NewsPost) => {
+                      if (fields.tags.filter((t) => t === current).length > 1) return 'Duplicates not allowed'
+                    }
+                  },
+                } as Field,
+              ]}>
+              <div css={css`
                 margin-bottom: 8px;
-                border: ${preview ? '1px solid var(--theme-color-divider)' : '0'};
                 flex-wrap: wrap;
                 display: flex;
-              `} />
+              `}>
+                {post.tags.map((tag, index) => (
+                  <span
+                    key={tag + index}
+                    css={css`
+                      color: var(--sunrise-magenta);
+                      text-transform: uppercase;
+                      font-weight: 700;
+                      width: fit-content !important;
+                      margin-right: 16px;
+                    `}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </Group>
             <h1 css={css`
               font-weight: 400;
               font-size: 56px;
@@ -139,7 +127,7 @@ export const Template = (props: Props) => {
                 {post.title}
               </Text>
             </h1>
-            {post.subtitle &&
+            {(preview || post.subtitle) &&
               <h3 css={css`
                 margin: 0;
                 font-size: 20px;
@@ -148,7 +136,11 @@ export const Template = (props: Props) => {
                 line-height: 1.1;
                 font-style: italic;
               `}>
-                {post.subtitle}
+                <Text
+                  name="subtitle"
+                  placeholder="Subtitle (optional)">
+                  {post.subtitle}
+                </Text>
               </h3>
             }
             <div css={css`

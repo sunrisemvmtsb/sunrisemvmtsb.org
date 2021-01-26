@@ -78,7 +78,7 @@ export default class FileSystemContentBackend implements IContentBackend {
   }
 
   async listMedia(): Promise<Array<string>> {
-    return glob.sync('public/media/*')
+    return glob.sync('public/media/*').map((p) => p.replace('public/media/', ''))
   }
 
   async uploadMedia({

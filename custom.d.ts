@@ -7,3 +7,9 @@ declare module '*.svg' {
 declare module 'formidable-serverless' {
   export { IncomingForm } from 'formidable'
 }
+
+declare module 'remark-unwrap-images' {
+  import { Attacher } from 'unist'
+  const stuff: Attacher
+  export default stuff
+}
