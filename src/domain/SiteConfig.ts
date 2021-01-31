@@ -48,6 +48,17 @@ const SiteConfig = {
     header: {
       links: [],
     },
+    footer: {
+      buttons: [],
+      links: [],
+      disclaimer: '',
+      social: {
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        email: '',
+      },
+    },
     infrastructure: {
       redirects: {
         pages: {},
