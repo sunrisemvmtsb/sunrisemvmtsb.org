@@ -1,21 +1,45 @@
-export type Link = {
+export type LinkOrButton = {
   title: string,
   url: string,
   type: 'Plain' | 'WhiteButton' | 'YellowButton',
   id: string,
 }
 
+export type Button = {
+  title: string,
+  url: string,
+  color: 'White' | 'Yellow',
+  id: string,
+}
+
+export type Link = {
+  title: string,
+  url: string,
+  id: string,
+}
+
 type SiteConfig = {
   header: {
-    links: Array<Link>,
+    links: Array<LinkOrButton>,
   },
+  footer: {
+    buttons: Array<Button>,
+    links: Array<Link>,
+    disclaimer: string,
+    social: {
+      facebook: string,
+      twitter: string,
+      instagram: string,
+      email: string,
+    },
+  }
   calendar: string,
   infrastructure: {
     redirects: {
       pages: Record<string, string>,
       news: Record<string, string>,
     }
-  }
+  },
 }
 
 const SiteConfig = {

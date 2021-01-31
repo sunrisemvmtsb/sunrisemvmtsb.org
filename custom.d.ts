@@ -13,3 +13,17 @@ declare module 'remark-unwrap-images' {
   const stuff: Attacher
   export default stuff
 }
+
+declare interface IResizeObserverEntry {
+  readonly borderBoxSize: Readonly<{ blockSize: number, inlineSize: number }>
+  readonly contentBoxSize: Readonly<{ blockSize: number, inlineSize: number }>
+  readonly contentRect: DOMRectReadOnly
+  readonly target: Element | SVGElement
+}
+
+declare class ResizeObserver {
+  constructor(callback: (entries: ReadonlyArray<IResizeObserverEntry>, observer: ResizeObserver) => void)
+  disconnect(): void
+  observe(target: Element | SVGElement, options?: { box: 'content-box' | 'border-box' | 'device-pixel-content-box' }): void
+  unobserve(target: Element | SVGElement): void
+}

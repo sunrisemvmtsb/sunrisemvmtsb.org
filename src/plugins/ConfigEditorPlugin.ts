@@ -79,7 +79,121 @@ export default class ConfigEditorPlugin {
               ]
             }
           ]
-        }
+        },
+        {
+          name: 'footer',
+          label: 'Footer',
+          component: 'group',
+          fields: [
+            {
+              name: 'buttons',
+              lable: 'Buttons',
+              component: 'group-list',
+              itemProps: (item: any) => ({
+                key: item.id,
+                label: item.title,
+              }),
+              defaultItem: () => {
+                return {
+                  title: '',
+                  url: '/',
+                  color: 'White',
+                  id: uuid.v4(),
+                }
+              },
+              fields: [
+                {
+                  name: 'title',
+                  label: 'Title',
+                  component: 'text',
+                  defaultValue: '',
+                },
+                {
+                  name: 'url',
+                  label: 'URL',
+                  component: 'text',
+                  defaultValue: '/',
+                },
+                {
+                  name: 'color',
+                  label: 'Color',
+                  component: 'select',
+                  options: [
+                    { value: 'White', label: 'White' },
+                    { value: 'Yellow', label: 'Yellow' },
+                  ]
+                }
+              ]
+            },
+            {
+              name: 'links',
+              label: 'Links',
+              component: 'group-list',
+              itemProps: (item: any) => ({
+                key: item.id,
+                label: item.title,
+              }),
+              defaultItem: () => {
+                return {
+                  title: '',
+                  url: '/',
+                  id: uuid.v4(),
+                }
+              },
+              fields: [
+                {
+                  name: 'title',
+                  label: 'Title',
+                  component: 'text',
+                  defaultValue: '',
+                },
+                {
+                  name: 'url',
+                  label: 'URL',
+                  component: 'text',
+                  defaultValue: '/',
+                },
+              ]
+            },
+            {
+              name: 'disclaimer',
+              label: 'Disclaimer',
+              component: 'textarea',
+              defaultValue: '',
+            },
+            {
+              name: 'social',
+              label: 'Social Links',
+              component: 'group',
+              fields: [
+                {
+                  component: 'text',
+                  name: 'facebook',
+                  label: 'Facebook username',
+                  defaultValue: '',
+                },
+                {
+                  component: 'text',
+                  name: 'twitter',
+                  label: 'Twitter username (no @)',
+                  defaultValue: '',
+                },
+                {
+                  component: 'text',
+                  name: 'instagram',
+                  label: 'Instagram username (no @)',
+                  defaultValue: '',
+                },
+                {
+                  component: 'text',
+                  name: 'email',
+                  label: 'Email address',
+                  defaultValue: '',
+                },
+              ],
+            },
+          ],
+        },
       ],
       async loadInitialValues() {
         if (cms.disabled) return config

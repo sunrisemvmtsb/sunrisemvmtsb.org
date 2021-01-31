@@ -27,6 +27,36 @@
       }
     ]
   },
+  "footer": {
+    "buttons": [
+      {
+        "title": "Donate",
+        "url": "/",
+        "color": "White",
+        "id": "1"
+      },
+      {
+        "title": "Take Action",
+        "url": "/",
+        "color": "Yellow",
+        "id": "2"
+      }
+    ],
+    "links": [
+      {
+        "title": "Contact",
+        "url": "mailto:contact@sunrisemvmtsb.org",
+        "id": "1"
+      }
+    ],
+    "disclaimer": "PAC-related content on this website is paid for by Sunrise PAC, 50 F Street NW STE #700, Washington, DC 20001. Not authorized by any candidate or candidate's committee.",
+    "social": {
+      "facebook": "sunrisemvmtsb",
+      "twitter": "sunrisemvmntsb",
+      "instagram": "sunrisemvmtsb",
+      "email": "contact@sunrisemvmtsb.org"
+    }
+  },
   "calendar": "https://calendar.google.com/calendar/u/0/embed?src=sunrisemvmtsb@gmail.com",
   "infrastructure": {
     "redirects": {

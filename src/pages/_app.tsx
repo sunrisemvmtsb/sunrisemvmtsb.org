@@ -107,7 +107,7 @@ const Contents = ({ Component, pageProps, config }: AppProps & { config: SiteCon
         `}>
           <Component {...pageProps} siteConfig={config} />
         </main>
-        <Footer />
+        <Footer config={config} />
       </div>
     </>
   )
