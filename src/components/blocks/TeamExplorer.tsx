@@ -87,7 +87,6 @@ const TeamEntryTemplate = ({
                 overflow: hidden;
               `}>
               {leads.map((lead, index) => {
-                console.log(lead.image)
                 return (
                   <div
                     key={lead.id}

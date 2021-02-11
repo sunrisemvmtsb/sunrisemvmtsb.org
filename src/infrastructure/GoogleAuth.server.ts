@@ -97,7 +97,6 @@ export default class GoogleAuth {
   }
 
   setAuthCookie(tokens: Tokens, res: NextApiResponse) {
-    console.log("hi")
     res.setHeader('Set-Cookie', cookie.serialize('auth', this._crypto.encrypt(JSON.stringify(tokens)), {
       httpOnly: true,
       maxAge: 24 * 60 * 60,

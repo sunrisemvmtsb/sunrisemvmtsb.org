@@ -42,7 +42,6 @@ export default class PagesService {
   }
 
   async renamePage(page: Page, slug: string): Promise<Page> {
-    console.log(page, slug)
     if (page.slug === '') throw Error('Cannot rename home page')
     if (slug === '') throw Error('Cannot move a new page to home page')
 
