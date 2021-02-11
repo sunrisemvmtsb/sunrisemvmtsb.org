@@ -10,6 +10,8 @@ type Icon
   | 'Facebook'
   | 'Email'
   | 'Twitter'
+  | 'ExpandMore'
+  | 'ExpandLess'
 
 const Icon = ({
   icon,
@@ -37,6 +39,10 @@ const Icon = ({
       return email(className)
     case 'Twitter':
       return twitter(className)
+    case 'ExpandMore':
+      return expandMore(className)
+    case 'ExpandLess':
+      return expandLess(className)
   }
 }
 
@@ -91,5 +97,17 @@ const email = (className?: string) => (
 const twitter = (className?: string) => (
   <svg viewBox="0 0 12 12" className={className}>
     <path d="M12 2.27852C11.5585 2.47452 11.084 2.60652 10.586 2.66602C11.0945 2.36152 11.485 1.87902 11.6685 1.30402C11.193 1.58602 10.666 1.79102 10.105 1.90152C9.6565 1.42302 9.016 1.12402 8.308 1.12402C6.7185 1.12402 5.5505 2.60702 5.9095 4.14652C3.864 4.04402 2.05 3.06402 0.8355 1.57452C0.1905 2.68102 0.501 4.12852 1.597 4.86152C1.194 4.84852 0.814 4.73802 0.4825 4.55352C0.4555 5.69402 1.273 6.76102 2.457 6.99852C2.1105 7.09252 1.731 7.11452 1.345 7.04052C1.658 8.01852 2.567 8.73002 3.645 8.75002C2.61 9.56152 1.306 9.92402 0 9.77002C1.0895 10.4685 2.384 10.876 3.774 10.876C8.345 10.876 10.9275 7.01552 10.7715 3.55302C11.2525 3.20552 11.67 2.77202 12 2.27852Z" />
+  </svg>
+)
+
+const expandMore = (className?: string) => (
+  <svg viewBox="0 0 24 24" className={className}>
+    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+  </svg>
+)
+
+const expandLess = (className?: string) => (
+  <svg viewBox="0 0 24 24" className={className}>
+    <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
   </svg>
 )

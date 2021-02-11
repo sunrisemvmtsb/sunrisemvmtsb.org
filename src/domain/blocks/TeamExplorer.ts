@@ -7,12 +7,13 @@ export type TeamLead = {
 export const TeamLead = {
   default: (id: string) => ({
     name: '',
-    image: '/images/placeholder.svg',
+    image: '/images/avatar.svg',
     id,
   })
 }
 
 export type Team = {
+  _template: 'Team',
   name: string,
   leads: Array<TeamLead>,
   description: string,
@@ -22,6 +23,7 @@ export type Team = {
 
 export const Team = {
   default: (id: string) => ({
+    _template: 'Team',
     name: '',
     leads: [],
     description: '',

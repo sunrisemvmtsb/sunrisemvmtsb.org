@@ -53,6 +53,7 @@
       "_template": "TeamExplorer",
       "teams": [
         {
+          "_template": "Team",
           "name": "Creative",
           "leads": [],
           "description": "",
@@ -60,6 +61,7 @@
           "id": "43159e1e-3467-4ec4-a470-476ba01399bc"
         },
         {
+          "_template": "Team",
           "name": "Outreach",
           "leads": [],
           "description": "",
@@ -67,16 +69,17 @@
           "id": "c8d2b4ac-fbc8-46d6-b656-c2eefc0bfaaf"
         },
         {
+          "_template": "Team",
           "name": "Administrative Coordinators",
           "id": "1",
           "leads": [
             {
-              "image": "/images/placeholder.svg",
+              "image": "/images/avatar.svg",
               "name": "Mikala Butson",
               "id": "1"
             },
             {
-              "image": "/images/placeholder.svg",
+              "image": "/images/avatar.svg",
               "name": "Chris Kracha",
               "id": "2"
             }
@@ -85,6 +88,7 @@
           "color": "#FFDE16"
         },
         {
+          "_template": "Team",
           "name": "Actions",
           "leads": [],
           "description": "Hello world",

@@ -10,21 +10,27 @@ const InlineImage = dynamic<InlineImageProps>(() => {
 export type Props = {
   name: string,
   src: string,
-  alt?: string
+  alt?: string,
+  className?: string,
 }
 
 const Editor = (props: Props) => {
   return (
     <InlineImage
+      className={props.className}
       focusRing={{ borderRadius: 0, offset: 0 }}
       name={props.name}
+      previewSrc={(() => props.src)}
       parse={(media) => media.id} />
   )
 }
 
 const Static = (props: Props) => {
   return (
-    <img alt={props.alt} src={props.src} />
+    <img
+      alt={props.alt}
+      src={props.src}
+      className={props.className} />
   )
 }
 

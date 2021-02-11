@@ -31,7 +31,7 @@ const Component = ({
           css={css`
             margin: 0 auto;
             max-width: 920px;
-            padding: 24px 0;
+            padding: 24px 32px;
           `}>
           <Markdown
             name="content"

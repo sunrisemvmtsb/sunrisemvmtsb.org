@@ -36,7 +36,7 @@ const Component = ({
             grid-auto-flow: column;
             max-width: 920px;
             margin: 0 auto;
-            padding: 24px 32px;
+            padding: 24px 64px;
           `}>
           <Markdown
             name="leftContent"

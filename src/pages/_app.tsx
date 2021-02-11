@@ -39,6 +39,10 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: inherit;
   }
+  #tinacms-inline-settings [class^=ModalBody] {
+    min-height: 40vh;
+    max-height: 80vh;
+  }
 `
 
 const CmsWrapper = dynamic(async () => {
