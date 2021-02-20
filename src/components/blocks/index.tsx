@@ -8,6 +8,7 @@ import type { Props as HeadlineHeroProps } from './HeadlineHero'
 import type { Props as OneColumnTextProps } from './OneColumnText'
 import type { Props as TwoColumnTextProps } from './TwoColumnText'
 import type { Props as TeamExplorerProps } from './TeamExplorer'
+import type { Props as GoogleFormProps } from './GoogleForm'
 import CallToActionData from '../../domain/blocks/CallToAction'
 
 const CallToActionComponent = dynamic<CallToActionProps>(() => import(/* webpackChunkName: "blocks" */ './CallToAction'))
@@ -105,6 +106,29 @@ const TeamExplorer = {
   },
 }
 
+const GoogleFormComponent = dynamic<GoogleFormProps>(() => import(/* webpackChunkName: "blocks" */ './GoogleForm'))
+const GoogleForm = {
+  Component: GoogleFormComponent as any,
+  template: {
+    label: 'Google Form',
+    defaultItem: { url: '', height: 75 },
+    fields: [
+      {
+        name: 'url',
+        label: 'URL',
+        component: 'text',
+        description: 'The URL for the form. Don\'t worry about doing the whole "Send" workflow in Google Forms. You can just copy the URL straight from the address bar in your browser and paste it in.'
+      },
+      {
+        name: 'height',
+        label: 'Height',
+        description: 'The height of the form, as a percentage of the screen height. 75% is the max and the default, but you can adjust it down if your form is short.',
+        component: 'number',
+      }
+    ]
+  },
+}
+
 
 const blocks: InlineBlocksProps['blocks'] = {
   CallToAction,
@@ -115,6 +139,7 @@ const blocks: InlineBlocksProps['blocks'] = {
   OneColumnText,
   TwoColumnText,
   TeamExplorer,
+  GoogleForm,
 }
 
 export default blocks

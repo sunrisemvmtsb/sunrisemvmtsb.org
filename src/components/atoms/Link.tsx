@@ -39,7 +39,7 @@ const Link = ({
   ) :
   (
     <NextLink href={href}>
-      <span css={css`
+      <a css={css`
         font-family: Source Sans Pro;
         font-size: 18px;
         font-weight: 700;
@@ -58,7 +58,7 @@ const Link = ({
         }
       `}>
         {children}
-      </span>
+      </a>
     </NextLink>
   )
 }

@@ -11,7 +11,6 @@ import SiteConfig from '../domain/SiteConfig'
 import SiteConfigService from '../services/SiteConfigService'
 import { NextApiRequest } from 'next'
 
-
 const GlobalStyle = createGlobalStyle`
   html, body {
     padding: 0;

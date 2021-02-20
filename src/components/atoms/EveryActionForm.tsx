@@ -124,6 +124,7 @@ const EveryActionForm = ({
         input {
           margin-bottom: 0 !important;
           border-radius: 0 !important;
+          display: block;
         }
 
         .at-form-submit {

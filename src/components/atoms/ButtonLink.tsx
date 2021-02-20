@@ -1,5 +1,6 @@
 import React from 'react'
 import { css } from 'styled-components'
+import NextLink from 'next/link'
 
 type Color =
   | 'Yellow'
@@ -35,7 +36,7 @@ const ButtonLink = ({
   color: Color,
   target?: string
 }>) => {
-  return (
+  return target ? (
     <a
       href={href}
       target={target}
@@ -49,9 +50,28 @@ const ButtonLink = ({
         padding: 12px;
         background-color: ${Color.backgroundColor(color)};
         color: ${Color.color(color)};
+        cursor: pointer;
       `}>
       {children}
     </a>
+  ) :
+  (
+    <NextLink href={href}>
+      <a css={css`
+        font-family: Source Sans Pro;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
+        text-transform: uppercase;
+        display: inline-block;
+        padding: 12px;
+        background-color: ${Color.backgroundColor(color)};
+        color: ${Color.color(color)};
+        cursor: pointer;
+      `}>
+        {children}
+      </a>
+    </NextLink>
   )
 }
 

@@ -161,17 +161,9 @@ const Header = ({
             switch (link.type) {
               case 'Plain':
                 return (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    css={css`
-                      display: block;
-                      color: var(--sunrise-yellow);
-                      font-weight: 700;
-                      text-transform: uppercase;
-                    `}>
+                  <Link key={link.id} href={link.url}>
                     {link.title}
-                  </a>
+                  </Link>
                 )
 
               case 'WhiteButton':
