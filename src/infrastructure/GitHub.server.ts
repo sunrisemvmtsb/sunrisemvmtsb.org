@@ -76,6 +76,10 @@ export default class GitHub {
         name: this._name,
         email: this._email,
       },
+      committer: {
+        name: this._name,
+        email: this._email,
+      },
     })
   }
 
@@ -122,7 +126,11 @@ export default class GitHub {
       author: {
         name: this._name,
         email: this._email,
-      }
+      },
+      committer: {
+        name: this._name,
+        email: this._email,
+      },
     })
   }
 
@@ -185,6 +193,10 @@ export default class GitHub {
       tree: updateTree.data.sha,
       parents: [branchTree.data.sha],
       author: {
+        name: this._name,
+        email: this._email,
+      },
+      committer: {
         name: this._name,
         email: this._email,
       },
