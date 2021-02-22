@@ -1,9 +1,9 @@
-type Team =
+export type Team =
   | 'Outreach'
   | 'Finance'
   | 'Actions'
 
-type EventType =
+export type EventType =
   | 'Meeting'
   | 'Phonebank'
   | 'Action'
@@ -14,6 +14,7 @@ type HubEvent = {
   start: string,
   type: EventType | null,
   team: Team | null,
+  url: string,
 }
 
 export default HubEvent

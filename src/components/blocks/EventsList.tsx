@@ -7,24 +7,8 @@ import BlockItem from '../fields/BlockItem'
 import { Temporal } from 'proposal-temporal'
 import ButtonLink from '../atoms/ButtonLink'
 import SiteConfig from '../../domain/SiteConfig'
-
-type Team =
-  | 'Outreach'
-  | 'Finance'
-  | 'Actions'
-
-type EventType =
-  | 'Meeting'
-  | 'Phonebank'
-  | 'Action'
-
-type HubEvent = {
-  id: string,
-  title: string,
-  start: string,
-  type: EventType | null,
-  team: Team | null,
-}
+import Link from '../atoms/Link'
+import HubEvent, { EventType, Team } from '../../domain/HubEvent'
 
 const parseEventType = (input: CalendarEvent): EventType | null => {
   const text = input.summary.toLowerCase() + input.description.toLowerCase()
@@ -71,6 +55,7 @@ const parseEvent = (input: CalendarEvent): HubEvent => {
       }),
     type: parseEventType(input),
     team: parseTeam(input),
+    url: input.htmlLink,
   }
 }
 
@@ -146,16 +131,28 @@ const Component = ({
                   {event.type}
                 </div>
               }
-              <h3 css={css`
-                font-family: Source Sans Pro;
-                font-weight: 700;
-                font-size: 28px;
-                line-height: 1;
-                color: var(--sunrise-magenta);
-                margin: 0;
-              `}>
-                {event.title}
-              </h3>
+              <a
+                href={event.url}
+                target="_blank"
+                css={css`
+                  display: block;
+                  color: var(--sunrise-magenta);
+                  :hover {
+                    text-decoration: underline;
+                  }
+                `}>
+                <h3 css={css`
+                  font-family: Source Sans Pro;
+                  font-weight: 700;
+                  font-size: 28px;
+                  line-height: 1;
+                  text-transform: none;
+                  color: var(--sunrise-magenta);
+                  margin: 0;
+                `}>
+                  {event.title}
+                </h3>
+              </a>
               {event.team &&
                 <a
                   href={teamUrl(event.team)}
