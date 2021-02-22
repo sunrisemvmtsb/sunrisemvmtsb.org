@@ -8,6 +8,10 @@
       "title": "2020–2021 sign-up forms"
     },
     {
+      "_template": "OneColumnText",
+      "content": "Something about the forms or whatever"
+    },
+    {
       "_template": "GoogleForm",
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSeirWYtLtLoDEL0iJacnvAKNZY5cFQymWBarBcwO71b9llf4Q/viewform",
       "height": 50
