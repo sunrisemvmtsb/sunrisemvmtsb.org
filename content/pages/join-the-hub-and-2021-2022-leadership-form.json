@@ -3,6 +3,11 @@
   "title": "Join the Hub and 2021/2022 Leadership Form",
   "blocks": [
     {
+      "_template": "HeadlineHero",
+      "lead": "Sunrise Santa Barbara",
+      "title": "Join the hub & 2020/2021 leadership form"
+    },
+    {
       "_template": "GoogleForm",
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSeirWYtLtLoDEL0iJacnvAKNZY5cFQymWBarBcwO71b9llf4Q/viewform",
       "height": 50
