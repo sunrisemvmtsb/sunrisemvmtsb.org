@@ -74,7 +74,7 @@ export default class NewsCreatorPlugin implements AddContentPlugin<Fields> {
         .trim()
         .toLowerCase()
         //replace invalid chars
-        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/[^a-z0-9 -]/g, '-')
         // Collapse whitespace and replace by -
         .replace(/\s+/g, '-')
         // Collapse dashes
