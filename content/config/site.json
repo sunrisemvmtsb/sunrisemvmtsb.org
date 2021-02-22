@@ -30,16 +30,16 @@
   "footer": {
     "buttons": [
       {
-        "title": "Donate",
-        "url": "/",
-        "color": "Yellow",
-        "id": "1"
-      },
-      {
         "title": "Join the Hub",
         "url": "/join-the-hub-and-2021-2022-leadership-form",
         "color": "White",
         "id": "2"
+      },
+      {
+        "title": "Donate",
+        "url": "/",
+        "color": "Yellow",
+        "id": "1"
       }
     ],
     "links": [
