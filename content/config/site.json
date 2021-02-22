@@ -32,13 +32,13 @@
       {
         "title": "Donate",
         "url": "/",
-        "color": "White",
+        "color": "Yellow",
         "id": "1"
       },
       {
         "title": "Join the Hub",
         "url": "/join-the-hub-and-2021-2022-leadership-form",
-        "color": "Yellow",
+        "color": "White",
         "id": "2"
       }
     ],
