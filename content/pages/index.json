@@ -13,15 +13,6 @@
       }
     },
     {
-      "_template": "CallToAction",
-      "callout": "Take Action Today!",
-      "title": "lol",
-      "url": "",
-      "description": "Biden & Harris promised to “Build Back Better”, but to do that they’ll need a team who represents the ambition of their vision. We gave them a mandate on climate and we’ll be here to make sure they fulfill it.",
-      "image": "/images/placeholder.svg",
-      "form": "https://secure.everyaction.com/v1/Forms/hAqwJdvz6UyYVvIsDH9gIQ2"
-    },
-    {
       "_template": "EventsList"
     },
     {
