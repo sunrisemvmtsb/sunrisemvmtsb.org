@@ -130,8 +130,8 @@ const Component = ({
           border: 1px solid var(--tina-color-grey-2);
           margin-bottom: 32px;
         `}>
-          {[...news, ...news].map((news, index) => (
-            <PageItem title={news.title} url={NewsSummary.href(news)} key={index} />
+          {news.map((news) => (
+            <PageItem title={news.title} url={NewsSummary.href(news)} key={news.slug} />
           ))}
         </ul>
       </div>
