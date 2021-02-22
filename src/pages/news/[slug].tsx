@@ -14,7 +14,7 @@ import Blocks from '../../components/fields/Blocks'
 import BlockItem from '../../components/fields/BlockItem'
 import Group from '../../components/fields/Group'
 
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 
 import NewsPost from '../../domain/NewsPost'
 

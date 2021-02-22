@@ -1,6 +1,7 @@
 import { ContainerInstance } from 'typedi'
 import IContentBackend from './IContentBackend'
 import Page from '../domain/Page'
+import PageSummary from '../domain/PageSummary'
 
 export default class PagesService {
   private _backend: IContentBackend
@@ -26,11 +27,31 @@ export default class PagesService {
     return { ...content as Page, slug }
   }
 
-  async listSlugs(): Promise<Array<string>> {
+  /**
+   * TODO:
+   * 1. Replace logic here with logic from NewsService listNewsSummaries
+   * 2. Update conten backend to allow for `include` key on fetching content
+   * 3. Update other uses of this method
+   * 4. Use this method to list pages in ContentListPlugin
+   */
+  async listPageSummaries(): Promise<Array<PageSummary>> {
     const filenames = await this._backend.listTextBucket({ bucket: 'pages' })
-    return filenames
-      .filter((fn) => fn !== 'index.json')
-      .map((filename) => filename.replace('.json', ''))
+    const files = await Promise.all(filenames
+      .filter((filename) => filename !== 'index.json')
+      .map((filename) => {
+        return this._backend.getTextFile({
+          bucket: 'pages',
+          filename,
+          exclude: ['description', 'blocks'],
+        }).then((data) => [filename, data] as [string, Record<string, any> | null])
+      }))
+
+    return files
+      .filter(([, file]) => file !== null)
+      .map(([filename, file]) => ({
+        title: file!.title,
+        slug: file!.slug,
+      }))
   }
 
   async savePage(page: Page): Promise<void> {

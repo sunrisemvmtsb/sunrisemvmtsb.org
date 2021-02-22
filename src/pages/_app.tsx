@@ -6,10 +6,11 @@ import dynamic from 'next/dynamic'
 import { createGlobalStyle, css } from 'styled-components'
 import Header from '../components/molecules/Header'
 import Footer from '../components/molecules/Footer'
-import Preview from '../contexts/Preview'
+import Preview from '../hooks/Preview'
 import SiteConfig from '../domain/SiteConfig'
 import SiteConfigService from '../services/SiteConfigService'
 import { NextApiRequest } from 'next'
+import type ContentListPlugin from '../plugins/ContentListPlugin'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -50,6 +51,7 @@ const CmsWrapper = dynamic(async () => {
   const { default: PageCreatorPlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/PageCreatorPlugin')
   const { default: NewsCreatorPlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/NewsCreatorPlugin')
   const { default: ContentMediaStorePlugin } = await import(/* webpackChunkName: "tina" */ '../plugins/ContentMediaStorePlugin')
+  const { default: ContentListPlugin } = await import(/*webpackChunkName: "tina" */ '../plugins/ContentListPlugin')
   const { default: AuthService } = await import(/* webpackChunkName: "tina" */ '../services/AuthService.client')
   const { default: container } = await import(/* webpackChunkName: "tina" */ '../infrastructure/Container.client')
 
@@ -78,13 +80,17 @@ const CmsWrapper = dynamic(async () => {
 
     return (
       <TinaProvider cms={cms}>
-        <CmsInner {...props} useConfig={ConfigEditorPlugin.use} />
+        <CmsInner {...props} ContentListPlugin={ContentListPlugin} useConfig={ConfigEditorPlugin.use} />
       </TinaProvider>
     )
   }
 })
 
-const CmsInner = (props: AppProps & { useConfig: (config: SiteConfig) => SiteConfig }) => {
+const CmsInner = (props: AppProps & {
+  ContentListPlugin: typeof ContentListPlugin,
+  useConfig: (config: SiteConfig) => SiteConfig,
+}) => {
+  props.ContentListPlugin.use()
   const config = props.useConfig(props.pageProps.siteConfig)
   return (
     <Contents {...props} config={config} />

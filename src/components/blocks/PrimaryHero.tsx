@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from 'styled-components'
 import AdjustableImage, { Data as AdjustableImageData } from '../fields/AdjustableImage'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 import BlockItem from '../fields/BlockItem'
 
 export type Data = {

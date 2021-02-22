@@ -44,8 +44,9 @@ export default class PageCreatorPlugin implements AddContentPlugin<Fields> {
     }
 
     try {
-      const existing = await this._pages.listSlugs()
-      if (page.slug === '' || existing.includes(page.slug)) {
+      const pages = await this._pages.listPageSummaries()
+      const existing = new Set(pages.map(({ slug }) => slug))
+      if (page.slug === '' || existing.has(page.slug)) {
         cms.alerts.error(`A page with path ${Page.href(page)} already exists.`)
         return
       }

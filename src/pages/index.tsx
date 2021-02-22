@@ -12,7 +12,7 @@ import Page from '../domain/Page'
 import SocialPost from '../domain/SocialPost'
 
 import ISocialService from '../services/ISocialService'
-import Preview from '../contexts/Preview'
+import Preview from '../hooks/Preview'
 import SiteConfigService from '../services/SiteConfigService'
 import PagesService from '../services/PagesService'
 import NewsService from '../services/NewsService'

@@ -1,6 +1,6 @@
 import React from 'react'
 import type { BlocksControlsProps } from 'react-tinacms-inline'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 import dynamic from 'next/dynamic'
 
 const BlocksControls = dynamic<BlocksControlsProps>(() => {

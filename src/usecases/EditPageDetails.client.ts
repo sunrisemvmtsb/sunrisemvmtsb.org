@@ -52,8 +52,9 @@ class EditPageDetails {
         return updated
       }
 
-      const existing = await this._pages.listSlugs()
-      if (existing.includes(data.slug)) throw new EditPageDetails.PageExistsError(Page.href(updated))
+      const pages = await this._pages.listPageSummaries()
+      const existing = new Set(pages.map(({ slug }) => slug))
+      if (existing.has(data.slug)) throw new EditPageDetails.PageExistsError(Page.href(updated))
       await this._pages.renamePage({ ...updated, slug: page.slug }, updated.slug)
       const siteConfig = await this._siteConfig.get()
       await this._siteConfig.save(SiteConfig.addPageRedirect(page.slug, updated.slug, siteConfig))

@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Field } from 'tinacms'
 import dynamic from 'next/dynamic'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 
 const InlineGroup = dynamic<any>(() => {
   return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineGroup)

@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import type { InlineImageProps } from 'react-tinacms-inline'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 
 const InlineImage = dynamic<InlineImageProps>(() => {
   return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineImage)

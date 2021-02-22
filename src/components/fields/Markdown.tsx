@@ -3,7 +3,7 @@ import { css } from 'styled-components'
 import type { InlineWysiwygFieldProps } from 'react-tinacms-editor'
 import Markdown from '../atoms/Markdown'
 import dynamic from 'next/dynamic'
-import Preview from 'src/contexts/Preview'
+import Preview from 'src/hooks/Preview'
 
 const InlineWysiwyg = dynamic<InlineWysiwygFieldProps>(() => {
   return import(/* webpackChunkName: "tina" */ 'react-tinacms-editor').then((m) => m.InlineWysiwyg)

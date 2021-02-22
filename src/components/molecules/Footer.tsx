@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from 'styled-components'
 import ButtonLink from '../atoms/ButtonLink'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 import AuthService from 'src/services/AuthService.client'
 import container from '../../infrastructure/Container.client'
 import SiteConfig from '../../domain/SiteConfig'

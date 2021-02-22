@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import type { InlineBlocksProps } from 'react-tinacms-inline'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 
 const InlineBlocks = dynamic<InlineBlocksProps>(() => {
   return import(/* webpackChunkName: "tina" */ 'react-tinacms-inline').then((m) => m.InlineBlocks)

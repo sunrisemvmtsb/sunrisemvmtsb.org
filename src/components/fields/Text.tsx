@@ -1,7 +1,7 @@
 import React from 'react'
 import type { InlineTextProps } from 'react-tinacms-inline'
 import { css } from 'styled-components'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 import dynamic from 'next/dynamic'
 
 const InlineText = dynamic<InlineTextProps>(() => {

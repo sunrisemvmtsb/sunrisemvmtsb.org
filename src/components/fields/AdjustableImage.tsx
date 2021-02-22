@@ -3,7 +3,7 @@ import { css } from 'styled-components'
 import type { Field } from 'tinacms'
 import Group from './Group'
 import Image from './Image'
-import Preview from '../../contexts/Preview'
+import Preview from '../../hooks/Preview'
 
 export type Data = {
   path: string,
