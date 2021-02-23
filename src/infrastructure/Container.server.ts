@@ -76,7 +76,7 @@ export default (id: string): ContainerInstance => {
 
   container.set(GoogleAuth, new GoogleAuth({
     container,
-    allowed: ['sunrisemvmtsb@gmail.com'],
+    allowed: ['sunrisemvmtsb@gmail.com', 'rajesh.v.sannidhi@gmail.com'],
     clientId: process.env.GOOGLE_AUTH_CLIENT_ID!,
     clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET!,
     hostname: process.env.SERVER_HOSTNAME!,
